@@ -65,3 +65,12 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
+
+# test
+app/src/androidTest/
+app/src/test/
+
+# file
+gradlew
+gradlew.bat
+local.properties
