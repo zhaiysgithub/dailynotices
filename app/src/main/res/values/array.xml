@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="home_bottom_text">
+        <item>首页</item>
+        <item>发现</item>
+        <item>" "</item>
+        <item>消息</item>
+        <item>我的</item>
+    </string-array>
+
+    <!-- 未被选中的icon -->
+    <integer-array name="home_bottom_unicon">
+        <item>@mipmap/ico_home_normal</item>
+        <item>@mipmap/ico_discovery_normal</item>
+        <item>@mipmap/ico_msg_normal</item>
+        <item>@mipmap/ico_mine_normal</item>
+    </integer-array>
+
+    <integer-array name="home_bottom_icon">
+        <item>@mipmap/ico_home_selected</item>
+        <item>@mipmap/ico_discovery_selected</item>
+        <item>@mipmap/ico_msg_selected</item>
+        <item>@mipmap/ico_mine_selected</item>
+    </integer-array>
+    
+    <string-array name="home_home_text">
+        <item>动态</item>
+        <item>通告</item>
+        <item>红人</item>
+    </string-array>
+</resources>
