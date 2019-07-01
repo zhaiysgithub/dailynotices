@@ -2,6 +2,7 @@ package com.suncity.dailynotices.ui.activity
 
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.ui.BaseActivity
+import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.ui.views.CircleTimerView
 import kotlinx.android.synthetic.main.ac_splash.*
 
@@ -15,7 +16,11 @@ import kotlinx.android.synthetic.main.ac_splash.*
 class SplashActivity : BaseActivity() {
 
     override fun setScreenManager() {
-        isFullScreen = true
+//        isFullScreen = true
+        ImmersionBar.with(this)
+            .statusBarDarkFont(true, 0.2f)
+            .navigationBarDarkIcon(true, 0.2f)
+            .init()
     }
 
     override fun getActivityLayoutId() : Int {

@@ -1,12 +1,10 @@
-package com.suncity.dailynotices.ui.bar;
+package com.suncity.dailynotices.ui.bar
 
 /**
  * bar的状态
  *
- * @author geyifeng
- * @date 2017/4/25
  */
-public enum BarHide {
+enum class BarHide {
     /**
      * 隐藏状态栏
      * Flag hide status bar bar hide.

@@ -1,5 +1,6 @@
 package com.suncity.dailynotices.ui.bar;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.database.ContentObserver;
 import android.net.Uri;
@@ -10,11 +11,12 @@ import android.provider.Settings;
 
 import java.util.ArrayList;
 
+import static com.suncity.dailynotices.ui.bar.BarConstants.IMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW;
+import static com.suncity.dailynotices.ui.bar.BarConstants.IMMERSION_MIUI_NAVIGATION_BAR_HIDE_SHOW;
+
 /**
  * 导航栏显示隐藏处理，目前只支持emui和miui带有导航栏的手机
  *
- * @author geyifeng
- * @date 2019/4/10 6:02 PM
  */
 final class NavigationBarObserver extends ContentObserver {
 
@@ -30,18 +32,19 @@ final class NavigationBarObserver extends ContentObserver {
         super(new Handler(Looper.getMainLooper()));
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     void register(Application application) {
         this.mApplication = application;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mApplication != null
                 && mApplication.getContentResolver() != null && !mIsRegister) {
             Uri uri = null;
-            if (OSUtils.isMIUI()) {
-                uri = Settings.Global.getUriFor(INSTANCE.getIMMERSION_MIUI_NAVIGATION_BAR_HIDE_SHOW());
-            } else if (OSUtils.isEMUI()) {
-                if (OSUtils.isEMUI3_x() || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                    uri = Settings.System.getUriFor(INSTANCE.getIMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW());
+            if (OSUtils.INSTANCE.isMIUI()) {
+                uri = Settings.Global.getUriFor(IMMERSION_MIUI_NAVIGATION_BAR_HIDE_SHOW);
+            } else if (OSUtils.INSTANCE.isEMUI()) {
+                if (OSUtils.INSTANCE.isEMUI3_x() || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    uri = Settings.System.getUriFor(IMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW);
                 } else {
-                    uri = Settings.Global.getUriFor(INSTANCE.getIMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW());
+                    uri = Settings.Global.getUriFor(IMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW);
                 }
             }
             if (uri != null) {
@@ -51,19 +54,20 @@ final class NavigationBarObserver extends ContentObserver {
         }
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     @Override
     public void onChange(boolean selfChange) {
         super.onChange(selfChange);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mApplication != null && mApplication.getContentResolver() != null
                 && mListeners != null && !mListeners.isEmpty()) {
             int show = 0;
-            if (OSUtils.isMIUI()) {
-                show = Settings.Global.getInt(mApplication.getContentResolver(), INSTANCE.getIMMERSION_MIUI_NAVIGATION_BAR_HIDE_SHOW(), 0);
-            } else if (OSUtils.isEMUI()) {
-                if (OSUtils.isEMUI3_x() || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                    show = Settings.System.getInt(mApplication.getContentResolver(), INSTANCE.getIMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW(), 0);
+            if (OSUtils.INSTANCE.isMIUI()) {
+                show = Settings.Global.getInt(mApplication.getContentResolver(), IMMERSION_MIUI_NAVIGATION_BAR_HIDE_SHOW, 0);
+            } else if (OSUtils.INSTANCE.isEMUI()) {
+                if (OSUtils.INSTANCE.isEMUI3_x() || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    show = Settings.System.getInt(mApplication.getContentResolver(), IMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW, 0);
                 } else {
-                    show = Settings.Global.getInt(mApplication.getContentResolver(), INSTANCE.getIMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW(), 0);
+                    show = Settings.Global.getInt(mApplication.getContentResolver(), IMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW, 0);
                 }
             }
             for (OnNavigationBarListener onNavigationBarListener : mListeners) {

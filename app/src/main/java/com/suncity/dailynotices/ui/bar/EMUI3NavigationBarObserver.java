@@ -1,5 +1,6 @@
 package com.suncity.dailynotices.ui.bar;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.database.ContentObserver;
 import android.net.Uri;
@@ -10,11 +11,11 @@ import android.provider.Settings;
 
 import java.util.ArrayList;
 
+import static com.suncity.dailynotices.ui.bar.BarConstants.IMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW;
+
 /**
  * 华为Emui3状态栏监听器
  *
- * @author geyifeng
- * @date 2019/4/10 6:02 PM
  */
 final class EMUI3NavigationBarObserver extends ContentObserver {
 
@@ -30,11 +31,12 @@ final class EMUI3NavigationBarObserver extends ContentObserver {
         super(new Handler(Looper.getMainLooper()));
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     void register(Application application) {
         this.mApplication = application;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mApplication != null
                 && mApplication.getContentResolver() != null && !mIsRegister) {
-            Uri uri = Settings.System.getUriFor(INSTANCE.getIMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW());
+            Uri uri = Settings.System.getUriFor(IMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW);
             if (uri != null) {
                 mApplication.getContentResolver().registerContentObserver(uri, true, this);
                 mIsRegister = true;
@@ -42,12 +44,13 @@ final class EMUI3NavigationBarObserver extends ContentObserver {
         }
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     @Override
     public void onChange(boolean selfChange) {
         super.onChange(selfChange);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mApplication != null && mApplication.getContentResolver() != null
                 && mCallbacks != null && !mCallbacks.isEmpty()) {
-            int show = Settings.System.getInt(mApplication.getContentResolver(), INSTANCE.getIMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW(), 0);
+            int show = Settings.System.getInt(mApplication.getContentResolver(), IMMERSION_EMUI_NAVIGATION_BAR_HIDE_SHOW, 0);
             for (ImmersionCallback callback : mCallbacks) {
                 callback.onNavigationBarChange(show != 1);
             }

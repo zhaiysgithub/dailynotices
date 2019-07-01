@@ -8,10 +8,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.Surface;
 
-/**
- * @author geyifeng
- * @date 2019/4/12 4:01 PM
- */
 class ImmersionDelegate implements Runnable {
 
     private ImmersionBar mImmersionBar;
@@ -64,7 +60,7 @@ class ImmersionDelegate implements Runnable {
 
     void onResume() {
         if (mImmersionBar != null && !mImmersionBar.isFragment() && mImmersionBar.initialized()) {
-            if (OSUtils.isEMUI3_x() && mImmersionBar.getBarParams().navigationBarWithEMUI3Enable) {
+            if (OSUtils.INSTANCE.isEMUI3_x() && mImmersionBar.getBarParams().navigationBarWithEMUI3Enable) {
                 reinitialize();
             } else {
                 if (mImmersionBar.getBarParams().barHide != BarHide.FLAG_SHOW_BAR) {
@@ -84,7 +80,7 @@ class ImmersionDelegate implements Runnable {
 
     void onConfigurationChanged(Configuration newConfig) {
         if (mImmersionBar != null) {
-            if (OSUtils.isEMUI3_x() || Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            if (OSUtils.INSTANCE.isEMUI3_x() || Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
                 if (mImmersionBar.initialized() && !mImmersionBar.isFragment() && mImmersionBar.getBarParams().navigationBarWithKitkatEnable) {
                     reinitialize();
                 } else {
@@ -159,10 +155,10 @@ class ImmersionDelegate implements Runnable {
             mBarProperties.setNavigationBarHeight(barConfig.getNavigationBarHeight());
             mBarProperties.setNavigationBarWidth(barConfig.getNavigationBarWidth());
             mBarProperties.setActionBarHeight(barConfig.getActionBarHeight());
-            boolean notchScreen = NotchUtils.hasNotchScreen(activity);
+            boolean notchScreen = NotchUtils.INSTANCE.hasNotchScreen(activity);
             mBarProperties.setNotchScreen(notchScreen);
             if (notchScreen && mNotchHeight == 0) {
-                mNotchHeight = NotchUtils.getNotchHeight(activity);
+                mNotchHeight = NotchUtils.INSTANCE.getNotchHeight(activity);
                 mBarProperties.setNotchHeight(mNotchHeight);
             }
             mOnBarListener.onBarChange(mBarProperties);

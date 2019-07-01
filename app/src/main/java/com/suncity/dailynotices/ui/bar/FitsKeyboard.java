@@ -12,8 +12,6 @@ import android.widget.FrameLayout;
 /**
  * 适配软键盘弹出问题
  *
- * @author geyifeng
- * @date 2018/11/9 10:24 PM
  */
 class FitsKeyboard implements ViewTreeObserver.OnGlobalLayoutListener {
 
