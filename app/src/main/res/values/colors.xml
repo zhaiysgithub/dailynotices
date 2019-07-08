@@ -18,4 +18,7 @@
     <color name="color_fff3f3f3">#FFF3F3F3</color>
     <color name="color_bbb">#BBB</color>
     <color name="color_d8d8d8">#D8D8D8</color>
+    <color name="color_353535">#353535</color>
+    <color name="color_e6fff">#E6FFFFFF</color>
+    <color name="color_dc000">#DC000000</color>
 </resources>

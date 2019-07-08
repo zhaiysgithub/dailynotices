@@ -15,7 +15,8 @@ object LogUtils{
 
     private const val isShowLog = true
 
-    private const val TAG = "DailyNotice"
+//    private const val TAG = "DailyNotice"
+    private const val TAG = "AVOS"
 
     fun e(tag:String, msg:String){
         if (isShowLog && BuildConfig.DEBUG){

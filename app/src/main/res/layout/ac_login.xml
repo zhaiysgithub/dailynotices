@@ -50,11 +50,11 @@
         <EditText
                 android:id="@+id/et_phoneNumber"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/dp_36"
                 android:layout_marginStart="@dimen/dp_43"
                 android:layout_marginEnd="@dimen/dp_43"
                 android:layout_marginTop="@dimen/dp_57"
-                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
                 android:hint="@string/str_phone_num"
                 android:background="@android:color/transparent"
                 android:inputType="phone"
@@ -71,7 +71,6 @@
                 android:layout_marginStart="@dimen/dp_43"
                 android:layout_marginEnd="@dimen/dp_43"
                 android:layout_height="@dimen/dp_1"
-                android:layout_marginTop="@dimen/dp_19"
                 android:background="@color/color_f3f3f3"
                 android:layout_below="@id/et_phoneNumber"/>
 
@@ -80,6 +79,7 @@
                 android:id="@+id/layout_pwd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_19"
                 android:layout_marginStart="@dimen/dp_43"
                 android:layout_marginEnd="@dimen/dp_43"
                 android:layout_below="@id/line_phonenum">
@@ -87,9 +87,7 @@
             <EditText
                     android:id="@+id/et_pwd"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/dp_19"
-                    android:layout_gravity="center_vertical"
+                    android:layout_height="@dimen/dp_36"
                     android:hint="@string/str_pwd"
                     android:background="@android:color/transparent"
                     android:singleLine="true"
@@ -103,7 +101,6 @@
                     android:id="@+id/line_authcode"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_1"
-                    android:layout_marginTop="@dimen/dp_19"
                     android:background="@color/color_f3f3f3"
                     android:layout_below="@id/et_pwd"/>
 

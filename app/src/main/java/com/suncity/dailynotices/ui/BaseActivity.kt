@@ -22,9 +22,9 @@ import com.tbruyelle.rxpermissions2.RxPermissions
  */
 abstract class BaseActivity : AppCompatActivity() {
 
-    var isFullScreen = false//是否允许全屏
-    var isScreenPortrait = true//是否禁止旋转屏幕
-    var netWorkRegister : NetworkChangedReceiver? = null
+    private var isFullScreen = false//是否允许全屏
+    private var isScreenPortrait = true//是否禁止旋转屏幕
+    private var netWorkRegister : NetworkChangedReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -153,4 +153,5 @@ abstract class BaseActivity : AppCompatActivity() {
             finish()
         }
     }
+
 }

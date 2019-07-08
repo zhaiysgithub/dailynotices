@@ -1,10 +1,13 @@
 package com.suncity.dailynotices.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Application
 import android.content.Context
 import android.os.Looper
 import android.widget.Toast
+
+
+
 
 /**
  * @ProjectName:    dailynotices
@@ -16,62 +19,37 @@ import android.widget.Toast
 
 object ToastUtils{
 
-    private var context: Application? = null
+    private var toast: Toast? = null
 
-    init {
-        context = Config.getApplicationContext()
-    }
-
-    private var mToast: Toast? = null
-
-    fun showShort(msg: String) {
-        if (mToast == null) {
-            mToast = Toast.makeText(context, msg, Toast.LENGTH_SHORT)
+    @SuppressLint("ShowToast")
+    fun showToast(text: String) {
+        if (toast == null) {
+            toast = Toast.makeText(Config.getApplicationContext(), text, Toast.LENGTH_SHORT)
         } else {
-            mToast?.setText(msg)
-            mToast?.duration = Toast.LENGTH_SHORT
+            toast?.setText(text)
         }
-        mToast?.show()
+        toast?.show()
     }
 
-    fun show(msg: String) {
-        showShort(msg)
-    }
-
-    fun showLong(msg: String) {
-        if (mToast == null) {
-            mToast = Toast.makeText(context, msg, Toast.LENGTH_LONG)
-        } else {
-            mToast?.setText(msg)
-        }
-        mToast?.show()
-    }
 
     fun showSafeToast(activity: Activity, text: String) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
-            showShort(text)
+            showToast(text)
         } else {
-            activity.runOnUiThread { showShort(text) }
+            activity.runOnUiThread { showToast(text) }
         }
     }
+
 
     fun showSafeToast(context: Context, text: String) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
-            showShort(text)
+            showToast(text)
         } else {
-            if (context is Activity) {
-                context.runOnUiThread { showShort(text) }
+            if (context is Activity){
+                context.runOnUiThread { showToast(text) }
             }
         }
     }
 
-    fun showSafeToast(context: Context, textRes: Int) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            showShort(UIUtils.getString(textRes))
-        } else {
-            if (context is Activity) {
-                context.runOnUiThread { showShort(UIUtils.getString(textRes)) }
-            }
-        }
-    }
+
 }

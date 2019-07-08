@@ -72,4 +72,22 @@ object UIUtils {
     }
 
 
+    fun isPhoneNumber(context: Activity, number: String): Boolean {
+        //"[1]"代表第1位为数字1，"[3578]"代表第二位可以为3、5、7、8中的一个，"\\d{9}"代表后面是可以是0～9的数字，有9位。
+        val num = "[1][3578]\\d{9}"
+        return if (TextUtils.isEmpty(number)) {
+            ToastUtils.showSafeToast(context, "请输入号码")
+            false
+        } else {
+            number.matches(num.toRegex())
+        }
+    }
+
+    fun isEmail(email: String?): Boolean {
+        if (null == email || "" == email) return false
+        val p = Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*")//复杂匹配
+        val m = p.matcher(email)
+        return m.matches()
+    }
+
 }

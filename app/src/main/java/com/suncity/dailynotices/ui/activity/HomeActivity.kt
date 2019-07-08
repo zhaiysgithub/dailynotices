@@ -2,6 +2,8 @@ package com.suncity.dailynotices.ui.activity
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Context
+import android.content.Intent
 import android.support.v4.app.Fragment
 import android.view.View
 import com.avos.avoscloud.AVException
@@ -40,6 +42,23 @@ class HomeActivity : BaseActivity() {
     private var lastPos = -1
     private var ignorePos = 2 //tab 中忽略的位置
 
+    companion object {
+
+        private const val EXTRA_POS = "extra_pos"
+        const val POS_HOME = 0
+        const val POS_DISCOVERY = 1
+        const val POS_CENTER = 2
+        const val POS_MSG = 3
+        const val POS_MINE = 4
+
+        fun start(context: Context, currentPos:Int){
+            val intent = Intent()
+            intent.setClass(context,HomeActivity::class.java)
+            intent.putExtra(EXTRA_POS,currentPos)
+            context.startActivity(intent)
+        }
+    }
+
     override fun getActivityLayoutId(): Int {
         return R.layout.ac_home
     }
@@ -54,10 +73,25 @@ class HomeActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         LogUtils.e("onStart -> lastPos=$lastPos,isLogined=${isLogined()}")
+        startAssignPos()
+    }
+
+    private fun startAssignPos(){
         val allCount = tablayout?.tabCount ?: 0
         val isAvailable = (lastPos in 0 until allCount)
-        if(!isLogined() && isAvailable){
+        if(isAvailable){
             tablayout?.currentTab = lastPos
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val selectedPos = intent?.getIntExtra(EXTRA_POS,-1) ?: -1
+        LogUtils.e("onNewIntent -> lastPos=$lastPos,selectedPos=$selectedPos}")
+        val allCount = tablayout?.tabCount ?: 0
+        if(selectedPos >= 0 && (selectedPos in 0 until allCount)){
+            lastPos = selectedPos
+            startAssignPos()
         }
     }
 
