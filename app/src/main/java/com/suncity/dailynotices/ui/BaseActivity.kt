@@ -154,4 +154,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
+    fun filterException(e: Exception?): Boolean {
+        return e == null
+    }
 }

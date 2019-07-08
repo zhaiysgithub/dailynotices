@@ -5,6 +5,7 @@ import android.text.Spanned
 import android.text.TextUtils
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
+import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import com.avos.avoscloud.AVException
@@ -12,6 +13,7 @@ import com.avos.avoscloud.AVUser
 import com.avos.avoscloud.LogInCallback
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.IEditTextChangeListener
+import com.suncity.dailynotices.callback.TextWatcherHelper
 import com.suncity.dailynotices.dialog.OnDismissListener
 import com.suncity.dailynotices.dialog.TipDialog
 import com.suncity.dailynotices.ui.BaseActivity
@@ -78,6 +80,34 @@ class LoginActivity : BaseActivity() {
 
         tv_login?.setOnClickListener {
             startLogin()
+        }
+
+        et_phoneNumber?.addTextChangedListener(object : TextWatcherHelper{
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val length = s?.length ?: 0
+                if (length > 0){
+                    iv_del_phone?.visibility = View.VISIBLE
+                }else{
+                    iv_del_phone?.visibility = View.GONE
+                }
+            }
+        })
+        et_pwd?.addTextChangedListener(object : TextWatcherHelper{
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val length = s?.length ?: 0
+                if (length > 0){
+                    iv_del_pwd?.visibility = View.VISIBLE
+                }else{
+                    iv_del_pwd?.visibility = View.GONE
+                }
+            }
+        })
+
+        iv_del_phone?.setOnClickListener {
+            et_phoneNumber?.setText("")
+        }
+        iv_del_pwd?.setOnClickListener {
+            et_pwd?.setText("")
         }
     }
 
