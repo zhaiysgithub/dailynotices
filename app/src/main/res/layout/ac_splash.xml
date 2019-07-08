@@ -5,13 +5,21 @@
         xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent"
         android:background="@color/color_white">
 
-    <ImageView
+    <!--<ImageView
             android:layout_width="126dp"
             android:layout_height="131dp"
             android:src="@mipmap/ic_splash"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginTop="@dimen/dp_204"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription"/>-->
+
+    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@mipmap/ico_splash"
+            android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription"/>
 
@@ -21,7 +29,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="@dimen/dp_15"
+            android:layout_marginTop="@dimen/dp_30"
             android:layout_marginEnd="@dimen/dp_15"
             app:solid_circle_radius = "@dimen/dp_20"
             app:empty_circle_radius = "@dimen/dp_22"

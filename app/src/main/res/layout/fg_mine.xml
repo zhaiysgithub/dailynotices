@@ -1,17 +1,242 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent" android:layout_height="match_parent">
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="FRAGMENT_MINE"
-            android:textSize="20sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+    <RelativeLayout
+            android:id="@+id/iv_mine_login_bg"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_225"
+            android:background="@color/color_ffde00"
+            tools:ignore="ContentDescription,UselessParent">
 
-</android.support.constraint.ConstraintLayout>
+        <!--用户未登录的UI-->
+        <RelativeLayout
+                android:id="@+id/layout_unlogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_74"
+                android:paddingStart="@dimen/dp_20"
+                tools:ignore="RtlSymmetry">
+
+            <TextView
+                    android:id="@+id/tv_mine_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_login"
+                    android:textSize="@dimen/sp_21"
+                    android:textColor="@color/color_222"/>
+
+            <TextView
+                    android:id="@+id/tv_mine_login_tip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_unlogin_tip"
+                    android:textSize="@dimen/sp_12"
+                    android:textColor="@color/color_222"
+                    android:layout_below="@id/tv_mine_login"
+                    android:layout_marginTop="@dimen/dp_3"/>
+
+            <ImageView
+                    android:id="@+id/iv_mine_unlogin_avatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_unlogin_avatar"
+                    android:layout_toStartOf="@id/iv_mine_unlogin_forward"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/dp_20"
+                    tools:ignore="ContentDescription"/>
+
+            <ImageView
+                    android:id="@+id/iv_mine_unlogin_forward"
+                    android:layout_width="@dimen/dp_6"
+                    android:layout_height="@dimen/dp_11"
+                    android:src="@mipmap/ico_login_forward"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="@dimen/dp_20"
+                    android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+
+        <!--工具按钮-->
+        <ImageView
+                android:id="@+id/iv_mine_tool"
+                android:layout_width="@dimen/dp_20"
+                android:layout_height="@dimen/dp_20"
+                android:src="@mipmap/ico_mine_tool"
+                android:layout_alignParentEnd="true"
+                android:visibility="gone"
+                android:layout_marginEnd="@dimen/dp_20"
+                android:layout_marginTop="@dimen/dp_35"/>
+        <!--用户登录后的UI-->
+        <RelativeLayout
+                android:id="@+id/layout_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_74"
+                android:paddingStart="@dimen/dp_20"
+                android:visibility="gone"
+                tools:ignore="RtlSymmetry">
+            <!--用户登录之后的头像-->
+            <ImageView
+                    android:id="@+id/iv_mine_login_avatar"
+                    android:layout_width="@dimen/dp_60"
+                    android:layout_height="@dimen/dp_60"
+                    android:background="@drawable/shape_login_avatar_default"
+                    tools:ignore="ContentDescription"/>
+
+            <TextView
+                    android:id="@+id/tv_login_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_user"
+                    android:textSize="@dimen/sp_21"
+                    android:textColor="@color/color_222"
+                    android:layout_toEndOf="@id/iv_mine_login_avatar"
+                    android:layout_marginStart="@dimen/dp_17"
+                    android:layout_marginTop="@dimen/dp_8"
+                    tools:ignore="RelativeOverlap"/>
+
+            <ImageView
+                    android:id="@+id/iv_unreal_name_auth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_17"
+                    android:layout_marginTop="@dimen/dp_3"
+                    android:layout_below="@id/tv_login_user_name"
+                    android:layout_toEndOf="@id/iv_mine_login_avatar"
+                    android:src="@mipmap/ico_unreal_name_auth"/>
+
+            <TextView
+                    android:id="@+id/tv_unreal_name_auth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_unreal_name"
+                    android:textSize="@dimen/sp_12"
+                    android:textColor="@color/color_222"
+                    android:layout_marginLeft="@dimen/dp_3"
+                    android:layout_toRightOf="@id/iv_unreal_name_auth"
+                    android:layout_below="@id/tv_login_user_name"
+                    tools:ignore="RtlHardcoded"/>
+
+            <ImageView
+                    android:id="@+id/iv_mine_login_forward"
+                    android:layout_width="@dimen/dp_6"
+                    android:layout_height="@dimen/dp_11"
+                    android:src="@mipmap/ico_login_forward"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="@dimen/dp_20"
+                    android:layout_centerVertical="true"/>
+        </RelativeLayout>
+
+        <!--关注，粉丝，访客-->
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentBottom="true"
+                tools:ignore="DisableBaselineAlignment,UselessLeaf">
+
+            <!--我的关注-->
+            <LinearLayout
+                    android:id="@+id/layout_login_focus"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="@dimen/dp_23"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    tools:ignore="UselessParent">
+
+                <TextView
+                        android:id="@+id/tv_login_focus_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/str_zero"
+                        android:textSize="@dimen/sp_23"
+                        android:textColor="@color/color_222"/>
+
+                <TextView
+                        android:id="@+id/tv_mine_focus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/str_mine_focus"
+                        android:textSize="@dimen/sp_12"
+                        android:textColor="@color/color_222"/>
+            </LinearLayout>
+
+
+            <!--粉丝-->
+            <LinearLayout
+                    android:id="@+id/layout_login_fans"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="@dimen/dp_23"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    tools:ignore="UselessParent">
+
+                <TextView
+                        android:id="@+id/tv_login_fans_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/str_zero"
+                        android:textSize="@dimen/sp_23"
+                        android:textColor="@color/color_222"/>
+
+                <TextView
+                        android:id="@+id/tv_mine_fans"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/str_mine_fans"
+                        android:textSize="@dimen/sp_12"
+                        android:textColor="@color/color_222"/>
+            </LinearLayout>
+
+            <!--访客-->
+            <LinearLayout
+                    android:id="@+id/layout_login_guest"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="@dimen/dp_23"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    tools:ignore="UselessParent">
+
+                <TextView
+                        android:id="@+id/tv_login_guest_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/str_zero"
+                        android:textSize="@dimen/sp_23"
+                        android:textColor="@color/color_222"/>
+
+                <TextView
+                        android:id="@+id/tv_mine_guest"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/str_mine_guest"
+                        android:textSize="@dimen/sp_12"
+                        android:textColor="@color/color_222"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_login"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/iv_mine_login_bg"/>
+
+</RelativeLayout>

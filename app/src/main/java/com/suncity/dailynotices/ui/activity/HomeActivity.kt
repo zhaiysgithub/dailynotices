@@ -7,7 +7,6 @@ import android.view.View
 import com.avos.avoscloud.AVException
 import com.avos.avoscloud.AVObject
 import com.avos.avoscloud.SaveCallback
-import com.suncity.dailynotices.ui.views.immersionBar
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.OnTabSelectListener
 import com.suncity.dailynotices.ui.BaseActivity
@@ -19,7 +18,6 @@ import com.suncity.dailynotices.ui.fragment.MineFragment
 import com.suncity.dailynotices.ui.views.tablayout.CustomTabEntity
 import com.suncity.dailynotices.ui.views.tablayout.TabEntity
 import com.suncity.dailynotices.utils.LogUtils
-import com.suncity.dailynotices.utils.ToastUtils
 import com.suncity.dailynotices.utils.UIUtils
 import kotlinx.android.synthetic.main.ac_home.*
 
@@ -39,16 +37,28 @@ class HomeActivity : BaseActivity() {
         , R.mipmap.ico_home_center, R.mipmap.ico_msg_selected, R.mipmap.ico_mine_selected
     )
 
+    private var lastPos = -1
+    private var ignorePos = 2 //tab 中忽略的位置
+
     override fun getActivityLayoutId(): Int {
         return R.layout.ac_home
     }
 
     override fun setScreenManager() {
-        super.setScreenManager()
         ImmersionBar.with(this)
-            .statusBarDarkFont(true, 0.2f)
-            .navigationBarDarkIcon(true, 0.2f)
+            .statusBarColor(R.color.color_white)
+            .statusBarDarkFont(true, 0f)
             .init()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        LogUtils.e("onStart -> lastPos=$lastPos,isLogined=${isLogined()}")
+        val allCount = tablayout?.tabCount ?: 0
+        val isAvailable = (lastPos in 0 until allCount)
+        if(!isLogined() && isAvailable){
+            tablayout?.currentTab = lastPos
+        }
     }
 
     override fun initData() {
@@ -71,8 +81,9 @@ class HomeActivity : BaseActivity() {
         val centerView = tablayout.getChildAt((size / 2)) // 中间的位置隐藏
         centerView?.visibility = View.GONE
 
-        tablayout?.setTabData(mTabEntities, this@HomeActivity, R.id.container, mFragments,2)
+        tablayout?.setTabData(mTabEntities, this@HomeActivity, R.id.container, mFragments, ignorePos)
         tablayout?.currentTab = 0
+        lastPos = 0
     }
 
     override fun initListener() {
@@ -81,6 +92,10 @@ class HomeActivity : BaseActivity() {
             override fun onTabSelect(position: Int) {
                 LogUtils.e("onTabSelect -> position = $position")
                 startScale(position)
+                if (!isLogined() && position == 3) {
+                    return
+                }
+                lastPos = position
             }
 
             override fun onTabReselect(position: Int) {
@@ -90,13 +105,15 @@ class HomeActivity : BaseActivity() {
 
         })
         iv_push?.setOnClickListener {
-            ToastUtils.show("IV_PUSH")
+            if (!isLogined()) {
+                startActivity(LoginActivity::class.java, false)
+            }
         }
     }
 
-    private fun startScale(position: Int){
+    private fun startScale(position: Int) {
         val iconView = tablayout?.getIconView(position)
-        if (iconView != null){
+        if (iconView != null) {
             startScaleAnim(iconView)
         }
     }

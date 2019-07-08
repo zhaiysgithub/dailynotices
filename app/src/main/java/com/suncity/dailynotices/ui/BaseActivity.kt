@@ -11,6 +11,7 @@ import com.suncity.dailynotices.callback.NetworkMonitor
 import com.suncity.dailynotices.manager.ScreenManager
 import com.suncity.dailynotices.receive.NetworkChangedReceiver
 import com.suncity.dailynotices.utils.LogUtils
+import com.suncity.dailynotices.utils.PreferenceStorage
 import com.tbruyelle.rxpermissions2.RxPermissions
 
 /**
@@ -61,6 +62,10 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onDestroy()
         LogUtils.e("${this.javaClass} onDestroy")
         unRegisterNetReceiver()
+    }
+
+    protected fun isLogined(): Boolean {
+        return PreferenceStorage.isLogin
     }
 
     @Suppress("DEPRECATION")

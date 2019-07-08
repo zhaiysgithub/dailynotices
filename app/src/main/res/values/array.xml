@@ -28,4 +28,21 @@
         <item>通告</item>
         <item>红人</item>
     </string-array>
+
+    <!--我的页面列表的 icon 数据-->
+    <integer-array name="mine_icon">
+        <item>@mipmap/ico_comm_notice</item>
+        <item>@mipmap/ico_mine_push</item>
+        <item>@mipmap/ico_shielding</item>
+        <item>@mipmap/ico_service</item>
+        <item>@mipmap/ico_about</item>
+    </integer-array>
+    <!--我的页面列表的 string 数据-->
+    <string-array name="mine_text">
+        <item>@string/str_communication_notice</item>
+        <item>@string/str_mine_push</item>
+        <item>@string/str_shielding</item>
+        <item>@string/str_service</item>
+        <item>@string/str_about</item>
+    </string-array>
 </resources>

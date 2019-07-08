@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:background="@color/color_white">
+
+    <include layout="@layout/view_title"/>
+
+    <EditText
+            android:id="@+id/et_suggestion"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_360"
+            app:layout_constraintTop_toBottomOf="@id/layout_title"
+            android:background="@null"
+            android:padding="@dimen/dp_15"
+            android:enabled="true"
+            android:gravity="top"
+            android:hint="@string/str_suggestion_hint"
+            android:textSize="@dimen/sp_13"
+            android:maxLength="400"
+            android:textColor="@color/color_222"
+            android:textColorHint="@color/color_999"
+            android:inputType="textMultiLine"
+            android:scrollbars="vertical"
+            tools:ignore="Autofill"/>
+
+    <TextView
+            android:id="@+id/tv_submit"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_45"
+            android:layout_marginStart="@dimen/dp_8"
+            android:layout_marginEnd="@dimen/dp_8"
+            android:layout_below="@id/tv_tip"
+            android:text="@string/str_submit"
+            android:textSize="@dimen/sp_16"
+            android:textColor="@color/color_999"
+            android:background="@drawable/shape_submit_unchecked_bg"
+            android:gravity="center"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_suggestion"
+            />
+</android.support.constraint.ConstraintLayout>

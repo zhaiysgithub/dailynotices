@@ -1,5 +1,6 @@
 package com.suncity.dailynotices.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -39,6 +40,31 @@ abstract class BaseFragment : Fragment() {
 
     protected fun isLogined(): Boolean {
         return PreferenceStorage.isLogin
+    }
+
+    /**
+     * @param cls 需要打开的页面 class
+     * @param isFinish 打开之前是否需要关闭当前页面
+     */
+    fun startActivity(cls: Class<*>, isFinish: Boolean = false) {
+        startActivity(cls, -1, isFinish)
+    }
+
+    /**
+     * @param cls 需要打开的页面 class
+     * @param requestCode 需要传递过去的 requestCode
+     * @param isFinish 打开之前是否需要关闭当前页面
+     */
+    fun startActivity(cls: Class<*>, requestCode: Int = -1, isFinish: Boolean = false) {
+        val intent = Intent(requireContext(), cls)
+        if (requestCode == -1) {
+            startActivity(intent)
+        } else {
+            startActivityForResult(intent, requestCode)
+        }
+        if (isFinish) {
+            activity?.finish()
+        }
     }
 
     override fun onPause() {

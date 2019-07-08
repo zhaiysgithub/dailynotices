@@ -5,6 +5,8 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.ui.BaseFragment
+import com.suncity.dailynotices.ui.bar.ImmersionBar
+import com.suncity.dailynotices.utils.LogUtils
 import com.suncity.dailynotices.utils.UIUtils
 import kotlinx.android.synthetic.main.fg_home.*
 
@@ -62,6 +64,16 @@ class HomeFragment : BaseFragment() {
 
         override fun getPageTitle(position: Int): CharSequence? {
             return mTitles[position]
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if(!hidden){
+            ImmersionBar.with(this)
+                .statusBarColor(R.color.color_white)
+                .statusBarDarkFont(true,0f)
+                .init()
         }
     }
 

@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.ac_splash.*
 class SplashActivity : BaseActivity() {
 
     override fun setScreenManager() {
-//        isFullScreen = true
         ImmersionBar.with(this)
             .statusBarDarkFont(true, 0.2f)
             .navigationBarDarkIcon(true, 0.2f)
