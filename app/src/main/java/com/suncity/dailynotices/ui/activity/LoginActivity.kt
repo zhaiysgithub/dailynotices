@@ -8,10 +8,9 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
-import com.avos.avoscloud.AVException
-import com.avos.avoscloud.AVUser
-import com.avos.avoscloud.LogInCallback
+import com.avos.avoscloud.*
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.TableConstants.Companion.USER_MOBILEPHONENUMBER
 import com.suncity.dailynotices.callback.IEditTextChangeListener
 import com.suncity.dailynotices.callback.TextWatcherHelper
 import com.suncity.dailynotices.dialog.OnDismissListener
@@ -21,6 +20,13 @@ import com.suncity.dailynotices.ui.activity.HomeActivity.Companion.POS_MINE
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.utils.*
 import kotlinx.android.synthetic.main.ac_login.*
+import com.avos.avoscloud.AVUser
+import com.suncity.dailynotices.Constants
+import com.suncity.dailynotices.TableConstants
+import com.suncity.dailynotices.model.AvFile
+import com.suncity.dailynotices.model.User
+import com.suncity.dailynotices.model.UserInfo
+
 
 /**
  * @ProjectName:    dailynotices
@@ -34,6 +40,7 @@ class LoginActivity : BaseActivity() {
     private val loadingText = Config.getString(R.string.str_loading)
     private val loginSuccessText = Config.getString(R.string.str_login_success)
     private val loginErrorText = Config.getString(R.string.str_login_error)
+    private var avUser:AVUser? = null
 
     override fun setScreenManager() {
 
@@ -82,22 +89,22 @@ class LoginActivity : BaseActivity() {
             startLogin()
         }
 
-        et_phoneNumber?.addTextChangedListener(object : TextWatcherHelper{
+        et_phoneNumber?.addTextChangedListener(object : TextWatcherHelper {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val length = s?.length ?: 0
-                if (length > 0){
+                if (length > 0) {
                     iv_del_phone?.visibility = View.VISIBLE
-                }else{
+                } else {
                     iv_del_phone?.visibility = View.GONE
                 }
             }
         })
-        et_pwd?.addTextChangedListener(object : TextWatcherHelper{
+        et_pwd?.addTextChangedListener(object : TextWatcherHelper {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val length = s?.length ?: 0
-                if (length > 0){
+                if (length > 0) {
                     iv_del_pwd?.visibility = View.VISIBLE
-                }else{
+                } else {
                     iv_del_pwd?.visibility = View.GONE
                 }
             }
@@ -134,28 +141,146 @@ class LoginActivity : BaseActivity() {
 
     /**
      * 使用leanCloud登录
+     * 1、验证手机号码
+     * 2、有效执行登录逻辑，无效执行注册逻辑
      */
     private fun requestLoginWithLeancloud(phoneNumber: String, pwd: String) {
+        //用户查询 - 验证手机号码
+        val userQuery = AVQuery<AVObject>(TableConstants.TABLE_USER)
+        val avQuery = userQuery.whereEqualTo(TableConstants.USER_MOBILEPHONENUMBER, phoneNumber)
+        avQuery.getFirstInBackground(object : GetCallback<AVObject>() {
+            override fun done(o: AVObject?, e: AVException?) {
+                if (o == null) {
+                    //执行注册逻辑-用户名和密码注册
+                    startRegisterbyMobile(phoneNumber, pwd)
+                } else {
+                    //执行登录逻辑
+                    loginByMobile(phoneNumber, pwd)
+                }
+            }
+
+        })
+    }
+
+    /**
+     * 执行注册逻辑-用户名和密码注册
+     */
+    private fun startRegisterbyMobile(phoneNumber: String, pwd: String) {
+        val user = AVUser()// 新建 AVUser 对象实例
+        user.username = StringUtils.getRandomString(6)// 设置用户名
+        user.setPassword(pwd)// 设置密码
+        user.mobilePhoneNumber = phoneNumber
+        user.signUpInBackground(object : SignUpCallback() {
+            override fun done(e: AVException?) {
+                if (e == null) {
+                    // 注册成功 - 执行登录逻辑
+                    loginByMobile(phoneNumber, pwd)
+                } else {
+                    // 失败的原因可能有多种，常见的是用户名已经存在。
+                    val errorMsg: String?
+                    val code = e.code
+                    errorMsg = when (code) {
+                        127 -> {
+                            "手机号码无效"
+                        }
+                        else -> {
+                            "抱歉，服务器开小差了"
+                        }
+                    }
+                    TipDialog.show(
+                        this@LoginActivity, errorMsg
+                        , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR
+                    )
+                }
+            }
+        })
+    }
+
+    private fun createUserInfoToBack(objectId: String) {
+        //创建 userInfo 的表数据
+        val userInfo = AVObject(TableConstants.TABLE_USERINFO)
+        userInfo.put("user",objectId)
+        userInfo.put("resume", "")
+        userInfo.put("autonym", 0)
+        userInfo.put("fire", 0)
+        userInfo.put("region", "")
+        userInfo.put("age", "")
+        userInfo.put("sex", "0")
+        userInfo.saveInBackground(object : SaveCallback() {
+            override fun done(e: AVException?) {
+                ProgressUtil.hideProgress()
+                if (e == null) { // 保存成功
+                    saveUser()
+                } else {
+                    TipDialog.show(
+                        this@LoginActivity, e.message ?: loginErrorText
+                        , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR
+                    )
+                }
+            }
+        })
+    }
+
+    /**
+     * 通过objectId 查询是否自动创建了userInfo的关联
+     */
+    private fun queryUserInfo(objectId: String) {
+        val query = AVQuery<AVObject>(TableConstants.TABLE_USERINFO)
+        query.whereEqualTo(TableConstants.USER, objectId).getFirstInBackground(object : GetCallback<AVObject>() {
+            override fun done(o: AVObject?, e: AVException?) {
+                if (o == null) {
+                    createUserInfoToBack(objectId)
+                } else {
+                    ProgressUtil.hideProgress()
+                    saveUser()
+                }
+            }
+
+        })
+    }
+
+    /**
+     * 执行登录逻辑
+     */
+    private fun loginByMobile(phoneNumber: String, pwd: String) {
         AVUser.loginByMobilePhoneNumberInBackground(phoneNumber, pwd, object : LogInCallback<AVUser>() {
             override fun done(user: AVUser?, e: AVException?) {
-                ProgressUtil.hideProgress()
                 if (user != null && e == null) {
-                    this@LoginActivity.finish()
-                    val tipDialog = TipDialog.show(this@LoginActivity,loginSuccessText
-                        ,TipDialog.SHOW_TIME_SHORT,TipDialog.TYPE_ERROR)
-                    tipDialog.setOnDismissListener(object : OnDismissListener{
-                        override fun onDismiss() {
-                            HomeActivity.start(this@LoginActivity, POS_MINE)
-                        }
-                    })
-
+                    avUser = user
+                    val objectId = user.objectId
+                    LogUtils.e("@@@->objectId=$objectId")
+                    queryUserInfo(objectId)
                 } else {
-                    if(e != null){
-                        TipDialog.show(this@LoginActivity,e.message ?: loginErrorText
-                            ,TipDialog.SHOW_TIME_SHORT,TipDialog.TYPE_ERROR)
-                    }else{
-                        TipDialog.show(this@LoginActivity,loginErrorText
-                            ,TipDialog.SHOW_TIME_SHORT,TipDialog.TYPE_ERROR)
+                    ProgressUtil.hideProgress()
+                    if (e != null) {
+                        val errorMsg: String?
+                        val errorCode = e.code
+                        errorMsg = when (errorCode) {
+                            127 -> {
+                                "手机号码无效"
+                            }
+                            210 -> {
+                                "登录密码错误，请重试"
+                            }
+                            214 -> {
+                                "手机号码已经被注册"
+                            }
+                            219 -> {
+                                "登录失败次数超过显示,请15分钟后尝试,\n 或者通过忘记密码重设密码"
+                            }
+                            else -> {
+                                "抱歉，服务器开小差"
+                            }
+                        }
+                        TipDialog.show(
+                            this@LoginActivity, errorMsg
+                            , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR
+                        )
+                    } else {
+                        TipDialog.show(
+                            this@LoginActivity, loginErrorText
+                            , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR
+                        )
                     }
                 }
             }
@@ -164,6 +289,20 @@ class LoginActivity : BaseActivity() {
     }
 
 
+    private fun saveUser() {
+        if (avUser == null) return
+        PreferenceStorage.isLogin = true
+        val tipDialog = TipDialog.show(
+            this@LoginActivity, loginSuccessText
+            , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR
+        )
+        tipDialog.setOnDismissListener(object : OnDismissListener {
+            override fun onDismiss() {
+                HomeActivity.start(this@LoginActivity, POS_MINE)
+                this@LoginActivity.finish()
+            }
+        })
+    }
 
 
     private val iEditTextChangeListener = object : IEditTextChangeListener {

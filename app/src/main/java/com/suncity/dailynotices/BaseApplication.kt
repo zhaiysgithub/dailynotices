@@ -2,6 +2,7 @@ package com.suncity.dailynotices
 
 import android.app.Application
 import com.avos.avoscloud.AVOSCloud
+import com.facebook.drawee.backends.pipeline.Fresco
 import com.suncity.dailynotices.utils.AppUtils
 import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.LogUtils
@@ -22,6 +23,7 @@ class BaseApplication : Application(){
         Config.setApplicationContext(this)
         AppUtils.init(this)
         initAvos()
+        Fresco.initialize(this)
     }
 
 

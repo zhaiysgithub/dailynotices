@@ -2,7 +2,10 @@ package com.suncity.dailynotices.ui.fragment
 
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import com.google.gson.Gson
+import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.model.User
 import com.suncity.dailynotices.ui.BaseFragment
 import com.suncity.dailynotices.ui.activity.AboutAppActivity
 import com.suncity.dailynotices.ui.activity.ContactServiceActivity
@@ -14,6 +17,7 @@ import com.suncity.dailynotices.ui.model.MineModel
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.LogUtils
+import com.suncity.dailynotices.utils.SharedPrefHelper
 import kotlinx.android.synthetic.main.fg_mine.*
 
 /**
@@ -28,6 +32,9 @@ class MineFragment : BaseFragment() {
     private var mineAdapter : MineAdapter? = null
     private var dataList : ArrayList<MineModel>? = null
     companion object {
+        private val CERTIFIED = Config.getString(R.string.str_certified_name)
+        private val NO_CERTIFIED = Config.getString(R.string.str_unreal_name)
+
         fun getInstance():MineFragment{
             return MineFragment()
         }
@@ -44,11 +51,29 @@ class MineFragment : BaseFragment() {
                 .statusBarColor(R.color.color_ffde00)
                 .statusBarDarkFont(true,0f)
                 .init()
+            initData()
         }
     }
 
     override fun initData() {
-        changeLoginFlagUi(isLogined())
+        val isLogin = isLogined()
+        changeLoginFlagUi(isLogin)
+        if(isLogin){
+            val userJson = SharedPrefHelper.retireveAny(Constants.SP_KEY_USER)
+            val gson = Gson()
+            val user = gson.fromJson(userJson,User::class.java)
+            tv_login_user_name?.text = user?.username ?: ""
+            val avFile = user?.avatar
+            val userInfo = user?.info
+            val userAvatarUrl = avFile?.url
+            iv_mine_login_avatar?.setImageURI(userAvatarUrl)
+            val autonym = userInfo?.autonym ?: 0 //代表是否认证了
+            if (autonym == 1)tv_unreal_name_auth.text = CERTIFIED else tv_unreal_name_auth.text = NO_CERTIFIED
+            //RecentVisit这个表中是查看我和我查看的，只是selecet字段不同  推荐我的在Fire中
+            // TODO
+
+        }
+
         mineAdapter = MineAdapter(requireContext())
         recyclerView_login?.layoutManager = LinearLayoutManager(requireContext())
         recyclerView_login?.setHasFixedSize(true)
@@ -149,9 +174,11 @@ class MineFragment : BaseFragment() {
     private fun changeLoginFlagUi(isLogin:Boolean){
         if (isLogin){
             layout_unlogin?.visibility = View.GONE
+            iv_mine_tool?.visibility = View.VISIBLE
             layout_login?.visibility = View.VISIBLE
         }else{
             layout_unlogin?.visibility = View.VISIBLE
+            iv_mine_tool?.visibility = View.GONE
             layout_login?.visibility = View.GONE
         }
     }

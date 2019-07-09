@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment
 import android.view.View
 import com.avos.avoscloud.AVException
 import com.avos.avoscloud.AVObject
+import com.avos.avoscloud.AVUser
 import com.avos.avoscloud.SaveCallback
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.OnTabSelectListener
@@ -72,8 +73,12 @@ class HomeActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        LogUtils.e("onStart -> lastPos=$lastPos,isLogined=${isLogined()}")
-        startAssignPos()
+        val selectedPos = intent?.getIntExtra(EXTRA_POS,-1) ?: -1
+        val allCount = tablayout?.tabCount ?: 0
+        if(selectedPos >= 0 && (selectedPos in 0 until allCount)){
+            lastPos = selectedPos
+            startAssignPos()
+        }
     }
 
     private fun startAssignPos(){
@@ -81,17 +86,6 @@ class HomeActivity : BaseActivity() {
         val isAvailable = (lastPos in 0 until allCount)
         if(isAvailable){
             tablayout?.currentTab = lastPos
-        }
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        val selectedPos = intent?.getIntExtra(EXTRA_POS,-1) ?: -1
-        LogUtils.e("onNewIntent -> lastPos=$lastPos,selectedPos=$selectedPos}")
-        val allCount = tablayout?.tabCount ?: 0
-        if(selectedPos >= 0 && (selectedPos in 0 until allCount)){
-            lastPos = selectedPos
-            startAssignPos()
         }
     }
 

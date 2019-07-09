@@ -3,7 +3,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" xmlns:fresco="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
             android:id="@+id/iv_mine_login_bg"
@@ -19,6 +19,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_74"
                 android:paddingStart="@dimen/dp_20"
+                android:visibility="gone"
                 tools:ignore="RtlSymmetry">
 
             <TextView
@@ -77,14 +78,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_74"
                 android:paddingStart="@dimen/dp_20"
-                android:visibility="gone"
+                android:visibility="visible"
                 tools:ignore="RtlSymmetry">
             <!--用户登录之后的头像-->
-            <ImageView
+            <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/iv_mine_login_avatar"
                     android:layout_width="@dimen/dp_60"
                     android:layout_height="@dimen/dp_60"
-                    android:background="@drawable/shape_login_avatar_default"
+                    fresco:placeholderImage="@drawable/shape_login_avatar_default"
+                    fresco:failureImage="@drawable/shape_login_avatar_default"
                     tools:ignore="ContentDescription"/>
 
             <TextView

@@ -3,6 +3,7 @@ package com.suncity.dailynotices.utils
 import android.app.Activity
 import android.graphics.Color
 import android.text.TextUtils
+import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -63,5 +64,19 @@ object StringUtils{
 
     fun isEmptyOrNull(str: String?): Boolean {
         return null == str || TextUtils.isEmpty(str) || str.isEmpty() || str == "null"
+    }
+
+    /**
+     * 自动生成用户名
+     */
+    fun getRandomString(length: Int): String {
+        val letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        val randomString = StringBuilder(length)
+
+        for (i in 0 until length) {
+            randomString.append(letters[Random().nextInt(letters.length)])
+        }
+
+        return "游客$randomString"
     }
 }
