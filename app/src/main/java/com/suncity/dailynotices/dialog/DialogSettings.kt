@@ -11,7 +11,7 @@ class DialogSettings {
         const val TYPE_IOS = 2
 
         const val STYLE_MATERIAL = 0
-        const val STYLE_KONGZUE = 1
+        const val STYLE_KZ = 1
         const val STYLE_IOS = 2
 
         //是否打印日志
@@ -23,7 +23,7 @@ class DialogSettings {
         //决定等待框、提示框以及iOS风格的对话框的模糊背景透明度（50-255）
         var blur_alpha = 200
 
-        //决定对话框的默认样式，请使用 STYLE_MATERIAL、STYLE_KONGZUE、STYLE_IOS 赋值
+        //决定对话框的默认样式，请使用 STYLE_MATERIAL、STYLE_KZ、STYLE_IOS 赋值
         var style = 0
 
         //决定对话框的模式（亮色和暗色两种），请使用 THEME_LIGHT、THEME_DARK 赋值

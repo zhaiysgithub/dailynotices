@@ -16,40 +16,65 @@ object PreferenceStorage {
     private val sharedPreferences: SharedPreferences = Config.getApplicationContext().getSharedPreferences("dailynotice", Context.MODE_PRIVATE)
     private val editor = sharedPreferences.edit()
 
+    private const val isLoginedStr = Constants.ISLOGINED
+    private const val userObjcetIdStr = Constants.USEROBJECTID
+    private const val userNameStr = Constants.USERNAME
+    private const val userPhoneNumStr = Constants.USERPHONENUM
+    private const val userAvatarStr = Constants.USERAvatar
+
+    private val needClearData = arrayOf(isLoginedStr,userObjcetIdStr,userNameStr,userPhoneNumStr,userAvatarStr)
+
     var isLogin : Boolean
         @JvmStatic
-        get() = sharedPreferences.getBoolean(Constants.ISLOGINED,false)
+        get() = sharedPreferences.getBoolean(isLoginedStr,false)
         @JvmStatic
         set(value) {
-            editor.putBoolean(Constants.ISLOGINED,value)
+            editor.putBoolean(isLoginedStr,value)
             editor.commit()
         }
 
     var userObjectId : String
         @JvmStatic
-        get() = (sharedPreferences.getString(Constants.USEROBJECTID,"") ?: "")
+        get() = (sharedPreferences.getString(userObjcetIdStr,"") ?: "")
         @JvmStatic
         set(value) {
-            editor.putString(Constants.USEROBJECTID,value)
+            editor.putString(userObjcetIdStr,value)
             editor.commit()
         }
 
     var userName:String
         @JvmStatic
-        get() = (sharedPreferences.getString(Constants.USERNAME,"") ?: "")
+        get() = (sharedPreferences.getString(userNameStr,"") ?: "")
         @JvmStatic
         set(value) {
-            editor.putString(Constants.USERNAME,value)
+            editor.putString(userNameStr,value)
+            editor.commit()
+        }
+
+    var userPhoneNum:String
+        @JvmStatic
+        get() = (sharedPreferences.getString(userPhoneNumStr,"") ?: "")
+        @JvmStatic
+        set(value) {
+            editor.putString(userPhoneNumStr,value)
             editor.commit()
         }
 
     var userAvatar:String
         @JvmStatic
-        get() = (sharedPreferences.getString(Constants.USERAvatar,"") ?: "")
+        get() = (sharedPreferences.getString(userAvatarStr,"") ?: "")
         @JvmStatic
         set(value) {
-            editor.putString(Constants.USERAvatar,value)
+            editor.putString(userAvatarStr,value)
             editor.commit()
         }
 
+    @JvmStatic
+    fun clear() {
+        needClearData.forEach {
+            editor.remove(it)
+        }
+        editor.commit()
+        SharedPrefHelper.needClearSpValue()
+    }
 }

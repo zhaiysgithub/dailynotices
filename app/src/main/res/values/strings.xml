@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">dailynotices</string>
+    <string name="app_name">每日通告</string>
     <string name="skip">跳过</string>
     <string name="str_home">首页</string>
     <string name="str_discovery">发现</string>
@@ -50,4 +50,23 @@
     <string name="str_phonenum_empty">请输入手机号码</string>
     <string name="str_send_smscode_success">短信已发送，请输入验证码来重置密码</string>
     <string name="str_getuser_error">获取用户信息失败</string>
+    <string name="str_logout">退出登录</string>
+    <string name="str_setting">设置</string>
+    <string name="str_accountmanager">账号管理</string>
+    <string name="str_cacheclear">清除缓存</string>
+    <string name="str_cancel">取消</string>
+    <string name="str_exit">登出</string>
+    <string name="str_tip">提示</string>
+    <string name="str_positive">确认</string>
+    <string name="str_yet_bind_phonenum">已绑定手机号</string>
+    <string name="str_pwd_edit">密码修改</string>
+    <string name="str_edit_confirm">确认修改</string>
+    <string name="str_origin_pwd_input">输入原密码</string>
+    <string name="str_new_pwd_input">输入新密码</string>
+    <string name="str_origin_phone_input">输入原手机号</string>
+    <string name="str_new_phone_input">输入新手机号</string>
+    <string name="str_asterisk">xxxxxxxx</string>
+    <string name="str_verifycode_toast">验证码发送成功，请注意查收</string>
+    <string name="str_verifycode">验证码</string>
+    <string name="str_update_error">修改失败，请稍后再试</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.suncity.dailynotices.ui.fragment
 
+import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
@@ -9,15 +10,13 @@ import com.avos.avoscloud.GetCallback
 import com.google.gson.Gson
 import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.callback.GlobalObserverHelper
+import com.suncity.dailynotices.callback.SimpleGlobalObservable
 import com.suncity.dailynotices.lcoperation.Query
-import com.suncity.dailynotices.localModel.LCUser
 import com.suncity.dailynotices.model.User
 import com.suncity.dailynotices.model.UserInfo
 import com.suncity.dailynotices.ui.BaseFragment
-import com.suncity.dailynotices.ui.activity.AboutAppActivity
-import com.suncity.dailynotices.ui.activity.ContactServiceActivity
-import com.suncity.dailynotices.ui.activity.LoginActivity
-import com.suncity.dailynotices.ui.activity.ShieldingActivity
+import com.suncity.dailynotices.ui.activity.*
 import com.suncity.dailynotices.ui.adapter.MineAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.ui.model.MineModel
@@ -49,6 +48,11 @@ class MineFragment : BaseFragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        GlobalObserverHelper.addObserver(mObservable)
+    }
+
     override fun setContentView(): Int {
         return R.layout.fg_mine
     }
@@ -70,45 +74,10 @@ class MineFragment : BaseFragment() {
         changeLoginFlagUi(isLogin)
         if (isLogin) {
             val userJson = SharedPrefHelper.retireveAny(Constants.SP_KEY_USER)
-            val userInfoJson = SharedPrefHelper.retireveAny(Constants.SP_KEY_USERINFO)
-            val userObjectId = PreferenceStorage.userObjectId
             if (userJson == null) {
                 getCurrentUserByLC()
             } else {
-                val gson = Gson()
-                val user = gson.fromJson(userJson, User::class.javaObjectType)
-                val userInfo = gson.fromJson(userInfoJson, UserInfo::class.javaObjectType)
-                tv_login_user_name?.text = user?.username ?: ""
-                val avFile = user?.avatar
-                val userAvatarUrl = avFile?.url
-                iv_mine_login_avatar?.setImageURI(userAvatarUrl)
-                val autonym = userInfo?.autonym ?: 0 //代表是否认证了
-                if (autonym == 1) {
-                    tv_unreal_name_auth.text = CERTIFIED
-                    iv_unreal_name_auth.setImageResource(authResourceId)
-                } else {
-                    tv_unreal_name_auth.text = NO_CERTIFIED
-                    iv_unreal_name_auth.setImageResource(unAuthResourceId)
-                }
-                //设置推荐我的，我查看的，查看我的，RecentVisit这个表中是查看我和我查看的，
-                // 推荐我的在Fire中
-                Query.queryFire(userObjectId){ fire,e ->
-                    if(e == null){
-                        tv_login_focus_count?.text = (fire?.fire ?: 0).toString() //推荐我的
-                    }
-                }
-                //我查看的
-                Query.queryRecentVisitUser(userObjectId) { count, e ->
-                    if(e == null){
-                        tv_login_fans_count?.text = count.toString() //我查看的
-                    }
-                }
-                //查看我的
-                Query.queryRecentVisitVisit(userObjectId) { count, e ->
-                    if(e == null){
-                        tv_login_guest_count?.text = count.toString() //查看我的
-                    }
-                }
+                notifyUI(userJson)
             }
         }
 
@@ -135,6 +104,52 @@ class MineFragment : BaseFragment() {
 
     }
 
+    private fun notifyUI(json: String) {
+        try {
+            val userInfoJson = SharedPrefHelper.retireveAny(Constants.SP_KEY_USERINFO)
+            val userObjectId = PreferenceStorage.userObjectId
+            val gson = Gson()
+            val user = gson.fromJson(json, User::class.javaObjectType)
+            val userInfo = gson.fromJson(userInfoJson, UserInfo::class.javaObjectType)
+            tv_login_user_name?.text = user?.username ?: ""
+            PreferenceStorage.userPhoneNum = (user?.mobilePhoneNumber ?: "")
+            val avFile = user?.avatar
+            val userAvatarUrl = avFile?.url
+            iv_mine_login_avatar?.setImageURI(userAvatarUrl)
+            val autonym = userInfo?.autonym ?: 0 //代表是否认证了
+            if (autonym == 1) {
+                tv_unreal_name_auth.text = CERTIFIED
+                iv_unreal_name_auth.setImageResource(authResourceId)
+            } else {
+                tv_unreal_name_auth.text = NO_CERTIFIED
+                iv_unreal_name_auth.setImageResource(unAuthResourceId)
+            }
+            //设置推荐我的，我查看的，查看我的，RecentVisit这个表中是查看我和我查看的，
+            // 推荐我的在Fire中
+            Query.queryFire(userObjectId) { fire, e ->
+                if (e == null) {
+                    tv_login_focus_count?.text = (fire?.fire ?: 0).toString() //推荐我的
+                }
+            }
+            //我查看的
+            Query.queryRecentVisitUser(userObjectId) { count, e ->
+                if (e == null) {
+                    tv_login_fans_count?.text = count.toString() //我查看的
+                }
+            }
+            //查看我的
+            Query.queryRecentVisitVisit(userObjectId) { count, e ->
+                if (e == null) {
+                    tv_login_guest_count?.text = count.toString() //查看我的
+                }
+            }
+        }catch (e : Exception){
+            LogUtils.e("notifyUI -> exception = $e")
+        }
+
+
+    }
+
     /**
      * 通过网络获取用户信息
      */
@@ -154,7 +169,10 @@ class MineFragment : BaseFragment() {
     }
 
     private fun setUIData() {
-        SharedPrefHelper.retireveAny(Constants.SP_KEY_USER)
+        val jsonStr = SharedPrefHelper.retireveAny(Constants.SP_KEY_USER)
+        if (jsonStr != null){
+            notifyUI(jsonStr)
+        }
     }
 
     override fun initListener() {
@@ -166,7 +184,7 @@ class MineFragment : BaseFragment() {
         }
         iv_mine_tool?.setOnClickListener {
             //进入账号管理页面
-            LogUtils.e("进入账号管理页面")
+            startActivity(SettingActivity::class.java)
         }
         layout_login_focus?.setOnClickListener {
             if (isLogined()) {
@@ -242,6 +260,22 @@ class MineFragment : BaseFragment() {
             layout_unlogin?.visibility = View.VISIBLE
             iv_mine_tool?.visibility = View.GONE
             layout_login?.visibility = View.GONE
+
+            tv_login_focus_count?.text = "0"
+            tv_login_fans_count?.text = "0"
+            tv_login_guest_count?.text = "0"
         }
+    }
+
+    private val mObservable = object : SimpleGlobalObservable() {
+
+        override fun onLogoutSuccess() {
+            initUIData()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        GlobalObserverHelper.removeObserver(mObservable)
     }
 }

@@ -27,6 +27,7 @@ abstract class BaseDialog{
 
         }
     }
+
     private var dialogLifeCycleListener: DialogLifeCycleListener? = null
     private var onDismissListener: OnDismissListener? = null
 

@@ -90,4 +90,21 @@ object UIUtils {
         return m.matches()
     }
 
+
+    fun getEncryPhone(phoneNum: String): String {
+        /**
+         * phone.replaceAll("(\\d{3})\\d{4}(\\d{4})","$1****$2");
+         *       152****4799
+         * idCard.replaceAll("(\\d{4})\\d{10}(\\w{4})","$1*****$2");
+         * 4304*****7733
+         */
+        val num = "[1][3578]\\d{9}"
+        val matches = phoneNum.matches(num.toRegex())
+        return if (matches){
+            phoneNum.substring(0,3) + "****" + phoneNum.substring(7)
+        }else{
+            ""
+        }
+    }
+
 }

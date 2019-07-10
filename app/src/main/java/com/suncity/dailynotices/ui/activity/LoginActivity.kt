@@ -128,7 +128,7 @@ class LoginActivity : BaseActivity() {
         val pwd = et_pwd.text.toString().trim()
         if (UIUtils.isPhoneNumber(this, phoneNumber)) {
             if (TextUtils.isEmpty(pwd) || pwd.length < 6) {
-                ToastUtils.showToast("请重新输入密码")
+                ToastUtils.showToast("请重新输入密码,且密码大于等于 6 位数")
             } else {
                 ProgressUtil.showProgress(this)
                 requestLoginWithLeancloud(phoneNumber, pwd)

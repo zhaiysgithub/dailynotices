@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_white">
+
+    <include layout="@layout/view_title"/>
+
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_setting"
+            android:layout_below="@id/layout_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/dp_120"/>
+
+    <TextView
+            android:id="@+id/tv_logout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_45"
+            android:layout_marginStart="@dimen/dp_43"
+            android:layout_marginEnd="@dimen/dp_43"
+            android:text="@string/str_logout"
+            android:textSize="@dimen/sp_16"
+            android:textColor="@color/color_999"
+            android:background="@drawable/shape_submit_unchecked_bg"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/dp_65"/>
+
+</RelativeLayout>

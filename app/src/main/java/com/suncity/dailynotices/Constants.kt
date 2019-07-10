@@ -21,6 +21,11 @@ class Constants{
         const val ISLOGINED = "islogined"
         const val USEROBJECTID = "userObjectId"
         const val USERNAME = "username"
+        const val USERPHONENUM = "userphonenum"
         const val USERAvatar = "userAvatar"
+
+
+        val needClearTableValue = arrayOf(SP_KEY_USER,SP_KEY_USERINFO,SP_KEY_FIRE)
+
     }
 }

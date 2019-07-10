@@ -10,6 +10,13 @@ package com.suncity.dailynotices.callback
 interface GlobalObservable {
 
 
+    /**
+     * 登录成功
+     */
+    fun onLoginSuccess()
 
-
+    /**
+     * 登出成功
+     */
+    fun onLogoutSuccess()
 }

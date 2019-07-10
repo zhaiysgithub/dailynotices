@@ -52,5 +52,15 @@ class SharedPrefHelper {
                 null
             }
         }
+
+
+        fun needClearSpValue(){
+            val sp = Config.getApplicationContext().getSharedPreferences(Constants.SP_NAME, Context.MODE_PRIVATE)
+            val editor = sp.edit()
+            Constants.needClearTableValue.forEach {
+                editor.remove(it)
+            }
+            editor.apply()
+        }
     }
 }

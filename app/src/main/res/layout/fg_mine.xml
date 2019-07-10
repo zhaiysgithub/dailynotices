@@ -64,11 +64,12 @@
         <!--工具按钮-->
         <ImageView
                 android:id="@+id/iv_mine_tool"
-                android:layout_width="@dimen/dp_20"
-                android:layout_height="@dimen/dp_20"
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="@dimen/dp_40"
                 android:src="@mipmap/ico_mine_tool"
+                android:scaleType="centerInside"
                 android:layout_alignParentEnd="true"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_marginEnd="@dimen/dp_20"
                 android:layout_marginTop="@dimen/dp_35"/>
         <!--用户登录后的UI-->

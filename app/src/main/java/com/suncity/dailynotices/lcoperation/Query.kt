@@ -71,6 +71,18 @@ object Query {
         })
     }
 
+    /**
+     * 查询 user 表
+     */
+    fun getFirstUser(callback: (AVObject?, AVException?) -> Unit){
+        val query = AVQuery<AVObject>(TableConstants.TABLE_USER)
+        query.getFirstInBackground(object : GetCallback<AVObject>(){
+
+            override fun done(avUser: AVObject?, e: AVException?) {
+                callback(avUser,e)
+            }
+        })
+    }
 
 
 

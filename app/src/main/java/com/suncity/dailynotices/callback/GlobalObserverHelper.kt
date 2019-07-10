@@ -1,6 +1,5 @@
-package com.suncity.dailynotices
+package com.suncity.dailynotices.callback
 
-import com.suncity.dailynotices.callback.GlobalObservable
 import com.suncity.dailynotices.observer.ObserverList
 
 /**
@@ -28,5 +27,17 @@ object GlobalObserverHelper {
         mObservers.removeObserver(observer)
     }
 
+
+    fun loginSuccess(){
+        mObservers.forEach {
+            it.onLoginSuccess()
+        }
+    }
+
+    fun logoutSuccess(){
+        mObservers.forEach {
+            it.onLogoutSuccess()
+        }
+    }
 
 }

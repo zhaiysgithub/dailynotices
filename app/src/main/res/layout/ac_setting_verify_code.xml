@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:background="@color/color_white">
+
+
+    <include layout="@layout/view_title"/>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_55"
+            android:layout_below="@id/layout_title">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_15"
+                android:text="@string/str_verifycode"
+                android:textColor="@color/color_222"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/dp_20"/>
+
+        <EditText
+                android:id="@+id/et_value_verifyCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_12"
+                android:textColor="@color/color_999"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:hint="@string/str_asterisk"
+                android:background="@android:color/transparent"
+                android:layout_marginEnd="@dimen/dp_20"
+                tools:ignore="Autofill,RelativeOverlap,TextFields"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_1"
+                android:background="@color/color_f3f3f3"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="@dimen/dp_20"
+                android:layout_marginRight="@dimen/dp_20"
+                tools:ignore="ContentDescription"/>
+    </RelativeLayout>
+
+
+
+    <TextView
+            android:id="@+id/tv_edit_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_45"
+            android:layout_marginStart="@dimen/dp_43"
+            android:layout_marginEnd="@dimen/dp_43"
+            android:text="@string/str_edit_confirm"
+            android:textSize="@dimen/sp_16"
+            android:textColor="@color/color_222"
+            android:background="@drawable/shape_submit_checked_bg"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/dp_65"/>
+
+</RelativeLayout>
