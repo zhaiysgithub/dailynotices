@@ -10,7 +10,6 @@ import android.widget.EditText
 import android.widget.TextView
 import com.avos.avoscloud.*
 import com.suncity.dailynotices.R
-import com.suncity.dailynotices.TableConstants.Companion.USER_MOBILEPHONENUMBER
 import com.suncity.dailynotices.callback.IEditTextChangeListener
 import com.suncity.dailynotices.callback.TextWatcherHelper
 import com.suncity.dailynotices.dialog.OnDismissListener
@@ -23,9 +22,7 @@ import kotlinx.android.synthetic.main.ac_login.*
 import com.avos.avoscloud.AVUser
 import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.TableConstants
-import com.suncity.dailynotices.model.AvFile
-import com.suncity.dailynotices.model.User
-import com.suncity.dailynotices.model.UserInfo
+import com.suncity.dailynotices.lcoperation.Increase
 
 
 /**
@@ -195,43 +192,28 @@ class LoginActivity : BaseActivity() {
             }
         })
     }
-
-    private fun createUserInfoToBack(objectId: String) {
-        //创建 userInfo 的表数据
-        val userInfo = AVObject(TableConstants.TABLE_USERINFO)
-        userInfo.put("user",objectId)
-        userInfo.put("resume", "")
-        userInfo.put("autonym", 0)
-        userInfo.put("fire", 0)
-        userInfo.put("region", "")
-        userInfo.put("age", "")
-        userInfo.put("sex", "0")
-        userInfo.saveInBackground(object : SaveCallback() {
-            override fun done(e: AVException?) {
-                ProgressUtil.hideProgress()
-                if (e == null) { // 保存成功
-                    saveUser()
-                } else {
-                    TipDialog.show(
-                        this@LoginActivity, e.message ?: loginErrorText
-                        , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR
-                    )
-                }
-            }
-        })
-    }
-
     /**
      * 通过objectId 查询是否自动创建了userInfo的关联
      */
     private fun queryUserInfo(objectId: String) {
         val query = AVQuery<AVObject>(TableConstants.TABLE_USERINFO)
         query.whereEqualTo(TableConstants.USER, objectId).getFirstInBackground(object : GetCallback<AVObject>() {
-            override fun done(o: AVObject?, e: AVException?) {
-                if (o == null) {
-                    createUserInfoToBack(objectId)
+            override fun done(userInfo: AVObject?, e: AVException?) {
+                if (userInfo == null) {
+                    Increase.createUserInfoToBack(objectId){
+                        ProgressUtil.hideProgress()
+                        if (e == null) { // 保存成功
+                            saveUser()
+                        } else {
+                            TipDialog.show(
+                                this@LoginActivity, e.message ?: loginErrorText
+                                , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR
+                            )
+                        }
+                    }
                 } else {
                     ProgressUtil.hideProgress()
+                    SharedPrefHelper.saveAny(Constants.SP_KEY_USERINFO,userInfo)
                     saveUser()
                 }
             }
@@ -248,7 +230,7 @@ class LoginActivity : BaseActivity() {
                 if (user != null && e == null) {
                     avUser = user
                     val objectId = user.objectId
-                    LogUtils.e("@@@->objectId=$objectId")
+                    PreferenceStorage.userObjectId = objectId
                     queryUserInfo(objectId)
                 } else {
                     ProgressUtil.hideProgress()
@@ -292,9 +274,11 @@ class LoginActivity : BaseActivity() {
     private fun saveUser() {
         if (avUser == null) return
         PreferenceStorage.isLogin = true
+
+        SharedPrefHelper.saveAny(Constants.SP_KEY_USER,avUser!!)
         val tipDialog = TipDialog.show(
             this@LoginActivity, loginSuccessText
-            , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR
+            , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_FINISH
         )
         tipDialog.setOnDismissListener(object : OnDismissListener {
             override fun onDismiss() {

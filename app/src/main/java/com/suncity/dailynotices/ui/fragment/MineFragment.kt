@@ -1,11 +1,18 @@
 package com.suncity.dailynotices.ui.fragment
 
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.View
+import com.avos.avoscloud.AVException
+import com.avos.avoscloud.AVUser
+import com.avos.avoscloud.GetCallback
 import com.google.gson.Gson
 import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.lcoperation.Query
+import com.suncity.dailynotices.localModel.LCUser
 import com.suncity.dailynotices.model.User
+import com.suncity.dailynotices.model.UserInfo
 import com.suncity.dailynotices.ui.BaseFragment
 import com.suncity.dailynotices.ui.activity.AboutAppActivity
 import com.suncity.dailynotices.ui.activity.ContactServiceActivity
@@ -15,9 +22,7 @@ import com.suncity.dailynotices.ui.adapter.MineAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.ui.model.MineModel
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
-import com.suncity.dailynotices.utils.Config
-import com.suncity.dailynotices.utils.LogUtils
-import com.suncity.dailynotices.utils.SharedPrefHelper
+import com.suncity.dailynotices.utils.*
 import kotlinx.android.synthetic.main.fg_mine.*
 
 /**
@@ -29,13 +34,17 @@ import kotlinx.android.synthetic.main.fg_mine.*
 
 class MineFragment : BaseFragment() {
 
-    private var mineAdapter : MineAdapter? = null
-    private var dataList : ArrayList<MineModel>? = null
+    private var mineAdapter: MineAdapter? = null
+    private var dataList: ArrayList<MineModel>? = null
+
     companion object {
         private val CERTIFIED = Config.getString(R.string.str_certified_name)
         private val NO_CERTIFIED = Config.getString(R.string.str_unreal_name)
+        private val GET_USERINFO_ERROR = Config.getString(R.string.str_getuser_error)
+        private val authResourceId = R.mipmap.ico_certification
+        private val unAuthResourceId = R.mipmap.ico_unreal_name_auth
 
-        fun getInstance():MineFragment{
+        fun getInstance(): MineFragment {
             return MineFragment()
         }
     }
@@ -46,32 +55,61 @@ class MineFragment : BaseFragment() {
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if(!hidden){
+        if (!hidden) {
             ImmersionBar.with(this)
                 .statusBarColor(R.color.color_ffde00)
-                .statusBarDarkFont(true,0f)
+                .statusBarDarkFont(true, 0f)
                 .init()
-            initData()
+            initUIData()
         }
     }
 
-    override fun initData() {
+    private fun initUIData() {
+        Log.e("@@@", "initUIData")
         val isLogin = isLogined()
         changeLoginFlagUi(isLogin)
-        if(isLogin){
+        if (isLogin) {
             val userJson = SharedPrefHelper.retireveAny(Constants.SP_KEY_USER)
-            val gson = Gson()
-            val user = gson.fromJson(userJson,User::class.java)
-            tv_login_user_name?.text = user?.username ?: ""
-            val avFile = user?.avatar
-            val userInfo = user?.info
-            val userAvatarUrl = avFile?.url
-            iv_mine_login_avatar?.setImageURI(userAvatarUrl)
-            val autonym = userInfo?.autonym ?: 0 //代表是否认证了
-            if (autonym == 1)tv_unreal_name_auth.text = CERTIFIED else tv_unreal_name_auth.text = NO_CERTIFIED
-            //RecentVisit这个表中是查看我和我查看的，只是selecet字段不同  推荐我的在Fire中
-            // TODO
-
+            val userInfoJson = SharedPrefHelper.retireveAny(Constants.SP_KEY_USERINFO)
+            val userObjectId = PreferenceStorage.userObjectId
+            if (userJson == null) {
+                getCurrentUserByLC()
+            } else {
+                val gson = Gson()
+                val user = gson.fromJson(userJson, User::class.javaObjectType)
+                val userInfo = gson.fromJson(userInfoJson, UserInfo::class.javaObjectType)
+                tv_login_user_name?.text = user?.username ?: ""
+                val avFile = user?.avatar
+                val userAvatarUrl = avFile?.url
+                iv_mine_login_avatar?.setImageURI(userAvatarUrl)
+                val autonym = userInfo?.autonym ?: 0 //代表是否认证了
+                if (autonym == 1) {
+                    tv_unreal_name_auth.text = CERTIFIED
+                    iv_unreal_name_auth.setImageResource(authResourceId)
+                } else {
+                    tv_unreal_name_auth.text = NO_CERTIFIED
+                    iv_unreal_name_auth.setImageResource(unAuthResourceId)
+                }
+                //设置推荐我的，我查看的，查看我的，RecentVisit这个表中是查看我和我查看的，
+                // 推荐我的在Fire中
+                Query.queryFire(userObjectId){ fire,e ->
+                    if(e == null){
+                        tv_login_focus_count?.text = (fire?.fire ?: 0).toString() //推荐我的
+                    }
+                }
+                //我查看的
+                Query.queryRecentVisitUser(userObjectId) { count, e ->
+                    if(e == null){
+                        tv_login_fans_count?.text = count.toString() //我查看的
+                    }
+                }
+                //查看我的
+                Query.queryRecentVisitVisit(userObjectId) { count, e ->
+                    if(e == null){
+                        tv_login_guest_count?.text = count.toString() //查看我的
+                    }
+                }
+            }
         }
 
         mineAdapter = MineAdapter(requireContext())
@@ -79,13 +117,15 @@ class MineFragment : BaseFragment() {
         recyclerView_login?.setHasFixedSize(true)
         recyclerView_login?.adapter = mineAdapter
 
-        val iconArray = arrayListOf(R.mipmap.ico_comm_notice,R.mipmap.ico_mine_push
-            ,R.mipmap.ico_shielding,R.mipmap.ico_service,R.mipmap.ico_about)
+        val iconArray = arrayListOf(
+            R.mipmap.ico_comm_notice, R.mipmap.ico_mine_push
+            , R.mipmap.ico_shielding, R.mipmap.ico_service, R.mipmap.ico_about
+        )
         val stringArray = Config.getResStringArray(R.array.mine_text)
         dataList = arrayListOf()
-        if (iconArray.size == stringArray.size){
-            for (i in 0 until iconArray.size){
-                val model = MineModel(i,iconArray[i], stringArray[i])
+        if (iconArray.size == stringArray.size) {
+            for (i in 0 until iconArray.size) {
+                val model = MineModel(i, iconArray[i], stringArray[i])
                 dataList?.add(model)
             }
         }
@@ -93,6 +133,28 @@ class MineFragment : BaseFragment() {
         mineAdapter?.addAll(dataList)
 
 
+    }
+
+    /**
+     * 通过网络获取用户信息
+     */
+    private fun getCurrentUserByLC() {
+        val objectId = PreferenceStorage.userObjectId
+        AVUser.getQuery().getInBackground(objectId, object : GetCallback<AVUser>() {
+            override fun done(o: AVUser?, e: AVException?) {
+                if (o != null && e == null) {
+                    SharedPrefHelper.saveAny(Constants.SP_KEY_USER, o)
+                    setUIData()
+                } else {
+                    ToastUtils.showSafeToast(requireContext(), GET_USERINFO_ERROR)
+                }
+            }
+
+        })
+    }
+
+    private fun setUIData() {
+        SharedPrefHelper.retireveAny(Constants.SP_KEY_USER)
     }
 
     override fun initListener() {
@@ -107,50 +169,50 @@ class MineFragment : BaseFragment() {
             LogUtils.e("进入账号管理页面")
         }
         layout_login_focus?.setOnClickListener {
-            if (isLogined()){
+            if (isLogined()) {
                 //进入推荐我的页面
                 LogUtils.e("进入推荐我的页面")
-            }else{
+            } else {
                 startActivity(LoginActivity::class.java)
             }
         }
         layout_login_fans?.setOnClickListener {
-            if (isLogined()){
+            if (isLogined()) {
                 //进入我查看的页面
                 LogUtils.e("进入我查看的页面")
-            }else{
+            } else {
                 startActivity(LoginActivity::class.java)
             }
         }
         layout_login_guest?.setOnClickListener {
-            if (isLogined()){
+            if (isLogined()) {
                 //进入查看我的页面
                 LogUtils.e("进入查看我的页面")
-            }else{
+            } else {
                 startActivity(LoginActivity::class.java)
             }
         }
         mineAdapter?.setOnItemClickListener(mRecyclerViewItemClick)
     }
 
-    private val mRecyclerViewItemClick = object : RecyclerArrayAdapter.OnItemClickListener{
+    private val mRecyclerViewItemClick = object : RecyclerArrayAdapter.OnItemClickListener {
 
         override fun onItemClick(position: Int, view: View) {
-            when(position){
+            when (position) {
                 0 -> {
                     // 沟通过的通告
-                    if(!isLogined()){
+                    if (!isLogined()) {
                         startActivity(LoginActivity::class.java)
-                    }else{
-                        LogUtils.e((dataList?.get(position)?.desc?:""))
+                    } else {
+                        LogUtils.e((dataList?.get(position)?.desc ?: ""))
                     }
                 }
                 1 -> {
                     // 我发布的
-                    if(!isLogined()){
+                    if (!isLogined()) {
                         startActivity(LoginActivity::class.java)
-                    }else{
-                        LogUtils.e((dataList?.get(position)?.desc?:""))
+                    } else {
+                        LogUtils.e((dataList?.get(position)?.desc ?: ""))
                     }
                 }
                 2 -> {
@@ -171,12 +233,12 @@ class MineFragment : BaseFragment() {
 
     }
 
-    private fun changeLoginFlagUi(isLogin:Boolean){
-        if (isLogin){
+    private fun changeLoginFlagUi(isLogin: Boolean) {
+        if (isLogin) {
             layout_unlogin?.visibility = View.GONE
             iv_mine_tool?.visibility = View.VISIBLE
             layout_login?.visibility = View.VISIBLE
-        }else{
+        } else {
             layout_unlogin?.visibility = View.VISIBLE
             iv_mine_tool?.visibility = View.GONE
             layout_login?.visibility = View.GONE

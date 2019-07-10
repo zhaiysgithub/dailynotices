@@ -24,4 +24,32 @@ object PreferenceStorage {
             editor.putBoolean(Constants.ISLOGINED,value)
             editor.commit()
         }
+
+    var userObjectId : String
+        @JvmStatic
+        get() = (sharedPreferences.getString(Constants.USEROBJECTID,"") ?: "")
+        @JvmStatic
+        set(value) {
+            editor.putString(Constants.USEROBJECTID,value)
+            editor.commit()
+        }
+
+    var userName:String
+        @JvmStatic
+        get() = (sharedPreferences.getString(Constants.USERNAME,"") ?: "")
+        @JvmStatic
+        set(value) {
+            editor.putString(Constants.USERNAME,value)
+            editor.commit()
+        }
+
+    var userAvatar:String
+        @JvmStatic
+        get() = (sharedPreferences.getString(Constants.USERAvatar,"") ?: "")
+        @JvmStatic
+        set(value) {
+            editor.putString(Constants.USERAvatar,value)
+            editor.commit()
+        }
+
 }

@@ -65,7 +65,6 @@
                 android:inputType="phone"
                 android:maxLength="11"
                 android:singleLine="true"
-
                 android:textColor="@color/color_black"
                 android:textColorHint="@color/color_bbb"
                 android:textSize="@dimen/sp_16"/>

@@ -13,8 +13,14 @@ class Constants{
     companion object {
 
         val SDK_INT = android.os.Build.VERSION.SDK_INT
+        const val SP_NAME = "dailynotices"
+        const val SP_KEY_USER = "spkeyuser"
+        const val SP_KEY_USERINFO = "spkeyuserinfo"
+        const val SP_KEY_FIRE = "spkeyfire"
+
         const val ISLOGINED = "islogined"
-        val SP_NAME = "dailynotices"
-        val SP_KEY_USER = "spkeyuser"
+        const val USEROBJECTID = "userObjectId"
+        const val USERNAME = "username"
+        const val USERAvatar = "userAvatar"
     }
 }

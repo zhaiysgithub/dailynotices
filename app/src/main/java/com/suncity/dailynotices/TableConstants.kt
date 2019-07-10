@@ -14,6 +14,8 @@ class TableConstants {
         const val USER_MOBILEPHONENUMBER = "mobilePhoneNumber"
         const val OBJECTID = "objectId"
         const val USER = "user"
+        const val VISITER = "visiter"
+        const val TOUSER = "toUser"
 
         const val TABLE_USER = "_User"
         const val TABLE_USERINFO = "UserInfo"
@@ -28,7 +30,6 @@ class TableConstants {
         const val TABLE_DYNAMIC = "Dynamic"
         const val TABLE_FEEDBACK = "FeedBack"
         const val TABLE_FIRE = "Fire"
-        const val TABLE_Fire = "Fire"
         const val TABLE_FOUND = "Found"
         const val TABLE_HOMEIMAGES = "HomeImages"
         const val TABLE_LIKE = "Like"

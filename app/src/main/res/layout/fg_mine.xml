@@ -87,6 +87,9 @@
                     android:layout_height="@dimen/dp_60"
                     fresco:placeholderImage="@drawable/shape_login_avatar_default"
                     fresco:failureImage="@drawable/shape_login_avatar_default"
+                    fresco:roundAsCircle="true"
+                    fresco:roundingBorderWidth="@dimen/dp_3"
+                    fresco:roundingBorderColor="@color/color_white"
                     tools:ignore="ContentDescription"/>
 
             <TextView
@@ -119,6 +122,7 @@
                     android:textSize="@dimen/sp_12"
                     android:textColor="@color/color_222"
                     android:layout_marginLeft="@dimen/dp_3"
+                    android:layout_marginTop="@dimen/dp_3"
                     android:layout_toRightOf="@id/iv_unreal_name_auth"
                     android:layout_below="@id/tv_login_user_name"
                     tools:ignore="RtlHardcoded"/>

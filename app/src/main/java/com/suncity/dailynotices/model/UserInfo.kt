@@ -27,9 +27,9 @@ class UserInfo :Serializable{
     var region:String? = null
     var native:String? = null
     var weight:String? = null
-    var interest:String? = null
+    var interest:ArrayList<String>? = null
     var resume:String? = null
-    var autonym:String? = null
+    var autonym:Int? = null
     var user:String? = null
     var height:String? = null
     var nation:String? = null
