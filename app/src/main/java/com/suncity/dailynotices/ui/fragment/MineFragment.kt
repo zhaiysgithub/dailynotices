@@ -189,7 +189,7 @@ class MineFragment : BaseFragment() {
         layout_login_focus?.setOnClickListener {
             if (isLogined()) {
                 //进入推荐我的页面
-                LogUtils.e("进入推荐我的页面")
+                startActivity(MineRecommentActivity::class.java)
             } else {
                 startActivity(LoginActivity::class.java)
             }
