@@ -1,6 +1,5 @@
 package com.suncity.dailynotices.lcoperation
 
-import android.util.Log
 import com.avos.avoscloud.*
 import com.google.gson.Gson
 import com.suncity.dailynotices.Constants
@@ -40,6 +39,21 @@ object Query {
                 }else{
                     callback(null,e)
                 }
+            }
+
+        })
+    }
+
+    /**
+     * 查询 匹配的fire 数据的集合
+     */
+    fun queryFireList(userObjectId:String,callback:((MutableList<AVObject>?,AVException?) -> Unit)){
+        val query = AVQuery<AVObject>(TableConstants.TABLE_FIRE)
+        query.whereEqualTo(TableConstants.TOUSER,AVObject.createWithoutData(TableConstants.TABLE_USER,userObjectId))
+        query.findInBackground(object : FindCallback<AVObject>(){
+
+            override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
+                callback(avObjects,avException)
             }
 
         })

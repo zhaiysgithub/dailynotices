@@ -70,4 +70,6 @@
     <dimen name="dp_14">14dp</dimen>
     <dimen name="dp_2_min">-2dp</dimen>
     <dimen name="dp_53">53dp</dimen>
+    <dimen name="dp_70">70dp</dimen>
+    <dimen name="dp_5">5dp</dimen>
 </resources>

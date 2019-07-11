@@ -115,6 +115,7 @@ class MineFragment : BaseFragment() {
             PreferenceStorage.userPhoneNum = (user?.mobilePhoneNumber ?: "")
             val avFile = user?.avatar
             val userAvatarUrl = avFile?.url
+            PreferenceStorage.userAvatar = (userAvatarUrl ?: "")
             iv_mine_login_avatar?.setImageURI(userAvatarUrl)
             val autonym = userInfo?.autonym ?: 0 //代表是否认证了
             if (autonym == 1) {
@@ -128,26 +129,34 @@ class MineFragment : BaseFragment() {
             // 推荐我的在Fire中
             Query.queryFire(userObjectId) { fire, e ->
                 if (e == null) {
-                    tv_login_focus_count?.text = (fire?.fire ?: 0).toString() //推荐我的
+                    val count = fire?.fire ?: 0
+                    tv_login_focus_count?.text = formartCount(count) //推荐我的
                 }
             }
             //我查看的
             Query.queryRecentVisitUser(userObjectId) { count, e ->
                 if (e == null) {
-                    tv_login_fans_count?.text = count.toString() //我查看的
+
+                    tv_login_fans_count?.text = formartCount(count) //我查看的
                 }
             }
             //查看我的
             Query.queryRecentVisitVisit(userObjectId) { count, e ->
                 if (e == null) {
-                    tv_login_guest_count?.text = count.toString() //查看我的
+                    tv_login_guest_count?.text = formartCount(count) //查看我的
                 }
             }
-        }catch (e : Exception){
+        } catch (e: Exception) {
             LogUtils.e("notifyUI -> exception = $e")
         }
+    }
 
-
+    private fun formartCount(count: Int): String {
+        return if (count > 999) {
+            "+999"
+        } else {
+            count.toString()
+        }
     }
 
     /**
@@ -170,7 +179,7 @@ class MineFragment : BaseFragment() {
 
     private fun setUIData() {
         val jsonStr = SharedPrefHelper.retireveAny(Constants.SP_KEY_USER)
-        if (jsonStr != null){
+        if (jsonStr != null) {
             notifyUI(jsonStr)
         }
     }

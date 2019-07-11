@@ -69,4 +69,10 @@
     <string name="str_verifycode_toast">验证码发送成功，请注意查收</string>
     <string name="str_verifycode">验证码</string>
     <string name="str_update_error">修改失败，请稍后再试</string>
+    <string name="str_title_recomment">推荐我的</string>
+    <string name="str_title_fans">我查看的</string>
+    <string name="str_title_focus">查看我的</string>
+
+    <!-- error 信息 -->
+    <string name="str_error_server">"抱歉，服务器开小差"</string>
 </resources>

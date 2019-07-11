@@ -251,7 +251,7 @@ class LoginActivity : BaseActivity() {
                                 "登录失败次数超过显示,请15分钟后尝试,\n 或者通过忘记密码重设密码"
                             }
                             else -> {
-                                "抱歉，服务器开小差"
+                                Config.getString(R.string.str_error_server)
                             }
                         }
                         TipDialog.show(

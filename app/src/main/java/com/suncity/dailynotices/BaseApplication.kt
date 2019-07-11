@@ -1,8 +1,14 @@
 package com.suncity.dailynotices
 
 import android.app.Application
+import android.content.Context
 import com.avos.avoscloud.AVOSCloud
 import com.facebook.drawee.backends.pipeline.Fresco
+import com.scwang.smartrefresh.header.MaterialHeader
+import com.scwang.smartrefresh.layout.SmartRefreshLayout
+import com.scwang.smartrefresh.layout.api.*
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter
+import com.scwang.smartrefresh.layout.header.ClassicsHeader
 import com.suncity.dailynotices.utils.AppUtils
 import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.LogUtils
@@ -15,8 +21,29 @@ import com.suncity.dailynotices.utils.LogUtils
  * @UpdateDate:     31/5/2019
  */
 
-class BaseApplication : Application(){
+class BaseApplication : Application() {
 
+    init {
+        //优先级比较低
+        SmartRefreshLayout.setDefaultRefreshHeaderCreator(object : DefaultRefreshHeaderCreator {
+
+            override fun createRefreshHeader(context: Context, layout: RefreshLayout): RefreshHeader {
+                //设置全局主题颜色
+                val materialHeader = MaterialHeader(context)
+                materialHeader.setColorSchemeColors(Config.getColor(R.color.color_ffde00), Config.getColor(R.color.color_white))
+                return materialHeader
+            }
+        })
+
+        SmartRefreshLayout.setDefaultRefreshFooterCreator(object : DefaultRefreshFooterCreator {
+
+            override fun createRefreshFooter(context: Context, layout: RefreshLayout): RefreshFooter {
+                //指定为经典Footer
+                return ClassicsFooter(context).setDrawableSize(20f)
+            }
+
+        })
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -49,7 +76,7 @@ class BaseApplication : Application(){
         val avosAppKey = AppEnviroment.getEnv()?.avosAppKey
         val avosAppId = AppEnviroment.getEnv()?.avosAppId
         LogUtils.e("initAvos -> avosAppKey=$avosAppKey,avosAppId=$avosAppId ")
-        AVOSCloud.initialize(this,avosAppId,avosAppKey)
+        AVOSCloud.initialize(this, avosAppId, avosAppKey)
         AVOSCloud.setDebugLogEnabled(true) //打开可调式的开关
     }
 }
