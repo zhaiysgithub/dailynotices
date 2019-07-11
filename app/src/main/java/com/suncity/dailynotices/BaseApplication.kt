@@ -30,7 +30,7 @@ class BaseApplication : Application() {
             override fun createRefreshHeader(context: Context, layout: RefreshLayout): RefreshHeader {
                 //设置全局主题颜色
                 val materialHeader = MaterialHeader(context)
-                materialHeader.setColorSchemeColors(Config.getColor(R.color.color_ffde00), Config.getColor(R.color.color_white))
+                materialHeader.setColorSchemeColors(Config.getColor(R.color.color_ffde00), Config.getColor(R.color.color_037bff))
                 return materialHeader
             }
         })

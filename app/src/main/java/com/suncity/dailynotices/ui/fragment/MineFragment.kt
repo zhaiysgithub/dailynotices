@@ -206,7 +206,7 @@ class MineFragment : BaseFragment() {
         layout_login_fans?.setOnClickListener {
             if (isLogined()) {
                 //进入我查看的页面
-                LogUtils.e("进入我查看的页面")
+                startActivity(MineFocusActivity::class.java)
             } else {
                 startActivity(LoginActivity::class.java)
             }
@@ -214,7 +214,7 @@ class MineFragment : BaseFragment() {
         layout_login_guest?.setOnClickListener {
             if (isLogined()) {
                 //进入查看我的页面
-                LogUtils.e("进入查看我的页面")
+                startActivity(MineFansActivity::class.java)
             } else {
                 startActivity(LoginActivity::class.java)
             }

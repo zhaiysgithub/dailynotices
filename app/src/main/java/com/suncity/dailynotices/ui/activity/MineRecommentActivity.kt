@@ -1,6 +1,7 @@
 package com.suncity.dailynotices.ui.activity
 
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import com.avos.avoscloud.AVUser
 import com.google.gson.Gson
 import com.scwang.smartrefresh.layout.api.RefreshLayout
@@ -12,7 +13,8 @@ import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.adapter.RecommentAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.utils.*
-import kotlinx.android.synthetic.main.ac_mine_recomment.*
+import kotlinx.android.synthetic.main.ac_mine_focus.*
+import kotlinx.android.synthetic.main.view_empty.*
 import kotlinx.android.synthetic.main.view_title.*
 
 /**
@@ -42,7 +44,7 @@ class MineRecommentActivity : BaseActivity() {
     }
 
     override fun getActivityLayoutId(): Int {
-        return R.layout.ac_mine_recomment
+        return R.layout.ac_mine_focus
     }
 
     override fun initData() {
@@ -98,7 +100,13 @@ class MineRecommentActivity : BaseActivity() {
                 recommentAdapter?.addAll(fireList)
 
             } else {
-                ToastUtils.showSafeToast(this@MineRecommentActivity, avException?.message ?: errorServer)
+                ToastUtils.showSafeToast(this@MineRecommentActivity, errorServer)
+            }
+
+            if(recommentAdapter?.itemCount == 0){
+                layout_empty?.visibility = View.VISIBLE
+            }else{
+                layout_empty?.visibility = View.GONE
             }
         }
 
