@@ -1,6 +1,7 @@
 package com.suncity.dailynotices.model
 
 import java.io.Serializable
+import java.util.*
 
 /**
  * @ProjectName:    dailynotices
@@ -11,8 +12,17 @@ import java.io.Serializable
  */
 class Notice : Serializable {
 
-    var objectId:String? = null
-    var workTime:String? = null
-    var payment:String? = null
-    var endTime:String? = null
+    var objectId: String? = null
+    var workTime: String? = null
+    var payment: String? = null
+    var endTime: String? = null
+    var title: String? = null
+    var contents: String? = null
+    var image: String? = null
+    var workPlace: String? = null
+    var beginTime: String? = null
+    var userId: String? = null
+    var createdAt: Date? = null
+    var updatedAt: Date? = null
+    var userName: String? = null
 }

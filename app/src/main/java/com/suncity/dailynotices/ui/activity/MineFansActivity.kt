@@ -9,8 +9,10 @@ import com.suncity.dailynotices.model.MineFocusModel
 import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.adapter.RecentVisitAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar
+import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.PreferenceStorage
+import com.suncity.dailynotices.utils.PreventRepeatedUtils
 import com.suncity.dailynotices.utils.ToastUtils
 import kotlinx.android.synthetic.main.ac_mine_focus.*
 import kotlinx.android.synthetic.main.view_empty.*
@@ -63,6 +65,8 @@ class MineFansActivity : BaseActivity() {
         smartRefreshLayout?.setOnRefreshListener {
             queryRecentVisitVister(it)
         }
+
+        focusAdapter?.setOnItemClickListener(mFocusItemClick)
     }
 
     private fun queryRecentVisitVister(it: RefreshLayout) {
@@ -80,7 +84,9 @@ class MineFansActivity : BaseActivity() {
                 focusAdapter?.clear()
                 focusAdapter?.addAll(sortedList)
             } else {
-                ToastUtils.showSafeToast(this@MineFansActivity, errorServer)
+                if(avException != null){
+                    ToastUtils.showSafeToast(this@MineFansActivity, errorServer)
+                }
             }
 
             if((focusAdapter?.itemCount ?: 0) > 0){
@@ -89,6 +95,18 @@ class MineFansActivity : BaseActivity() {
                 layout_empty?.visibility = View.VISIBLE
             }
         }
+    }
+
+
+    private val mFocusItemClick = object : RecyclerArrayAdapter.OnItemClickListener{
+
+        override fun onItemClick(position: Int, view: View) {
+            val item = focusAdapter?.getItem(position) ?: return
+            val userInfoObjectId = item.userInfoObjcetId ?: return
+            if (PreventRepeatedUtils.isFastDoubleClick()) return
+            UserInfoActivity.start(this@MineFansActivity,userInfoObjectId)
+        }
+
     }
 
 

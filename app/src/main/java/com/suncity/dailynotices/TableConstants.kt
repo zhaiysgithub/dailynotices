@@ -16,6 +16,7 @@ class TableConstants {
         const val USER = "user"
         const val VISITER = "visiter"
         const val TOUSER = "toUser"
+        const val SHIELD_ID = "shieldId"
 
         const val TABLE_USER = "_User"
         const val TABLE_USERINFO = "UserInfo"

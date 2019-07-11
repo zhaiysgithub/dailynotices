@@ -85,6 +85,7 @@ class MineFragment : BaseFragment() {
         recyclerView_login?.layoutManager = LinearLayoutManager(requireContext())
         recyclerView_login?.setHasFixedSize(true)
         recyclerView_login?.adapter = mineAdapter
+        mineAdapter?.setOnItemClickListener(mRecyclerViewItemClick)
 
         val iconArray = arrayListOf(
             R.mipmap.ico_comm_notice, R.mipmap.ico_mine_push
@@ -190,6 +191,9 @@ class MineFragment : BaseFragment() {
         }
         layout_login?.setOnClickListener {
             //进入个人主页
+            val userObjectId = PreferenceStorage.userObjectId
+            if (StringUtils.isEmpty(userObjectId)) return@setOnClickListener
+            UserInfoActivity.start(requireContext(),userObjectId)
         }
         iv_mine_tool?.setOnClickListener {
             //进入账号管理页面
@@ -219,7 +223,7 @@ class MineFragment : BaseFragment() {
                 startActivity(LoginActivity::class.java)
             }
         }
-        mineAdapter?.setOnItemClickListener(mRecyclerViewItemClick)
+
     }
 
     private val mRecyclerViewItemClick = object : RecyclerArrayAdapter.OnItemClickListener {
@@ -231,7 +235,7 @@ class MineFragment : BaseFragment() {
                     if (!isLogined()) {
                         startActivity(LoginActivity::class.java)
                     } else {
-                        LogUtils.e((dataList?.get(position)?.desc ?: ""))
+                        startActivity(CommuncatedNoticeActivity::class.java)
                     }
                 }
                 1 -> {
@@ -239,7 +243,7 @@ class MineFragment : BaseFragment() {
                     if (!isLogined()) {
                         startActivity(LoginActivity::class.java)
                     } else {
-                        LogUtils.e((dataList?.get(position)?.desc ?: ""))
+                        startActivity(MinePushedActivity::class.java)
                     }
                 }
                 2 -> {

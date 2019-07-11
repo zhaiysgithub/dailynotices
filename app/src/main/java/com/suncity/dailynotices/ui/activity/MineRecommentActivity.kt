@@ -100,7 +100,9 @@ class MineRecommentActivity : BaseActivity() {
                 recommentAdapter?.addAll(fireList)
 
             } else {
-                ToastUtils.showSafeToast(this@MineRecommentActivity, errorServer)
+                if(avException != null){
+                    ToastUtils.showSafeToast(this@MineRecommentActivity, errorServer)
+                }
             }
 
             if(recommentAdapter?.itemCount == 0){

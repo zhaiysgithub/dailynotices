@@ -38,7 +38,7 @@
             app:layout_constraintRight_toRightOf="parent"
             tools:ignore="ContentDescription"/>
 
-    <ImageView
+    <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_1"
             android:background="@color/color_f3f3f3"

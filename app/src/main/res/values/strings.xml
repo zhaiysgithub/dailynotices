@@ -72,6 +72,11 @@
     <string name="str_title_recomment">推荐我的</string>
     <string name="str_title_fans">我查看的</string>
     <string name="str_title_focus">查看我的</string>
+    <string name="str_title_comm_notice">沟通过的公告</string>
+    <string name="str_title_mine_push">我发布的</string>
+    <string name="str_title_shield">屏蔽过的人</string>
+    <string name="str_remove">移出</string>
+    <string name="str_expired">已过期</string>
 
     <!-- error 信息 -->
     <string name="str_error_server">"抱歉，服务器开小差"</string>

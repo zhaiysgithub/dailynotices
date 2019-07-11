@@ -72,4 +72,7 @@
     <dimen name="dp_53">53dp</dimen>
     <dimen name="dp_70">70dp</dimen>
     <dimen name="dp_5">5dp</dimen>
+    <dimen name="dp_7">7dp</dimen>
+    <dimen name="dp_66">66dp</dimen>
+    <dimen name="dp_21">21dp</dimen>
 </resources>

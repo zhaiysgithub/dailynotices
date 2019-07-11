@@ -13,8 +13,11 @@ import java.util.*
 class Shield : Serializable {
 
     var objectId:String? = null
-    var user:User? = null
-    var shieldId:User? = null
     var createdAt: Date? = null
     var updatedAt: Date? = null
+    var avatarurl:String? = null
+    var shieldUserName:String? = null
+    var userCategory:String? = null
+    var userInfoId:String? = null
+    var autonym:Int? = null
 }
