@@ -2,6 +2,7 @@ package com.suncity.dailynotices.lcoperation
 
 import com.avos.avoscloud.*
 import com.google.gson.Gson
+import com.google.gson.internal.ObjectConstructor
 import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.TableConstants
 import com.suncity.dailynotices.model.Fire
@@ -430,4 +431,13 @@ object Query {
         })
     }
 
+    fun queryUserByObjectId(objectId : String,callback:((AVUser?,AVException?) -> Unit)){
+        val avQuery = AVUser.getQuery()
+        avQuery.getInBackground(objectId,object : GetCallback<AVUser>(){
+            override fun done(avUser: AVUser?, e: AVException?) {
+                callback(avUser,e)
+            }
+
+        })
+    }
 }

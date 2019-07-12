@@ -75,4 +75,7 @@
     <dimen name="dp_7">7dp</dimen>
     <dimen name="dp_66">66dp</dimen>
     <dimen name="dp_21">21dp</dimen>
+    <dimen name="dp_375">375dp</dimen>
+    <dimen name="dp_600">600dp</dimen>
+    <dimen name="dp_415">415dp</dimen>
 </resources>
