@@ -1,14 +1,12 @@
 package com.suncity.dailynotices.lcoperation
 
 import com.avos.avoscloud.*
+import com.avos.avoscloud.ops.SingleValueOp
 import com.google.gson.Gson
 import com.google.gson.internal.ObjectConstructor
 import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.TableConstants
-import com.suncity.dailynotices.model.Fire
-import com.suncity.dailynotices.model.MineFocusModel
-import com.suncity.dailynotices.model.Notice
-import com.suncity.dailynotices.model.Shield
+import com.suncity.dailynotices.model.*
 import com.suncity.dailynotices.utils.SharedPrefHelper
 import com.suncity.dailynotices.utils.StringUtils
 import java.util.*
@@ -431,6 +429,9 @@ object Query {
         })
     }
 
+    /**
+     * 个人详情页查询个人信息
+     */
     fun queryUserByObjectId(objectId : String,callback:((AVUser?,AVException?) -> Unit)){
         val avQuery = AVUser.getQuery()
         avQuery.getInBackground(objectId,object : GetCallback<AVUser>(){
@@ -439,5 +440,142 @@ object Query {
             }
 
         })
+    }
+
+    /**
+     * 首页通告栏
+     */
+    fun queryAllRecentNotice(callback: ((ArrayList<Notice>?, AVException?) -> Unit)){
+        val query = AVQuery<AVObject>(TableConstants.TABLE_NOTICE)
+
+        query.findInBackground(object : FindCallback<AVObject>() {
+            override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
+                if (avObjects != null && avObjects.size > 0 && avException == null) {
+                    val noticeList = arrayListOf<Notice>()
+                    val queryList = arrayListOf<AVQuery<AVUser>>()
+                    avObjects.forEach {
+                        val notice = Notice()
+                        notice.title = it.getString("title")
+                        notice.endTime = it.getString("endTime")
+                        notice.payment = it.getString("payment")
+                        notice.contents = it.getString("contents")
+                        val userPoint: AVUser = it.getAVUser("user")
+                        val userObjectId = userPoint.objectId
+                        notice.userId = userObjectId
+                        noticeList.add(notice)
+
+                        val userQuery = AVQuery<AVUser>(TableConstants.TABLE_USER)
+                        userQuery.whereEqualTo(TableConstants.OBJECTID, userObjectId)
+                        queryList.add(userQuery)
+
+                    }
+                    // OR 组合查询
+                    val userQueryOr = AVQuery.or(queryList)
+
+                    findNoticeUserByQueryOr(userQueryOr, noticeList){ list,exception ->
+                        if (list != null && list.size > 0 && exception == null){
+                            callback(list,null)
+                        }else{
+                            callback(noticeList,exception)
+                        }
+                    }
+                } else {
+                    callback(null, avException)
+                }
+            }
+
+        })
+    }
+
+    /**
+     * 红人页面数据查询
+     */
+    fun queryAllCover(callback: ((ArrayList<Cover>?, AVException?) -> Unit)){
+        val query = AVQuery<AVObject>(TableConstants.TABLE_COVER)
+        query.findInBackground(object : FindCallback<AVObject>(){
+
+            override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
+                if (avObjects != null && avObjects.size > 0 && avException == null){
+                    val coverList = arrayListOf<Cover>()
+                    val queryUserList = arrayListOf<AVQuery<AVUser>>()
+                    val queryUserInfoList = arrayListOf<AVQuery<AVObject>>()
+                    avObjects.forEach {
+                        val itemCover = Cover()
+                        val coverFile = it.getAVFile<AVFile>("cover")
+                        itemCover.objectId = it.objectId
+                        itemCover.coverUrl = coverFile.url
+                        itemCover.createdAt = it.getDate("createdAt")
+                        itemCover.updateAt = it.getDate("updateAt")
+                        val userInfoPointer = it.getAVObject<AVObject>("user")
+                        val idPointer = userInfoPointer.objectId
+                        itemCover.userObjectId = idPointer
+                        coverList.add(itemCover)
+                        //查询user表中的userName
+                        val userQuery = AVQuery<AVUser>(TableConstants.TABLE_USER)
+                        userQuery.whereEqualTo(TableConstants.OBJECTID, idPointer)
+                        queryUserList.add(userQuery)
+
+                        //查询userInfo表中的fire字段
+
+                        val userInfoQuery = AVQuery<AVObject>(TableConstants.TABLE_USERINFO)
+                        userInfoQuery.whereEqualTo(TableConstants.USER, idPointer)
+                        queryUserInfoList.add(userInfoQuery)
+                    }
+                    // OR 组合查询
+                    val userQueryOr = AVQuery.or(queryUserList)
+                    val userInfoQueryOr = AVQuery.or(queryUserInfoList)
+                    findUserInfoByQueryOr(userQueryOr,userInfoQueryOr,coverList){ covers,e ->
+                        callback(covers,e)
+                    }
+                }else{
+                    callback(null,avException)
+                }
+            }
+
+        })
+    }
+
+    /**
+     * 组合查询 user 和 userInfo
+     */
+    private fun findUserInfoByQueryOr(
+        userQueryOr: AVQuery<AVUser>?,
+        userInfoQueryOr: AVQuery<AVObject>?,
+        coverList: ArrayList<Cover>,
+        callback: (ArrayList<Cover>?, AVException?) -> Unit
+    ) {
+        userQueryOr?.findInBackground(object : FindCallback<AVUser>(){
+            override fun done(avUsers: MutableList<AVUser>?, avException: AVException?) {
+
+                userInfoQueryOr?.findInBackground(object : FindCallback<AVObject>(){
+
+                    override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
+                        setCoverData(coverList,avUsers,avObjects,avException,callback)
+                    }
+
+                })
+            }
+        })
+
+
+    }
+
+    /**
+     * 组合查询 user 和 userInfo 的内容返回给cover集合
+     */
+    private fun setCoverData(
+        coverList: ArrayList<Cover>,
+        avUsers: MutableList<AVUser>?,
+        avUserInfos: MutableList<AVObject>?,
+        avException: AVException?,
+        callback: (ArrayList<Cover>?, AVException?) -> Unit
+    ) {
+        coverList.forEach {cover ->
+            val user = avUsers?.find {cover.userObjectId == it.objectId}
+            val userInfo = avUserInfos?.find { cover.userObjectId == it.getString("user") }
+            cover.userName = user?.username
+            cover.fireCount = userInfo?.getInt("fire")
+        }
+        callback(coverList,avException)
     }
 }

@@ -78,4 +78,5 @@
     <dimen name="dp_375">375dp</dimen>
     <dimen name="dp_600">600dp</dimen>
     <dimen name="dp_415">415dp</dimen>
+    <dimen name="dp_166">166dp</dimen>
 </resources>

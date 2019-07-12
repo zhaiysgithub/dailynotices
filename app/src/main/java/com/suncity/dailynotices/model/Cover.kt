@@ -13,9 +13,10 @@ import java.util.*
 class Cover : Serializable {
 
     var objectId:String? = null
-    var cover:AvFile? = null
-    var className:String? = null
-    var user:User? = null
+    var coverUrl:String? = null
+    var userName:String? = null
+    var userObjectId:String? = null
     var createdAt: Date? = null
     var updateAt:Date? = null
+    var fireCount:Int? = null //userInfo 表中的内容
 }
