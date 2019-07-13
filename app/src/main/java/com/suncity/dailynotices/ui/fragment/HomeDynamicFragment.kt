@@ -2,12 +2,13 @@ package com.suncity.dailynotices.ui.fragment
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.View
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.GlobalObserverHelper
+import com.suncity.dailynotices.callback.OnDynamicItemMenuClick
 import com.suncity.dailynotices.callback.SimpleGlobalObservable
+import com.suncity.dailynotices.dialog.BottomDialogiOSDynamic
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.model.Dynamic
 import com.suncity.dailynotices.ui.BaseFragment
@@ -67,6 +68,7 @@ class HomeDynamicFragment : BaseFragment() {
         }
 
         dynamicAdapter?.setOnItemClickListener(mDynamicItemClick)
+        dynamicAdapter?.setOnDynamicItemMenuClick(mDynamicItemMenuClick)
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -122,6 +124,40 @@ class HomeDynamicFragment : BaseFragment() {
 
     }
 
+    private val mDynamicItemMenuClick = object : OnDynamicItemMenuClick{
+
+        override fun onMoreClick(position: Int) {
+            val item = dynamicAdapter?.getItem(position)
+            val dynamicMoreDialog = BottomDialogiOSDynamic(requireContext())
+            dynamicMoreDialog.show()
+            dynamicMoreDialog.setClickCallback(object : BottomDialogiOSDynamic.ClickCallback{
+                override fun doShieldUserclick() {
+                }
+
+                override fun doCancel() {
+                }
+
+                override fun doReport() {
+                }
+
+                override fun doComplaint() {
+                }
+
+            })
+
+        }
+
+        override fun onImageClick(position: Int, url: String) {
+        }
+
+        override fun onSelectLikeClick(position: Int) {
+        }
+
+        override fun onTagFlowClick(position: Int, tagPos: Int, tagString: String) {
+        }
+
+    }
+
     private val globalObservable = object : SimpleGlobalObservable(){
 
         override fun onLoginSuccess() {
@@ -132,6 +168,8 @@ class HomeDynamicFragment : BaseFragment() {
             queryDynamicData(null)
         }
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()

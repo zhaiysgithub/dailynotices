@@ -4,9 +4,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.avos.avoscloud.AVUser
 import com.suncity.dailynotices.R
-import com.suncity.dailynotices.callback.GlobalObserverHelper
-import com.suncity.dailynotices.dialog.ActionSheetDialog
 import com.suncity.dailynotices.dialog.AlertDialog
+import com.suncity.dailynotices.dialog.BottomDialogiOSSetting
 import com.suncity.dailynotices.manager.UserManager
 import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.adapter.SettingAdapter
@@ -107,18 +106,22 @@ class SettingActivity : BaseActivity() {
         })
 
         tv_logout?.setOnClickListener {
-            ActionSheetDialog(this@SettingActivity).builder().setCancelable(true)
-                .setCancelable(true)
-                .addSheetItem(STR_LOGOUT, R.color.color_037bff
-                    , object : ActionSheetDialog.OnSheetItemClickListener {
-                        override fun onClick(which: Int) {
-                            doLogout()
-                        }
-                    }).show()
+            if(PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
+            val bottomDialog = BottomDialogiOSSetting(this@SettingActivity)
+            bottomDialog.show()
+            bottomDialog.setClickCallback(object : BottomDialogiOSSetting.ClickCallback{
+                override fun doLogout() {
+                    excuteLogout()
+                }
+
+                override fun doCancel() {
+                }
+
+            })
         }
     }
 
-    private fun doLogout() {
+    private fun excuteLogout() {
 //        val currentUser = AVUser.getCurrentUser()
         AVUser.logOut()
         UserManager.removeUserInfo()

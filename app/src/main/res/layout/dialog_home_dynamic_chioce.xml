@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+>
+
+    <TextView
+            android:id="@+id/tv_shield_user"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:background="@drawable/dialog_sheet_bg_radius_top"
+            android:text="@string/str_shield_user"
+            android:gravity="center"
+            android:textColor="@color/color_037bff"
+            android:textSize="16sp"/>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_f3f3f3"/>
+
+    <TextView
+            android:id="@+id/tv_report"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:background="@drawable/dialog_sheet_bg_radius_center"
+            android:text="@string/str_report"
+            android:textColor="@color/color_037bff"
+            android:gravity="center"
+            android:textSize="16sp"/>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_f3f3f3"/>
+
+    <TextView
+            android:id="@+id/tv_complain"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:background="@drawable/dialog_sheet_bg_radius_bottom"
+            android:text="@string/str_complain"
+            android:textColor="@color/color_037bff"
+            android:gravity="center"
+            android:textSize="16sp"/>
+
+    <Button
+            android:id="@+id/tv_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:background="@drawable/dialog_sheet_bg_radius_all"
+            android:layout_marginTop="10dp"
+            android:text="@string/str_cancel"
+            android:textColor="@color/color_037bff"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+</LinearLayout>

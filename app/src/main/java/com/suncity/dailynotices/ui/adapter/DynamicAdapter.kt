@@ -485,7 +485,7 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
     }
 
 
-    private fun setOnDynamicItemMenuClick(itemMenuClick: OnDynamicItemMenuClick) {
+    fun setOnDynamicItemMenuClick(itemMenuClick: OnDynamicItemMenuClick) {
         mMenuClick = itemMenuClick
     }
 

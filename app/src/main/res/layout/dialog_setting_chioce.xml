@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+>
+
+    <TextView
+            android:id="@+id/tv_logout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:background="@drawable/dialog_sheet_bg_radius_all"
+            android:text="@string/str_exit"
+            android:gravity="center"
+            android:textColor="@color/color_037bff"
+            android:textSize="16sp"/>
+
+
+
+    <Button
+            android:id="@+id/tv_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:background="@drawable/dialog_sheet_bg_radius_all"
+            android:layout_marginTop="10dp"
+            android:text="@string/str_cancel"
+            android:textColor="@color/color_037bff"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+</LinearLayout>
