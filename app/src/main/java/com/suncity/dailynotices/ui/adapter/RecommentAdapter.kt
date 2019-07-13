@@ -14,7 +14,7 @@ import com.suncity.dailynotices.utils.PreferenceStorage
 
 /**
  * @ProjectName:    dailynotices
- * @Package:        com.suncity.dailynotices.ui.adapter
+ * @Package:        com.suncity.dailynotices.ui.mAdapter
  * @ClassName:      RecommentAdapter
  * @Description:     作用描述
  * @UpdateDate:     11/7/2019

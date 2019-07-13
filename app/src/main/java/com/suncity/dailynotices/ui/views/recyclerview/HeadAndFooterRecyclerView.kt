@@ -324,7 +324,7 @@ open class HeadAndFooterRecyclerView : FrameLayout {
     }
 
     /**
-     * Remove the adapter from the recycler
+     * Remove the mAdapter from the recycler
      */
     fun clear() {
         recyclerView?.adapter = null

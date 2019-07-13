@@ -10,7 +10,7 @@ import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapt
 
 /**
  * @ProjectName:    dailynotices
- * @Package:        com.suncity.dailynotices.ui.adapter
+ * @Package:        com.suncity.dailynotices.ui.mAdapter
  * @ClassName:      SettingAdapter
  * @Description:     作用描述
  * @UpdateDate:     10/7/2019

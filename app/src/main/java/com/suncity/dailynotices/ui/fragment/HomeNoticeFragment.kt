@@ -42,7 +42,6 @@ class HomeNoticeFragment : BaseFragment() {
     }
 
     override fun initData() {
-        tv_title_center?.text = Config.getString(R.string.str_title_comm_notice)
         tv_empty_desc?.text = Config.getString(R.string.str_no_notice)
         communcatedAdapter = CommuncatedAdapter(requireContext())
         recyclerView?.setHasFixedSize(true)

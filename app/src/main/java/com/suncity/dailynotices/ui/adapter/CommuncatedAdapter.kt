@@ -13,7 +13,7 @@ import com.suncity.dailynotices.utils.DateUtils
 
 /**
  * @ProjectName:    dailynotices
- * @Package:        com.suncity.dailynotices.ui.adapter
+ * @Package:        com.suncity.dailynotices.ui.mAdapter
  * @ClassName:      CommuncatedAdapter
  * @Description:     作用描述
  * @UpdateDate:     11/7/2019

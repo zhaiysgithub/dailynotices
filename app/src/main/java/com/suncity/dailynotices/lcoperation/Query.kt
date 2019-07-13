@@ -1,14 +1,14 @@
 package com.suncity.dailynotices.lcoperation
 
+import com.alibaba.fastjson.JSONObject
 import com.avos.avoscloud.*
-import com.avos.avoscloud.ops.SingleValueOp
 import com.google.gson.Gson
-import com.google.gson.internal.ObjectConstructor
 import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.TableConstants
 import com.suncity.dailynotices.model.*
 import com.suncity.dailynotices.utils.SharedPrefHelper
 import com.suncity.dailynotices.utils.StringUtils
+import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -274,11 +274,11 @@ object Query {
                     // OR 组合查询
                     val userQueryOr = AVQuery.or(queryList)
 
-                    findNoticeUserByQueryOr(userQueryOr, noticeList){ list,exception ->
-                        if (list != null && list.size > 0 && exception == null){
-                            callback(list,null)
-                        }else{
-                            callback(noticeList,exception)
+                    findNoticeUserByQueryOr(userQueryOr, noticeList) { list, exception ->
+                        if (list != null && list.size > 0 && exception == null) {
+                            callback(list, null)
+                        } else {
+                            callback(noticeList, exception)
                         }
                     }
                 } else {
@@ -305,7 +305,7 @@ object Query {
                     for (item in 0 until avObjects.size) {
                         val avUser = avObjects[item]
                         noticeList.forEach {
-                            if(it.userId == avUser.objectId){
+                            if (it.userId == avUser.objectId) {
                                 it.userName = avUser.username
                             }
                         }
@@ -415,7 +415,7 @@ object Query {
                     avObjects.forEach { avObject ->
                         val userIdStr = avObject.getString("user")
                         shieldList.forEach {
-                            if(it.userInfoId == userIdStr){
+                            if (it.userInfoId == userIdStr) {
                                 it.autonym = avObject.getInt("autonym")
                             }
                         }
@@ -432,11 +432,11 @@ object Query {
     /**
      * 个人详情页查询个人信息
      */
-    fun queryUserByObjectId(objectId : String,callback:((AVUser?,AVException?) -> Unit)){
+    fun queryUserByObjectId(objectId: String, callback: ((AVUser?, AVException?) -> Unit)) {
         val avQuery = AVUser.getQuery()
-        avQuery.getInBackground(objectId,object : GetCallback<AVUser>(){
+        avQuery.getInBackground(objectId, object : GetCallback<AVUser>() {
             override fun done(avUser: AVUser?, e: AVException?) {
-                callback(avUser,e)
+                callback(avUser, e)
             }
 
         })
@@ -445,7 +445,7 @@ object Query {
     /**
      * 首页通告栏
      */
-    fun queryAllRecentNotice(callback: ((ArrayList<Notice>?, AVException?) -> Unit)){
+    fun queryAllRecentNotice(callback: ((ArrayList<Notice>?, AVException?) -> Unit)) {
         val query = AVQuery<AVObject>(TableConstants.TABLE_NOTICE)
 
         query.findInBackground(object : FindCallback<AVObject>() {
@@ -472,11 +472,11 @@ object Query {
                     // OR 组合查询
                     val userQueryOr = AVQuery.or(queryList)
 
-                    findNoticeUserByQueryOr(userQueryOr, noticeList){ list,exception ->
-                        if (list != null && list.size > 0 && exception == null){
-                            callback(list,null)
-                        }else{
-                            callback(noticeList,exception)
+                    findNoticeUserByQueryOr(userQueryOr, noticeList) { list, exception ->
+                        if (list != null && list.size > 0 && exception == null) {
+                            callback(list, null)
+                        } else {
+                            callback(noticeList, exception)
                         }
                     }
                 } else {
@@ -490,12 +490,12 @@ object Query {
     /**
      * 红人页面数据查询
      */
-    fun queryAllCover(callback: ((ArrayList<Cover>?, AVException?) -> Unit)){
+    fun queryAllCover(callback: ((ArrayList<Cover>?, AVException?) -> Unit)) {
         val query = AVQuery<AVObject>(TableConstants.TABLE_COVER)
-        query.findInBackground(object : FindCallback<AVObject>(){
+        query.findInBackground(object : FindCallback<AVObject>() {
 
             override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
-                if (avObjects != null && avObjects.size > 0 && avException == null){
+                if (avObjects != null && avObjects.size > 0 && avException == null) {
                     val coverList = arrayListOf<Cover>()
                     val queryUserList = arrayListOf<AVQuery<AVUser>>()
                     val queryUserInfoList = arrayListOf<AVQuery<AVObject>>()
@@ -524,11 +524,11 @@ object Query {
                     // OR 组合查询
                     val userQueryOr = AVQuery.or(queryUserList)
                     val userInfoQueryOr = AVQuery.or(queryUserInfoList)
-                    findUserInfoByQueryOr(userQueryOr,userInfoQueryOr,coverList){ covers,e ->
-                        callback(covers,e)
+                    findUserInfoByQueryOr(userQueryOr, userInfoQueryOr, coverList) { covers, e ->
+                        callback(covers, e)
                     }
-                }else{
-                    callback(null,avException)
+                } else {
+                    callback(null, avException)
                 }
             }
 
@@ -544,13 +544,13 @@ object Query {
         coverList: ArrayList<Cover>,
         callback: (ArrayList<Cover>?, AVException?) -> Unit
     ) {
-        userQueryOr?.findInBackground(object : FindCallback<AVUser>(){
+        userQueryOr?.findInBackground(object : FindCallback<AVUser>() {
             override fun done(avUsers: MutableList<AVUser>?, avException: AVException?) {
 
-                userInfoQueryOr?.findInBackground(object : FindCallback<AVObject>(){
+                userInfoQueryOr?.findInBackground(object : FindCallback<AVObject>() {
 
                     override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
-                        setCoverData(coverList,avUsers,avObjects,avException,callback)
+                        setCoverData(coverList, avUsers, avObjects, avException, callback)
                     }
 
                 })
@@ -570,12 +570,216 @@ object Query {
         avException: AVException?,
         callback: (ArrayList<Cover>?, AVException?) -> Unit
     ) {
-        coverList.forEach {cover ->
-            val user = avUsers?.find {cover.userObjectId == it.objectId}
+        coverList.forEach { cover ->
+            val user = avUsers?.find { cover.userObjectId == it.objectId }
             val userInfo = avUserInfos?.find { cover.userObjectId == it.getString("user") }
             cover.userName = user?.username
             cover.fireCount = userInfo?.getInt("fire")
         }
-        callback(coverList,avException)
+        callback(coverList, avException)
+    }
+
+
+    /**
+     * 1:未登录查询所有的数据
+     * 2:已经登录的了，需要过滤 shield 的数据
+     * 3:关联的表有 Dynamic , user , shield ,userInfo,like
+     */
+    fun queryDynamicData(
+        isLogin: Boolean,
+        userObjectId: String,
+        callback: (ArrayList<Dynamic>?, AVException?) -> Unit
+    ) {
+
+        if (isLogin) {
+            // 查询 shield 表中的过滤数据
+            val shieldQuery = AVQuery<AVObject>(TableConstants.TABLE_SHIELD)
+
+            shieldQuery.whereEqualTo(
+                TableConstants.USER,
+                AVObject.createWithoutData(TableConstants.TABLE_USER, userObjectId)
+            )
+
+            // 查询 Like 表中的过滤数据
+            val likeQuery = AVQuery<AVObject>(TableConstants.TABLE_LIKE)
+            likeQuery.whereEqualTo(
+                TableConstants.USER,
+                AVObject.createWithoutData(TableConstants.TABLE_USER, userObjectId)
+            )
+
+            shieldQuery.findInBackground(object : FindCallback<AVObject>() {
+                override fun done(avShields: MutableList<AVObject>?, avException: AVException?) {
+                    // shield 表查询异常不影响 dynamic 的数据查询
+                    // 查询 Like 表
+                    queryLikeAll(likeQuery) {
+                        //点过赞的id集合
+                        val likeIdList = arrayListOf<String>()
+                        it?.forEach { like ->
+                            val likeId = like.getString("likedId")
+                            likeIdList.add(likeId)
+                        }
+                        //屏蔽过的id集合
+                        val shieldIdList = arrayListOf<String>()
+                        avShields?.forEach {shield ->
+                            val avObject = shield.getAVObject<AVObject>("shieldId")
+                            val idPointer = avObject.objectId
+                            shieldIdList.add(idPointer)
+                        }
+
+                        queryDynamicAll(likeIdList,shieldIdList, callback)
+                    }
+
+                }
+            })
+        } else {
+            queryDynamicAll(null, null, callback)
+        }
+    }
+
+    /**
+     * 查询like数据
+     */
+    fun queryLikeAll(likeQuery: AVQuery<AVObject>, callback: ((MutableList<AVObject>?) -> Unit)) {
+
+        likeQuery.findInBackground(object : FindCallback<AVObject>() {
+            override fun done(likes: MutableList<AVObject>?, avException: AVException?) {
+                callback(likes)
+            }
+        })
+    }
+
+    /**
+     * 查询 首页动态数据
+     */
+    private fun queryDynamicAll(
+        likeIdList: ArrayList<String>?,
+        shieldIdList: ArrayList<String>?,
+        callback: (ArrayList<Dynamic>?, AVException?) -> Unit
+    ) {
+        val dynamicQuery = AVQuery<AVObject>(TableConstants.TABLE_DYNAMIC)
+        dynamicQuery.findInBackground(object : FindCallback<AVObject>() {
+
+            override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
+                if (avException == null && avObjects != null && avObjects.size > 0) {
+                    val dynamicList = arrayListOf<Dynamic>()
+                    if ((shieldIdList?.size == 0)) {
+                        setDynamicData(dynamicList, avObjects,likeIdList) {
+                            callback(it, null)
+                        }
+                    } else {
+                        //过滤 shield 后的集合
+                        if(shieldIdList != null){
+                            val filterList = avObjects.filterTo(arrayListOf()) {
+                                val avUser = it.getAVObject<AVObject>("user")
+                                !shieldIdList.contains(avUser.objectId)
+                            }
+                            setDynamicData(dynamicList, filterList,likeIdList) {
+                                callback(it, null)
+                            }
+                        }else{
+                            setDynamicData(dynamicList, avObjects,likeIdList) {
+                                callback(it, null)
+                            }
+                        }
+                    }
+
+                } else {
+                    callback(null, avException)
+                }
+            }
+
+        })
+    }
+
+    /**
+     * 填充数据
+     */
+    private fun setDynamicData(
+        dynamicList: ArrayList<Dynamic>,
+        avDynamics: MutableList<AVObject>,
+        likeIdList: ArrayList<String>?,
+        callback: (ArrayList<Dynamic>) -> Unit
+    ) {
+        try{
+            val avUserQueryList = arrayListOf<AVQuery<AVUser>>()
+            val avUserInfoQueryList = arrayListOf<AVQuery<AVObject>>()
+            avDynamics.forEach {
+                val dynamic = Dynamic()
+                val id = it.objectId
+                dynamic.objectId = id
+                dynamic.createAt = it.createdAt
+                dynamic.updateAt = it.updatedAt
+                dynamic.contents = it.getString("contents")
+                val jsonArray = it.getJSONArray("images")
+                val arrList: MutableList<String> = JSONObject.parseArray(jsonArray.toString(), String::class.javaObjectType)
+                dynamic.images = arrList
+                val skill = it.getString("skill")
+                dynamic.skill = skill
+                dynamic.likeNum = it.getInt("likeNum")
+                dynamic.able = it.getInt("able")
+                val style = it.getString("style")
+                dynamic.style = style
+                dynamic.fire = it.getInt("fire")
+                val tags = arrayListOf<String>()
+                if (StringUtils.isNotEmptyAndNull(skill)) {
+                    tags.add("# $skill")
+                }
+                if (StringUtils.isNotEmptyAndNull(style)) {
+                    tags.add("# $style")
+                }
+                dynamic.tagList = tags
+                //是否点过赞了
+                dynamic.isSelected = (likeIdList?.contains(id) ?: false)
+                //user 表
+                val avUser = it.getAVUser<AVUser>("user")
+                val userId = avUser.objectId
+                dynamic.idPointer = userId
+                dynamicList.add(dynamic)
+
+                //or 组合查询
+                val userQuery = AVQuery<AVUser>(TableConstants.TABLE_USER)
+                userQuery.whereEqualTo(TableConstants.OBJECTID, userId)
+                avUserQueryList.add(userQuery)
+
+                val userInfoQuery = AVQuery<AVObject>(TableConstants.TABLE_USERINFO)
+                userInfoQuery.whereEqualTo(TableConstants.OBJECTID,userId)
+                avUserInfoQueryList.add(userInfoQuery)
+
+
+            }
+            val queryUserByOr = AVQuery.or(avUserQueryList)
+            queryUserByOr.findInBackground(object : FindCallback<AVUser>(){
+
+                override fun done(avUsers: MutableList<AVUser>?, avException: AVException?) {
+                    avUsers?.forEach { avUser ->
+                        dynamicList.forEach {
+                            if(it.idPointer == avUser.objectId){
+                                it.userName = avUser.username
+                                it.avatarurl = avUser.getAVFile<AVFile>("avatar").url
+                            }
+                        }
+                    }
+
+                    val queryUserInfoByOr = AVQuery.or(avUserInfoQueryList)
+                    queryUserInfoByOr.findInBackground(object : FindCallback<AVObject>(){
+                        override fun done(avUserInfos: MutableList<AVObject>?, avException: AVException?) {
+                            avUserInfos?.forEach { avUserInfo ->
+                                dynamicList.forEach {
+                                    if(it.idPointer == avUserInfo.objectId){
+                                        it.userAutonym = avUserInfo.getInt("autonym")
+                                    }
+                                }
+                            }
+                            callback(dynamicList)
+                        }
+
+                    })
+                }
+            })
+        }catch (e : Exception){
+            callback(dynamicList)
+        }
+
     }
 }
+

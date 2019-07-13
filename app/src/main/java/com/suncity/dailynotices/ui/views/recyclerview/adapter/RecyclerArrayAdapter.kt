@@ -11,7 +11,7 @@ import java.util.*
 
 /**
  *
- * 包含各种类型的recyclerView adapter
+ * 包含各种类型的recyclerView mAdapter
  */
 abstract class RecyclerArrayAdapter<T> : RecyclerView.Adapter<HAFViewHolder<T>> {
 
@@ -370,10 +370,10 @@ abstract class RecyclerArrayAdapter<T> : RecyclerView.Adapter<HAFViewHolder<T>> 
     }
 
     /**
-     * Sorts the content of this adapter using the specified comparator.
+     * Sorts the content of this mAdapter using the specified comparator.
      *
      * @param comparator The comparator used to sort the objects contained
-     * in this adapter.
+     * in this mAdapter.
      */
     fun sort(comparator: Comparator<in T>) {
         if (mObjects == null || mObjects!!.size == 0) return
@@ -502,7 +502,7 @@ abstract class RecyclerArrayAdapter<T> : RecyclerView.Adapter<HAFViewHolder<T>> 
         return getViewType(position - headers.size)
     }
 
-    fun getViewType(position: Int): Int {
+    open fun getViewType(position: Int): Int {
         return 0
     }
 

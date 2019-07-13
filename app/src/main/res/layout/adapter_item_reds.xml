@@ -13,8 +13,9 @@
             android:id="@+id/iv_red"
             android:layout_width="@dimen/dp_166"
             android:layout_height="@dimen/dp_166"
-            app:placeholderImage="@mipmap/ico_empty_holder"
-            app:failureImage="@mipmap/ico_empty_holder"
+            app:placeholderImage="@mipmap/ico_home_img_holder"
+            app:failureImage="@mipmap/ico_home_img_holder"
+            app:placeholderImageScaleType="centerCrop"
             app:roundedCornerRadius="@dimen/dp_4"
     />
 

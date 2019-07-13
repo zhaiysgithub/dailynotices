@@ -11,7 +11,7 @@ import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapt
 
 /**
  * @ProjectName:    dailynotices
- * @Package:        com.suncity.dailynotices.ui.adapter
+ * @Package:        com.suncity.dailynotices.ui.mAdapter
  * @ClassName:      MineAdapter
  * @Description:    我的页面的底部的列表模块
  */

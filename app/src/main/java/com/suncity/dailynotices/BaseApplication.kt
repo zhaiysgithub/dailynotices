@@ -3,12 +3,15 @@ package com.suncity.dailynotices
 import android.app.Application
 import android.content.Context
 import com.avos.avoscloud.AVOSCloud
+import com.facebook.cache.disk.DiskCacheConfig
+import com.facebook.common.util.ByteConstants
 import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.imagepipeline.cache.MemoryCacheParams
+import com.facebook.imagepipeline.core.ImagePipelineConfig
 import com.scwang.smartrefresh.header.MaterialHeader
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.scwang.smartrefresh.layout.api.*
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter
-import com.scwang.smartrefresh.layout.header.ClassicsHeader
 import com.suncity.dailynotices.utils.AppUtils
 import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.LogUtils
@@ -45,12 +48,41 @@ class BaseApplication : Application() {
         })
     }
 
+    companion object {
+        private val MAX_HEAP_SIZE = Runtime.getRuntime().maxMemory().toInt()
+        private val MAX_MEMORY_CACHE_SIZE = MAX_HEAP_SIZE / 4
+        private const val MAX_DISK_CACHE_SIZE = 20L * ByteConstants.MB
+    }
+
     override fun onCreate() {
         super.onCreate()
         Config.setApplicationContext(this)
         AppUtils.init(this)
         initAvos()
-        Fresco.initialize(this)
+        initFrescoConfig()
+
+    }
+
+    private fun initFrescoConfig() {
+
+        val pipelineConfig = ImagePipelineConfig.newBuilder(this)
+            .setBitmapMemoryCacheParamsSupplier {
+                MemoryCacheParams(
+                    MAX_MEMORY_CACHE_SIZE,
+                    Int.MAX_VALUE,
+                    MAX_MEMORY_CACHE_SIZE,
+                    Int.MAX_VALUE,
+                    Int.MAX_VALUE)
+            }
+            .setMainDiskCacheConfig(
+                DiskCacheConfig.newBuilder(this)
+                .setBaseDirectoryPath(cacheDir)
+                .setBaseDirectoryName("notice")
+                .setMaxCacheSize(MAX_DISK_CACHE_SIZE)
+                .build())
+            .setDownsampleEnabled(true)
+            .build()
+        Fresco.initialize(this,pipelineConfig)
     }
 
 

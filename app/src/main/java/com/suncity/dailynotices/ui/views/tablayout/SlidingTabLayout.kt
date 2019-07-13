@@ -339,7 +339,7 @@ class SlidingTabLayout @JvmOverloads constructor(
     /** 关联ViewPager  */
     fun setViewPager(vp: ViewPager?) {
         if (vp == null || vp.adapter == null) {
-            throw IllegalStateException("ViewPager or ViewPager adapter can not be NULL !")
+            throw IllegalStateException("ViewPager or ViewPager mAdapter can not be NULL !")
         }
 
         this.mViewPager = vp
@@ -352,7 +352,7 @@ class SlidingTabLayout @JvmOverloads constructor(
     /** 关联ViewPager,用于不想在ViewPager适配器中设置titles数据的情况  */
     fun setViewPager(vp: ViewPager?, titles: Array<String>?) {
         if (vp == null || vp.adapter == null) {
-            throw IllegalStateException("ViewPager or ViewPager adapter can not be NULL !")
+            throw IllegalStateException("ViewPager or ViewPager mAdapter can not be NULL !")
         }
 
         if (titles == null || titles.isEmpty()) {

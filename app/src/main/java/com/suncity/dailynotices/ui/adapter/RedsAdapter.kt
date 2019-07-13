@@ -11,7 +11,7 @@ import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapt
 
 /**
  * @ProjectName:    dailynotices
- * @Package:        com.suncity.dailynotices.ui.adapter
+ * @Package:        com.suncity.dailynotices.ui.mAdapter
  * @ClassName:      RedsAdapter
  * @Description:     作用描述
  * @UpdateDate:     12/7/2019

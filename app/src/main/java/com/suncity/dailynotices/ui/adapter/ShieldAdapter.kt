@@ -14,7 +14,7 @@ import com.suncity.dailynotices.utils.PreventRepeatedUtils
 
 /**
  * @ProjectName:    dailynotices
- * @Package:        com.suncity.dailynotices.ui.adapter
+ * @Package:        com.suncity.dailynotices.ui.mAdapter
  * @ClassName:      ShieldAdapter
  * @Description:     作用描述
  * @UpdateDate:     11/7/2019

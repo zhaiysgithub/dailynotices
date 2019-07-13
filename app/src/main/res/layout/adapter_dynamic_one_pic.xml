@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_20"
+        android:paddingLeft="@dimen/dp_20"
+        android:paddingRight="@dimen/dp_20"
+        tools:ignore="UselessParent">
+
+    <!--头像-->
+    <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/iv_avatar"
+            android:layout_width="@dimen/dp_36"
+            android:layout_height="@dimen/dp_36"
+            app:placeholderImage="@drawable/ico_default_avatar"
+            app:failureImage="@drawable/ico_default_avatar"
+            app:roundAsCircle="true"/>
+    <!--头部-->
+    <RelativeLayout
+            android:id="@+id/layout_header"
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/iv_avatar"
+            android:layout_marginStart="@dimen/dp_2">
+
+        <!--用户名-->
+        <TextView
+                android:id="@+id/tv_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="@dimen/sp_14"
+                android:maxLength="20"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textColor="@color/color_222"/>
+
+        <!--日期-->
+        <TextView
+                android:id="@+id/tv_createDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_11"
+                android:textColor="@color/color_999"
+                android:layout_below="@id/tv_username"
+                android:layout_marginTop="@dimen/dp_1"
+        />
+
+        <!--认证标志-->
+        <ImageView
+                android:id="@+id/iv_auth_mark"
+                android:layout_width="@dimen/dp_14"
+                android:layout_height="@dimen/dp_14"
+                android:src="@mipmap/ico_certification"
+                android:layout_toEndOf="@id/tv_username"
+                android:layout_marginStart="@dimen/dp_1"
+                android:layout_alignTop="@id/tv_username"
+                tools:ignore="ContentDescription"/>
+
+        <!--更多-->
+        <ImageView
+                android:id="@+id/iv_more"
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="@dimen/dp_25"
+                android:src="@mipmap/ico_nav_more"
+                android:layout_alignParentEnd="true"
+                android:scaleType="centerInside"
+                android:layout_centerVertical="true"
+                tools:ignore="ContentDescription"/>
+    </RelativeLayout>
+
+    <!--内容区域-->
+    <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout_header"
+            android:layout_marginTop="@dimen/dp_4"
+            android:textSize="@dimen/sp_14"
+            android:textColor="@color/color_222"
+            android:text="用户可在此输入140字，用户可在此输入140字用户可在此输入140"
+            android:maxLength="140"
+            android:ellipsize="end"/>
+
+    <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/iv_pic_one"
+            android:layout_width="@dimen/dp_222"
+            android:layout_height="@dimen/dp_222"
+            app:placeholderImage="@mipmap/ico_home_img_holder"
+            app:placeholderImageScaleType="fitCenter"
+            app:roundedCornerRadius="@dimen/dp_4"
+            android:layout_below="@id/tv_content"
+            android:layout_marginTop="@dimen/dp_12"
+    />
+
+    <!--footer-->
+    <com.suncity.dailynotices.ui.views.flowlayout.TagFlowLayout
+            android:id="@+id/tagFlowLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_pic_one"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_toStartOf="@id/layout_zan"
+            app:tag_gravity="left"/>
+
+    <RelativeLayout
+            android:id="@+id/layout_zan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_pic_one"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/dp_6"
+            android:layout_marginTop="@dimen/dp_10">
+        <ImageView
+                android:id="@+id/iv_zan"
+                android:layout_width="@dimen/dp_21"
+                android:layout_height="@dimen/dp_21"
+                android:scaleType="centerInside"
+                android:src="@mipmap/ico_zan_unselected"
+                tools:ignore="ContentDescription"/>
+
+        <TextView
+                android:id="@+id/tv_zan_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_11"
+                android:textColor="@color/color_222"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/dp_6"
+                android:layout_toEndOf="@id/iv_zan"
+        />
+    </RelativeLayout>
+
+</RelativeLayout>
+

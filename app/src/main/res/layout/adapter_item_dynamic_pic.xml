@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.drawee.view.SimpleDraweeView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/iv_pic"
+        android:layout_width="@dimen/dp_109"
+        android:layout_height="@dimen/dp_109"
+        app:actualImageScaleType="centerCrop"
+        app:placeholderImage="@mipmap/ico_home_img_holder"
+        app:failureImage="@mipmap/ico_home_img_holder"
+        app:placeholderImageScaleType="centerInside"
+        app:failureImageScaleType="centerInside"
+        app:roundedCornerRadius="@dimen/dp_4"
+/>

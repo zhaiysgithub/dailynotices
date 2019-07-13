@@ -51,4 +51,14 @@ object DateUtils {
             false
         }
     }
+
+    fun compareDate(time1:Date?,time2:Date?):Boolean{
+        return try {
+            val endTimeLong1 = time1?.time ?: 0L
+            val endTimeLong2 = time2?.time ?: 0L
+            (endTimeLong1 > endTimeLong2)
+        }catch (e : Exception){
+            false
+        }
+    }
 }

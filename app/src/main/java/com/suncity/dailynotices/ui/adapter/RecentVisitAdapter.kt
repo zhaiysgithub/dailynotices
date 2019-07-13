@@ -12,7 +12,7 @@ import com.suncity.dailynotices.utils.DateUtils
 
 /**
  * @ProjectName:    dailynotices
- * @Package:        com.suncity.dailynotices.ui.adapter
+ * @Package:        com.suncity.dailynotices.ui.mAdapter
  * @ClassName:      RecentVisitAdapter
  * @Description:    我查看的和查看我的adapter
  * @UpdateDate:     11/7/2019
