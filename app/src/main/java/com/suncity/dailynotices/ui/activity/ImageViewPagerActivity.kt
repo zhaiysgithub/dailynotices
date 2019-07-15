@@ -1,12 +1,8 @@
 package com.suncity.dailynotices.ui.activity
 
-import android.app.ActivityOptions
-import android.content.Context
-import android.content.Intent
 import android.graphics.drawable.Animatable
 import android.net.Uri
 import android.support.v4.view.PagerAdapter
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.drawee.backends.pipeline.Fresco

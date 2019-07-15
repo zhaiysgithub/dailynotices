@@ -80,6 +80,7 @@ class DynamicDetailActivity : BaseActivity() {
     private var layoutThreeImage = R.layout.adapter_dynamic_three_pic
     private var layoutFourImage = R.layout.adapter_dynamic_four_pic
     private var layoutGreaterfourImage = R.layout.adapter_dynamic_greaterfour_pic
+    private var firstImgUrl:String? = null
 
     override fun setScreenManager() {
         mInflater = LayoutInflater.from(this)
@@ -277,7 +278,7 @@ class DynamicDetailActivity : BaseActivity() {
         if (userObjectId == null) return
         layout?.setOnClickListener {
             if (PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
-            UserInfoActivity.start(this@DynamicDetailActivity, userObjectId)
+            UserInfoActivity.start(this@DynamicDetailActivity, userObjectId,firstImgUrl)
         }
     }
 
@@ -361,21 +362,24 @@ class DynamicDetailActivity : BaseActivity() {
 
 
     private fun setMoreClick(ivMore: ImageView?, idPointer: String?) {
-        if (idPointer?.isEmpty() == true) return
-        if (!isLogined()) {
-            startActivity(LoginActivity::class.java)
-        } else {
-            ivMore?.setOnClickListener {
+
+        ivMore?.setOnClickListener {
+            if (idPointer?.isEmpty() == true) return@setOnClickListener
+            if (!isLogined()) {
+                startActivity(LoginActivity::class.java)
+            }else{
                 if (!PreventRepeatedUtils.isFastDoubleClick()) {
                     createBottomDialog(idPointer!!)
                 }
             }
+
         }
     }
 
     private fun setOnePic(ivPic: SimpleDraweeView?, data: Dynamic) {
         val images = data.images
         if (images != null && images.size > 0) {
+            firstImgUrl = images[0]
             ivPic?.setImageURI(images[0])
             setImageClick(ivPic, 0, images[0], data)
         }
@@ -385,6 +389,7 @@ class DynamicDetailActivity : BaseActivity() {
     private fun setTwoPic(ivPicOne: SimpleDraweeView?, ivPicTwo: SimpleDraweeView?, data: Dynamic) {
         val images = data.images
         if (images != null && images.size > 0) {
+            firstImgUrl = images[0]
             ivPicOne?.setImageURI(images[0])
             setImageClick(ivPicOne, 0, images[0], data)
             if (images[1].isNotEmpty()) {
@@ -400,6 +405,7 @@ class DynamicDetailActivity : BaseActivity() {
     ) {
         val images = data.images
         if (images != null && images.size > 0) {
+            firstImgUrl = images[0]
             ivPicOne?.setImageURI(images[0])
             setImageClick(ivPicOne, 0, images[0], data)
             if (images[1].isNotEmpty()) {
@@ -419,6 +425,7 @@ class DynamicDetailActivity : BaseActivity() {
     ) {
         val images = data.images
         if (images != null && images.size > 0) {
+            firstImgUrl = images[0]
             ivPicOne?.setImageURI(images[0])
             setImageClick(ivPicOne, 0, images[0], data)
             if (images[1].isNotEmpty()) {
@@ -444,6 +451,7 @@ class DynamicDetailActivity : BaseActivity() {
         picRecyclerView?.adapter = adapter
         val images = data.images
         if (images != null && images.size > 0) {
+            firstImgUrl = images[0]
             adapter.addAll(images)
             adapter.setOnItemClickListener(object : RecyclerArrayAdapter.OnItemClickListener {
 

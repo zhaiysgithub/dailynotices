@@ -1,6 +1,7 @@
 package com.suncity.dailynotices.ui.activity
 
 import android.animation.ArgbEvaluator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.support.design.widget.AppBarLayout
@@ -11,18 +12,22 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.OnApplyWindowInsetsListener
 import android.support.v4.view.ViewCompat
 import android.support.v4.view.WindowInsetsCompat
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
 import com.avos.avoscloud.AVFile
+import com.avos.avoscloud.AVObject
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.AppBarStateChangeListener
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.bar.ImmersionBar
-import com.suncity.dailynotices.ui.fragment.UserInfoFragment
+import com.suncity.dailynotices.ui.fragment.UserInfoHomeFragment
+import com.suncity.dailynotices.ui.fragment.UserInfoPicFragment
+import com.suncity.dailynotices.utils.Config
+import com.suncity.dailynotices.utils.PreventRepeatedUtils
 import com.suncity.dailynotices.utils.ScreentUtils
+import com.suncity.dailynotices.utils.StringUtils
 import kotlinx.android.synthetic.main.ac_userinfo.*
 
 /**
@@ -35,16 +40,22 @@ import kotlinx.android.synthetic.main.ac_userinfo.*
 class UserInfoActivity : BaseActivity() {
 
     private var mAdapter: ViewPagerAdapter? = null
-    private var objectId : String? = null
-    private val tabTitles = arrayListOf("主页","图片")
+    private var objectId: String? = null
+    private var ivHeaderBg: String = ""
+    private val tabTitles = arrayListOf("主页", "图片")
+    private var userInfoObject: AVObject? = null
+
 
     companion object {
         private const val OBJECTID = "objectId"
-
-        fun start(context: Context, objectId: String) {
+        private const val IMGBG = "imgbg"
+        private var mImgBg : String = ""
+        fun start(context: Context, objectId: String, imgBg: String? = null) {
             val intent = Intent()
             intent.setClass(context, UserInfoActivity::class.java)
             intent.putExtra(OBJECTID, objectId)
+            mImgBg = imgBg ?: ""
+            intent.putExtra(IMGBG,mImgBg)
             context.startActivity(intent)
         }
     }
@@ -62,6 +73,7 @@ class UserInfoActivity : BaseActivity() {
 
     override fun initData() {
         objectId = intent.getStringExtra(OBJECTID)
+        ivHeaderBg = intent.getStringExtra(IMGBG)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
@@ -69,9 +81,9 @@ class UserInfoActivity : BaseActivity() {
         collapsing_toolbar?.isTitleEnabled = false
         collapsing_toolbar?.requestLayout()
         actionBarResponsive()
+
         mAdapter = ViewPagerAdapter(supportFragmentManager)
         viewPager?.offscreenPageLimit = (mAdapter?.count ?: 0)
-        viewPager?.adapter = mAdapter
         tabLayout?.setupWithViewPager(viewPager)
 
         ViewCompat.setOnApplyWindowInsetsListener(view_container, object : OnApplyWindowInsetsListener {
@@ -86,14 +98,57 @@ class UserInfoActivity : BaseActivity() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun queryData() {
         if (objectId.isNullOrEmpty()) return
-        Query.queryUserByObjectId(objectId!!){ avUser,e ->
-            if(avUser != null && e == null){
+        Query.queryUserByObjectId(objectId!!) { avUser, e ->
+            if (avUser != null) {
                 val username = avUser.username
                 toolbar_title?.text = username
-                val avatarFile:AVFile = avUser.getAVFile("avatar")
-                imageView_header?.setImageURI(avatarFile.url)
+                val avatarFile: AVFile = avUser.getAVFile("avatar")
+                val avatarUrl = avatarFile.url
+                if(ivHeaderBg.isEmpty()){
+                    imageView_header?.setImageURI(avatarUrl)
+                }else{
+                    imageView_header?.setImageURI(ivHeaderBg)
+                }
+                iv_userinfo_avatar?.setImageURI(avatarUrl)
+                tv_userinfo_name?.text = username
+                val userinfoId = avUser.getAVObject<AVObject>("info").objectId
+                Query.queryUserInfoByObjectId(userinfoId) { userInfo, _ ->
+                    if (userInfo != null) {
+                        userInfoObject = userInfo
+                        val sex = userInfo.getString("sex")
+                        if (sex == "1") {//女性
+                            iv_userinfo_sex?.setBackgroundResource(R.drawable.shape_sex_girl)
+                            iv_sex?.setImageResource(R.mipmap.ico_female)
+                        } else {//男性
+                            iv_userinfo_sex?.setBackgroundResource(R.drawable.shape_sex_boy)
+                            iv_sex?.setImageResource(R.mipmap.ico_male)
+                        }
+                        var age = userInfo.getString("age")
+                        if (StringUtils.isEmptyOrNull(age)) age = "18"
+                        tv_age?.text = "${age}岁"
+
+                        val autonym = userInfo.getInt("autonym")
+                        if (autonym == 1) {//已认证
+                            tv_auth_mark?.text = Config.getString(R.string.str_certified_name)
+                            val leftDrawable = Config.getDrawable(R.mipmap.ico_certification)
+                            leftDrawable.setBounds(0, 0, leftDrawable.minimumWidth, leftDrawable.minimumHeight)
+                            tv_auth_mark?.setCompoundDrawables(leftDrawable, null, null, null)
+                        } else {//未认证
+                            tv_auth_mark?.text = Config.getString(R.string.str_userinfo_no_autonym)
+                            tv_auth_mark?.setCompoundDrawables(null, null, null, null)
+                        }
+                        val fireCount = userInfo.getInt("fire")
+                        tv_userinfo_recommend?.text = "被推荐$fireCount"
+
+                        //设置底部的布局
+                        viewPager?.adapter = mAdapter
+                    } else {
+
+                    }
+                }
             }
         }
     }
@@ -161,6 +216,11 @@ class UserInfoActivity : BaseActivity() {
             }
 
         })
+
+        tv_direct_msg?.setOnClickListener {
+            if(PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
+            //TODO 进入聊天会话页面
+        }
     }
 
     private fun actionBarResponsive() {
@@ -180,7 +240,7 @@ class UserInfoActivity : BaseActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId){
+        when (item?.itemId) {
             android.R.id.home -> {
                 finish()
             }
@@ -191,8 +251,18 @@ class UserInfoActivity : BaseActivity() {
 
     private inner class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
 
-        override fun getItem(position: Int): Fragment {
-            return UserInfoFragment()
+        override fun getItem(position: Int): Fragment? {
+            return when (position) {
+                0 -> {
+                    UserInfoHomeFragment.getInstance(userInfoObject)
+                }
+                1 -> {
+                    UserInfoPicFragment.getInstance(userInfoObject)
+                }
+                else -> {
+                    null
+                }
+            }
         }
 
         override fun getCount(): Int {

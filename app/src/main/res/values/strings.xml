@@ -92,4 +92,7 @@
     <string name="str_dynamic_all">全部评论</string>
     <string name="str_dynamic_detail">动态详情</string>
     <string name="str_no_comments">暂无评论</string>
+    <string name="str_userinfo_no_autonym">通过实名认证，提高个人信誉</string>
+    <string name="str_userinfopic_empty">还没有展示图片，赶快添加吧</string>
+    <string name="str_direct_msg">私信</string>
 </resources>

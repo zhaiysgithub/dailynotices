@@ -1,5 +1,6 @@
 package com.suncity.dailynotices.lcoperation
 
+import android.support.v7.app.ActionBar
 import android.util.Log
 import android.widget.TabHost
 import com.alibaba.fastjson.JSONObject
@@ -439,6 +440,17 @@ object Query {
         avQuery.getInBackground(objectId, object : GetCallback<AVUser>() {
             override fun done(avUser: AVUser?, e: AVException?) {
                 callback(avUser, e)
+            }
+
+        })
+    }
+
+    fun queryUserInfoByObjectId(objectId: String, callback: ((AVObject?, AVException?) -> Unit)) {
+        val userInfoQuery = AVQuery<AVObject>(TableConstants.TABLE_USERINFO)
+        userInfoQuery.whereEqualTo(TableConstants.OBJECTID, objectId)
+        userInfoQuery.getFirstInBackground(object : GetCallback<AVObject>() {
+            override fun done(userInfo: AVObject?, e: AVException?) {
+                callback(userInfo, e)
             }
 
         })
@@ -886,9 +898,9 @@ object Query {
                                 callback(null, avException)
                             } else {
                                 users.forEach {
-                                    commentsList.forEach {comment ->
+                                    commentsList.forEach { comment ->
 
-                                        if(comment.userPointerId == it.objectId){
+                                        if (comment.userPointerId == it.objectId) {
                                             comment.userName = it.username
                                             comment.userInfoPointerId = it.getAVObject<AVObject>("info").objectId
                                             comment.userAvatar = it.getAVFile<AVFile>("avatar").url
@@ -896,11 +908,36 @@ object Query {
                                     }
 
                                 }
-                                callback(commentsList,null)
+                                callback(commentsList, null)
                             }
                         }
 
                     })
+                }
+            }
+
+        })
+    }
+
+    /**
+     * 查询用户中心的图片列表数据
+     */
+    fun queryHomeImagesByUserid(userId: String, callback: (ArrayList<String>?, AVException?) -> Unit) {
+
+        val homeImagesObject = AVQuery<AVObject>(TableConstants.TABLE_HOMEIMAGES)
+        homeImagesObject.whereEqualTo(TableConstants.USER, AVObject.createWithoutData(TableConstants.USER, userId))
+        homeImagesObject.findInBackground(object : FindCallback<AVObject>() {
+
+            override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
+                if (avObjects != null && avObjects.size > 0) {
+                    val imageList = arrayListOf<String>()
+                    avObjects.forEach {
+                        val imageFile = it.getAVFile<AVFile>("image")
+                        imageList.add(imageFile.url)
+                    }
+                    callback(imageList,null)
+                } else {
+                    callback(null, avException)
                 }
             }
 
