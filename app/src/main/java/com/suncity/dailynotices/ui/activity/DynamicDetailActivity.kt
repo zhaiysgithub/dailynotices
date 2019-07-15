@@ -70,7 +70,9 @@ class DynamicDetailActivity : BaseActivity() {
             context.startActivity(intent)
         }
     }
-    private var commentAdapter : CommentAdapter? = null
+
+    private var commentAdapter: CommentAdapter? = null
+    private var dynamicId: String? = null
     private lateinit var mInflater: LayoutInflater
     private var layoutNoImage = R.layout.adapter_dynamic_no_pic
     private var layoutOneImage = R.layout.adapter_dynamic_one_pic
@@ -95,19 +97,28 @@ class DynamicDetailActivity : BaseActivity() {
 
     override fun initData() {
         val dynamicItem = intent.getSerializableExtra(DYNAMIC_EXTRA) as Dynamic
-        val dynamicId = dynamicItem.objectId
+        dynamicId = dynamicItem.objectId
         tv_title_center?.text = Config.getString(R.string.str_dynamic_detail)
         tv_empty_desc?.text = Config.getString(R.string.str_no_comments)
+        recyclerView_comments?.isNestedScrollingEnabled = false
+
         val imgSize = dynamicItem.images?.size ?: 0
         setContainerLayout(imgSize, dynamicItem)
         commentAdapter = CommentAdapter(this)
         recyclerView_comments?.setHasFixedSize(true)
         recyclerView_comments?.layoutManager = LinearLayoutManager(this)
-        recyclerView_comments?.addItemDecoration(DividerDecoration(dividerColor, dividerHeight, dividerMargin, dividerMargin))
+        recyclerView_comments?.addItemDecoration(
+            DividerDecoration(
+                dividerColor,
+                dividerHeight,
+                dividerMargin,
+                dividerMargin
+            )
+        )
         recyclerView_comments?.adapter = commentAdapter
         if (StringUtils.isNotEmptyAndNull(dynamicId)) {
             queryDynamicUser(dynamicId!!)
-            queryComments(dynamicId)
+            queryComments(dynamicId!!)
         }
 
 
@@ -118,7 +129,7 @@ class DynamicDetailActivity : BaseActivity() {
      */
     @SuppressLint("SetTextI18n")
     private fun queryComments(dynamicId: String) {
-        Query.queryCommentsByDynamicId(dynamicId){commentsList,avException ->
+        Query.queryCommentsByDynamicId(dynamicId) { commentsList, avException ->
             if (avException == null && (commentsList?.size ?: 0) > 0) {
                 tv_comments_title?.text = "全部${commentsList!!.size}条评论"
                 val sortedList = arrayListOf<Comments>()
@@ -130,7 +141,7 @@ class DynamicDetailActivity : BaseActivity() {
                 }))
                 commentAdapter?.clear()
                 commentAdapter?.addAll(sortedList)
-            }else{
+            } else {
                 tv_comments_title?.text = Config.getString(R.string.str_dynamic_all)
             }
             if ((commentAdapter?.itemCount ?: 0) > 0) {
@@ -273,6 +284,25 @@ class DynamicDetailActivity : BaseActivity() {
     override fun initListener() {
         fl_title_back?.setOnClickListener {
             finish()
+        }
+        tv_comment_end?.setOnClickListener {
+            if (dynamicId == null) return@setOnClickListener
+            val commentContent = et_comment_write?.text?.toString()?.trim()
+            if (commentContent?.isEmpty() == true) {
+                ToastUtils.showSafeToast(this@DynamicDetailActivity, "请您输入评论内容")
+                return@setOnClickListener
+            }
+            Increase.createComment(dynamicId!!,commentContent!!) {
+                if (it == null) {
+                    TipDialog.show(this@DynamicDetailActivity, "评论成功", TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_FINISH)
+                    et_comment_write?.setText("")
+                    DisplayUtils.hiddenInputMethod(this@DynamicDetailActivity)
+                    //刷新评论列表
+                    queryComments(dynamicId!!)
+                } else {
+                    ToastUtils.showSafeToast(this@DynamicDetailActivity, errorServer)
+                }
+            }
         }
     }
 
@@ -419,7 +449,7 @@ class DynamicDetailActivity : BaseActivity() {
 
                 override fun onItemClick(position: Int, view: View) {
                     val item = adapter.getItem(position) ?: return
-                    setImageClick(view,position,item,data)
+                    setImageClick(view, position, item, data)
                 }
 
             })
@@ -469,7 +499,8 @@ class DynamicDetailActivity : BaseActivity() {
                 val images = data.images
                 if (images == null || images.size == 0) return@setOnClickListener
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    val option = ActivityOptions.makeSceneTransitionAnimation(this@DynamicDetailActivity, view, IMAGETRANSITION)
+                    val option =
+                        ActivityOptions.makeSceneTransitionAnimation(this@DynamicDetailActivity, view, IMAGETRANSITION)
                     val intent = Intent(this@DynamicDetailActivity, ImageViewPagerActivity::class.java)
                     ImageViewPagerActivity.currentPos = pos
                     ImageViewPagerActivity.urls = images

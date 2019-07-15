@@ -886,14 +886,15 @@ object Query {
                                 callback(null, avException)
                             } else {
                                 users.forEach {
-                                    val item = commentsList.find { comment ->
-                                        comment.userPointerId == it.objectId
+                                    commentsList.forEach {comment ->
+
+                                        if(comment.userPointerId == it.objectId){
+                                            comment.userName = it.username
+                                            comment.userInfoPointerId = it.getAVObject<AVObject>("info").objectId
+                                            comment.userAvatar = it.getAVFile<AVFile>("avatar").url
+                                        }
                                     }
-                                    if(item != null){
-                                        item.userName = it.username
-                                        item.userInfoPointerId = it.getAVObject<AVObject>("info").objectId
-                                        item.userAvatar = it.getAVFile<AVFile>("avatar").url
-                                    }
+
                                 }
                                 callback(commentsList,null)
                             }

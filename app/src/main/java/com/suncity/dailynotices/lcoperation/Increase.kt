@@ -59,4 +59,19 @@ object Increase {
         likeObject.put("user",AVUser.createWithoutData(TableConstants.TABLE_USER,userObjectId))
         likeObject.saveInBackground()
     }
+
+
+    fun createComment(dynamicId:String,commentContents:String,callback: (AVException?) -> Unit){
+        val userObjectId = PreferenceStorage.userObjectId
+        val commentObject = AVObject(TableConstants.TABLE_COMMENTS)
+        commentObject.put("user",AVObject.createWithoutData(TableConstants.TABLE_USER,userObjectId))
+        commentObject.put("dynamicId",AVObject.createWithoutData(TableConstants.TABLE_DYNAMIC,dynamicId))
+        commentObject.put("comments",commentContents)
+        commentObject.saveInBackground(object : SaveCallback(){
+            override fun done(e: AVException?) {
+                callback(e)
+            }
+
+        })
+    }
 }
