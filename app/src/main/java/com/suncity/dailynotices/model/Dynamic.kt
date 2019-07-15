@@ -33,5 +33,7 @@ class Dynamic : Serializable {
     var userAutonym : Int? = null
     //like表  是否点过赞了
     var isSelected : Boolean = false
+    //点赞人的头像的集合
+    var userLikeAvatar:MutableList<String>? = null
 
 }

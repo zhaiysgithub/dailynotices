@@ -77,10 +77,19 @@
     <string name="str_title_shield">屏蔽过的人</string>
     <string name="str_remove">移出</string>
     <string name="str_expired">已过期</string>
+    <string name="image_transition_name">image_transition</string>
+    <string name="str_shield_success_tips">屏蔽成功，刷新将不再看到此用户的动态</string>
+    <string name="str_write_comment_hint">写评论…(最多140字哦)</string>
+    <string name="str_send">发送</string>
 
     <!-- error 信息 -->
     <string name="str_error_server">"抱歉，服务器开小差"</string>
     <string name="str_shield_user">屏蔽此人</string>
     <string name="str_report">举报</string>
     <string name="str_complain">投诉</string>
+    <string name="str_report_success">举报成功，我们会在 24H 内核实处理</string>
+    <string name="str_dynamic_detail_comment">全部评论</string>
+    <string name="str_dynamic_all">全部评论</string>
+    <string name="str_dynamic_detail">动态详情</string>
+    <string name="str_no_comments">暂无评论</string>
 </resources>

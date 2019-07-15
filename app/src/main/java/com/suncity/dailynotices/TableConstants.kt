@@ -26,7 +26,7 @@ class TableConstants {
         const val TABLE_INSTALLATION = "_Installation"
         const val TABLE_ROLE = "_Role"
         const val TABLE_AUTONYM = "Autonym"
-        const val TABLE_Comments = "COMMENTS"
+        const val TABLE_COMMENTS = "Comments"
         const val TABLE_COVER = "Cover"
         const val TABLE_DYNAMIC = "Dynamic"
         const val TABLE_FEEDBACK = "FeedBack"

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_20"
+>
+
+
+    <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/iv_avatar_comment"
+            android:layout_width="@dimen/dp_36"
+            android:layout_height="@dimen/dp_36"
+            app:placeholderImage="@drawable/ico_default_avatar"
+            app:failureImage="@drawable/ico_default_avatar"
+            app:roundAsCircle="true"
+    />
+
+    <!--头部-->
+    <RelativeLayout
+            android:id="@+id/layout_header_comment"
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_36"
+            android:layout_toEndOf="@id/iv_avatar_comment"
+            android:layout_marginStart="@dimen/dp_2">
+
+        <!--用户名-->
+        <TextView
+                android:id="@+id/tv_username_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="@dimen/sp_14"
+                android:maxLength="20"
+                android:layout_centerVertical="true"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textColor="@color/color_222"/>
+
+        <!--认证标志-->
+        <ImageView
+                android:id="@+id/iv_auth_mark_comment"
+                android:layout_width="@dimen/dp_14"
+                android:layout_height="@dimen/dp_14"
+                android:src="@mipmap/ico_certification"
+                android:layout_toEndOf="@id/tv_username_comment"
+                android:layout_marginStart="@dimen/dp_1"
+                android:layout_alignTop="@id/tv_username_comment"
+                android:visibility="gone"
+                tools:ignore="ContentDescription"/>
+
+    </RelativeLayout>
+
+    <!--内容区域-->
+    <TextView
+            android:id="@+id/tv_content_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_avatar_comment"
+            android:layout_marginTop="@dimen/dp_4"
+            android:textSize="@dimen/sp_14"
+            android:textColor="@color/color_222"
+            android:layout_alignStart="@id/layout_header_comment"
+            android:text="用户可在此输入140字，用户可在此输入140字用户可在此输入140"
+            android:maxLength="140"
+            android:ellipsize="end"/>
+
+    <!--日期-->
+    <TextView
+            android:id="@+id/tv_createDate_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sp_11"
+            android:textColor="@color/color_999"
+            android:layout_alignStart="@id/layout_header_comment"
+            android:layout_below="@id/tv_content_comment"
+            android:layout_marginTop="@dimen/dp_5"
+    />
+
+</RelativeLayout>
+
+

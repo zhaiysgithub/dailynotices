@@ -81,4 +81,6 @@
     <dimen name="dp_166">166dp</dimen>
     <dimen name="dp_222">222dp</dimen>
     <dimen name="dp_109">109dp</dimen>
+    <dimen name="dp_106">106dp</dimen>
+    <dimen name="dp_32">32dp</dimen>
 </resources>

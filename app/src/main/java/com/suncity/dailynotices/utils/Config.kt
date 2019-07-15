@@ -1,5 +1,6 @@
 package com.suncity.dailynotices.utils
 
+import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import com.suncity.dailynotices.BaseApplication
@@ -25,6 +26,11 @@ object Config {
     @JvmStatic
     fun getApplicationContext(): BaseApplication {
         return context
+    }
+
+    @JvmStatic
+    fun getResource(): Resources {
+        return getApplicationContext().resources
     }
 
     @JvmStatic

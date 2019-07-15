@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.drawee.view.SimpleDraweeView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/iv_dynamic_user_avatar"
+        android:layout_width="@dimen/dp_20"
+        android:layout_height="@dimen/dp_20"
+        app:placeholderImage="@drawable/ico_default_avatar"
+        app:roundAsCircle="true"
+/>

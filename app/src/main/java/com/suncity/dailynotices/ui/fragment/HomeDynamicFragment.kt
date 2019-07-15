@@ -1,7 +1,12 @@
 package com.suncity.dailynotices.ui.fragment
 
+import android.app.ActivityOptions
+import android.content.Intent
+import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.View
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.suncity.dailynotices.R
@@ -9,15 +14,20 @@ import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.callback.OnDynamicItemMenuClick
 import com.suncity.dailynotices.callback.SimpleGlobalObservable
 import com.suncity.dailynotices.dialog.BottomDialogiOSDynamic
+import com.suncity.dailynotices.dialog.TipDialog
+import com.suncity.dailynotices.lcoperation.Increase
+import com.suncity.dailynotices.lcoperation.Modify
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.model.Dynamic
 import com.suncity.dailynotices.ui.BaseFragment
+import com.suncity.dailynotices.ui.activity.*
 import com.suncity.dailynotices.ui.adapter.DynamicAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.ui.views.recyclerview.DividerDecoration
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.*
 import kotlinx.android.synthetic.main.ac_mine_focus.*
+import kotlinx.android.synthetic.main.dialog_tip.*
 import kotlinx.android.synthetic.main.view_empty.*
 
 /**
@@ -34,12 +44,15 @@ class HomeDynamicFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         GlobalObserverHelper.addObserver(globalObservable)
     }
+
     companion object {
 
         private val errorServer = Config.getString(R.string.str_error_server)
+        private val shieldSuccessTip = Config.getString(R.string.str_shield_success_tips)
         private val dividerMargin = DisplayUtils.dip2px(20f)
         private val dividerColor = Config.getColor(R.color.color_f3f3f3)
         private val dividerHeight = Config.getDimension(R.dimen.dp_1).toInt()
+        private val IMAGETRANSITION = Config.getString(R.string.image_transition_name)
         fun getInstance(): HomeDynamicFragment {
             return HomeDynamicFragment()
         }
@@ -54,7 +67,7 @@ class HomeDynamicFragment : BaseFragment() {
         dynamicAdapter = DynamicAdapter(requireContext())
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView?.addItemDecoration(DividerDecoration(dividerColor,dividerHeight,dividerMargin,dividerMargin))
+        recyclerView?.addItemDecoration(DividerDecoration(dividerColor, dividerHeight, dividerMargin, dividerMargin))
         recyclerView?.adapter = dynamicAdapter
 
         smartRefreshLayout?.autoRefresh()
@@ -89,27 +102,27 @@ class HomeDynamicFragment : BaseFragment() {
     private fun queryDynamicData(it: RefreshLayout?) {
         val isLogin = isLogined()
         val userObjectId = PreferenceStorage.userObjectId
-        Query.queryDynamicData(isLogin,userObjectId){dynamicList , avException ->
+        Query.queryDynamicData(isLogin, userObjectId) { dynamicList, avException ->
             it?.finishRefresh()
             if (avException == null && (dynamicList?.size ?: 0) > 0) {
                 val sortedList = arrayListOf<Dynamic>()
                 sortedList.addAll(dynamicList!!.sortedWith(kotlin.Comparator { o1, o2 ->
                     val time01 = o1.createAt
                     val time02 = o2.createAt
-                    val isGreater = DateUtils.compareDate(time01,time02)
-                    if(isGreater) -1 else 1
+                    val isGreater = DateUtils.compareDate(time01, time02)
+                    if (isGreater) -1 else 1
                 }))
                 dynamicAdapter?.clear()
                 dynamicAdapter?.addAll(sortedList)
             } else {
-                if (avException != null){
+                if (avException != null) {
                     ToastUtils.showSafeToast(requireContext(), errorServer)
                 }
             }
 
-            if((dynamicAdapter?.itemCount ?: 0) > 0){
+            if ((dynamicAdapter?.itemCount ?: 0) > 0) {
                 layout_empty?.visibility = View.GONE
-            }else{
+            } else {
                 layout_empty?.visibility = View.VISIBLE
             }
 
@@ -119,38 +132,87 @@ class HomeDynamicFragment : BaseFragment() {
     private val mDynamicItemClick = object : RecyclerArrayAdapter.OnItemClickListener {
 
         override fun onItemClick(position: Int, view: View) {
-
+            val item = dynamicAdapter?.getItem(position) ?: return
+            DynamicDetailActivity.start(requireContext(), item)
         }
 
     }
 
-    private val mDynamicItemMenuClick = object : OnDynamicItemMenuClick{
+    private val mDynamicItemMenuClick = object : OnDynamicItemMenuClick {
 
         override fun onMoreClick(position: Int) {
+            if (!isLogined()) {
+                startActivity(LoginActivity::class.java)
+                return
+            }
             val item = dynamicAdapter?.getItem(position)
             val dynamicMoreDialog = BottomDialogiOSDynamic(requireContext())
             dynamicMoreDialog.show()
-            dynamicMoreDialog.setClickCallback(object : BottomDialogiOSDynamic.ClickCallback{
+            dynamicMoreDialog.setClickCallback(object : BottomDialogiOSDynamic.ClickCallback {
                 override fun doShieldUserclick() {
+                    val idPointer = item?.idPointer ?: return
+                    Query.queryShieldUser(idPointer) {
+                        if (it) {
+                            Increase.createShieldToBack(idPointer) { e ->
+                                if (e == null) {
+                                    TipDialog.show(
+                                        requireContext(), shieldSuccessTip
+                                        , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_FINISH
+                                    )
+                                } else {
+                                    TipDialog.show(
+                                        requireContext(), errorServer
+                                        , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
 
                 override fun doCancel() {
                 }
 
                 override fun doReport() {
+                    startActivity(ReportActivity::class.java)
                 }
 
                 override fun doComplaint() {
+                    ContactServiceActivity.start(requireContext(), ContactServiceActivity.TYPE_COMPLAINT)
                 }
 
             })
 
         }
 
-        override fun onImageClick(position: Int, url: String) {
+        override fun onImageClick(view: View, position: Int, url: String, data: Dynamic) {
+            val images = data.images
+            if (images == null || images.size == 0) return
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val option = ActivityOptions.makeSceneTransitionAnimation(activity, view, IMAGETRANSITION)
+                val intent = Intent(requireContext(), ImageViewPagerActivity::class.java)
+                ImageViewPagerActivity.currentPos = position
+                ImageViewPagerActivity.urls = images
+                startActivity(intent, option.toBundle())
+            } else {
+                val intent = Intent(requireContext(), ImageViewPagerActivity::class.java)
+                val rect = Rect()
+                view.getLocalVisibleRect(rect)
+                intent.sourceBounds = rect
+                ImageViewPagerActivity.currentPos = position
+                ImageViewPagerActivity.urls = images
+                startActivity(intent)
+                activity?.overridePendingTransition(0, 0)
+            }
         }
 
-        override fun onSelectLikeClick(position: Int) {
+        // 点赞
+        override fun onSelectLikeClick(position: Int, data: Dynamic) {
+            val objectId = data.objectId ?: return
+            val likeNum = data.likeNum ?: 0
+            Modify.updateDynamicLikeNum(objectId, likeNum) { e ->
+                LogUtils.e(e.toString())
+            }
         }
 
         override fun onTagFlowClick(position: Int, tagPos: Int, tagString: String) {
@@ -158,7 +220,7 @@ class HomeDynamicFragment : BaseFragment() {
 
     }
 
-    private val globalObservable = object : SimpleGlobalObservable(){
+    private val globalObservable = object : SimpleGlobalObservable() {
 
         override fun onLoginSuccess() {
             queryDynamicData(null)
@@ -168,7 +230,6 @@ class HomeDynamicFragment : BaseFragment() {
             queryDynamicData(null)
         }
     }
-
 
 
     override fun onDestroy() {

@@ -175,6 +175,7 @@ dependencies {
     // Fresco 图片加载库
     implementation "com.facebook.fresco:fresco:$fresco_version"
     implementation "com.facebook.fresco:animated-gif:$frescogif_version"
+    implementation "me.relex:photodraweeview:1.1.3"//大图预览
 
     //leanCloud
     implementation "cn.leancloud.android:avoscloud-sdk:$avoscloud_version"

@@ -252,7 +252,7 @@ class MineFragment : BaseFragment() {
                 }
                 3 -> {
                     //联系客服
-                    startActivity(ContactServiceActivity::class.java)
+                    ContactServiceActivity.start(requireContext(),ContactServiceActivity.TYPE_CONTACTSERVICE)
                 }
                 4 -> {
                     //关于我们

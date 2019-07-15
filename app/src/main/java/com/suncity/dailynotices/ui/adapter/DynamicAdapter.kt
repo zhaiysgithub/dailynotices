@@ -3,7 +3,6 @@ package com.suncity.dailynotices.ui.adapter
 import android.content.Context
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,11 +17,9 @@ import com.suncity.dailynotices.ui.views.flowlayout.TagAdapter
 import com.suncity.dailynotices.ui.views.flowlayout.TagFlowLayout
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.HAFViewHolder
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
-import com.suncity.dailynotices.utils.DateUtils
-import com.suncity.dailynotices.utils.PreventRepeatedUtils
 import java.util.*
 import com.facebook.drawee.generic.RoundingParams
-import com.suncity.dailynotices.utils.StringUtils
+import com.suncity.dailynotices.utils.*
 
 
 /**
@@ -103,15 +100,15 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         private var tvZanCount: TextView? = null
 
         init {
-            ivAvatar = itemView.findViewById(R.id.iv_avatar)
-            tvUsername = itemView.findViewById(R.id.tv_username)
-            tvCreateDate = itemView.findViewById(R.id.tv_createDate)
-            ivAuthMark = itemView.findViewById(R.id.iv_auth_mark)
-            ivMore = itemView.findViewById(R.id.iv_more)
-            tvContent = itemView.findViewById(R.id.tv_content)
-            tagFlowLayout = itemView.findViewById(R.id.tagFlowLayout)
-            ivZan = itemView.findViewById(R.id.iv_zan)
-            tvZanCount = itemView.findViewById(R.id.tv_zan_count)
+            ivAvatar = itemView.findViewById(R.id.iv_avatar_no)
+            tvUsername = itemView.findViewById(R.id.tv_username_no)
+            tvCreateDate = itemView.findViewById(R.id.tv_createDate_no)
+            ivAuthMark = itemView.findViewById(R.id.iv_auth_mark_no)
+            ivMore = itemView.findViewById(R.id.iv_more_no)
+            tvContent = itemView.findViewById(R.id.tv_content_no)
+            tagFlowLayout = itemView.findViewById(R.id.tagFlowLayout_no)
+            ivZan = itemView.findViewById(R.id.iv_zan_no)
+            tvZanCount = itemView.findViewById(R.id.tv_zan_count_no)
         }
 
         override fun setData(data: Dynamic) {
@@ -140,16 +137,16 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         private var tvZanCount: TextView? = null
 
         init {
-            ivAvatar = itemView.findViewById(R.id.iv_avatar)
-            tvUsername = itemView.findViewById(R.id.tv_username)
-            tvCreateDate = itemView.findViewById(R.id.tv_createDate)
-            ivAuthMark = itemView.findViewById(R.id.iv_auth_mark)
-            ivMore = itemView.findViewById(R.id.iv_more)
-            tvContent = itemView.findViewById(R.id.tv_content)
-            tagFlowLayout = itemView.findViewById(R.id.tagFlowLayout)
-            ivZan = itemView.findViewById(R.id.iv_zan)
-            tvZanCount = itemView.findViewById(R.id.tv_zan_count)
-            ivPic = itemView.findViewById(R.id.iv_pic_one)
+            ivAvatar = itemView.findViewById(R.id.iv_avatar_one)
+            tvUsername = itemView.findViewById(R.id.tv_username_one)
+            tvCreateDate = itemView.findViewById(R.id.tv_createDate_one)
+            ivAuthMark = itemView.findViewById(R.id.iv_auth_mark_one)
+            ivMore = itemView.findViewById(R.id.iv_more_one)
+            tvContent = itemView.findViewById(R.id.tv_content_one)
+            tagFlowLayout = itemView.findViewById(R.id.tagFlowLayout_one)
+            ivZan = itemView.findViewById(R.id.iv_zan_one)
+            tvZanCount = itemView.findViewById(R.id.tv_zan_count_one)
+            ivPic = itemView.findViewById(R.id.iv_pic_one_one)
         }
 
         override fun setData(data: Dynamic) {
@@ -180,17 +177,17 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         private var tvZanCount: TextView? = null
 
         init {
-            ivAvatar = itemView.findViewById(R.id.iv_avatar)
-            tvUsername = itemView.findViewById(R.id.tv_username)
-            tvCreateDate = itemView.findViewById(R.id.tv_createDate)
-            ivAuthMark = itemView.findViewById(R.id.iv_auth_mark)
-            ivMore = itemView.findViewById(R.id.iv_more)
-            tvContent = itemView.findViewById(R.id.tv_content)
-            tagFlowLayout = itemView.findViewById(R.id.tagFlowLayout)
-            ivZan = itemView.findViewById(R.id.iv_zan)
-            tvZanCount = itemView.findViewById(R.id.tv_zan_count)
-            ivPicOne = itemView.findViewById(R.id.iv_pic_one)
-            ivPicTwo = itemView.findViewById(R.id.iv_pic_two)
+            ivAvatar = itemView.findViewById(R.id.iv_avatar_two)
+            tvUsername = itemView.findViewById(R.id.tv_username_two)
+            tvCreateDate = itemView.findViewById(R.id.tv_createDate_two)
+            ivAuthMark = itemView.findViewById(R.id.iv_auth_mark_two)
+            ivMore = itemView.findViewById(R.id.iv_more_two)
+            tvContent = itemView.findViewById(R.id.tv_content_two)
+            tagFlowLayout = itemView.findViewById(R.id.tagFlowLayout_two)
+            ivZan = itemView.findViewById(R.id.iv_zan_two)
+            tvZanCount = itemView.findViewById(R.id.tv_zan_count_two)
+            ivPicOne = itemView.findViewById(R.id.iv_pic_one_two)
+            ivPicTwo = itemView.findViewById(R.id.iv_pic_two_two)
         }
 
         override fun setData(data: Dynamic) {
@@ -222,18 +219,18 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         private var tvZanCount: TextView? = null
 
         init {
-            ivAvatar = itemView.findViewById(R.id.iv_avatar)
-            tvUsername = itemView.findViewById(R.id.tv_username)
-            tvCreateDate = itemView.findViewById(R.id.tv_createDate)
-            ivAuthMark = itemView.findViewById(R.id.iv_auth_mark)
-            ivMore = itemView.findViewById(R.id.iv_more)
-            tvContent = itemView.findViewById(R.id.tv_content)
-            tagFlowLayout = itemView.findViewById(R.id.tagFlowLayout)
-            ivZan = itemView.findViewById(R.id.iv_zan)
-            tvZanCount = itemView.findViewById(R.id.tv_zan_count)
-            ivPicOne = itemView.findViewById(R.id.iv_pic_one)
-            ivPicTwo = itemView.findViewById(R.id.iv_pic_two)
-            ivPicThree = itemView.findViewById(R.id.iv_pic_three)
+            ivAvatar = itemView.findViewById(R.id.iv_avatar_three)
+            tvUsername = itemView.findViewById(R.id.tv_username_three)
+            tvCreateDate = itemView.findViewById(R.id.tv_createDate_three)
+            ivAuthMark = itemView.findViewById(R.id.iv_auth_mark_three)
+            ivMore = itemView.findViewById(R.id.iv_more_three)
+            tvContent = itemView.findViewById(R.id.tv_content_three)
+            tagFlowLayout = itemView.findViewById(R.id.tagFlowLayout_three)
+            ivZan = itemView.findViewById(R.id.iv_zan_three)
+            tvZanCount = itemView.findViewById(R.id.tv_zan_count_three)
+            ivPicOne = itemView.findViewById(R.id.iv_pic_one_three)
+            ivPicTwo = itemView.findViewById(R.id.iv_pic_two_three)
+            ivPicThree = itemView.findViewById(R.id.iv_pic_three_three)
         }
 
         override fun setData(data: Dynamic) {
@@ -266,19 +263,19 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         private var tvZanCount: TextView? = null
 
         init {
-            ivAvatar = itemView.findViewById(R.id.iv_avatar)
-            tvUsername = itemView.findViewById(R.id.tv_username)
-            tvCreateDate = itemView.findViewById(R.id.tv_createDate)
-            ivAuthMark = itemView.findViewById(R.id.iv_auth_mark)
-            ivMore = itemView.findViewById(R.id.iv_more)
-            tvContent = itemView.findViewById(R.id.tv_content)
-            tagFlowLayout = itemView.findViewById(R.id.tagFlowLayout)
-            ivZan = itemView.findViewById(R.id.iv_zan)
-            tvZanCount = itemView.findViewById(R.id.tv_zan_count)
-            ivPicOne = itemView.findViewById(R.id.iv_pic_one)
-            ivPicTwo = itemView.findViewById(R.id.iv_pic_two)
-            ivPicThree = itemView.findViewById(R.id.iv_pic_three)
-            ivPicFour = itemView.findViewById(R.id.iv_pic_four)
+            ivAvatar = itemView.findViewById(R.id.iv_avatar_four)
+            tvUsername = itemView.findViewById(R.id.tv_username_four)
+            tvCreateDate = itemView.findViewById(R.id.tv_createDate_four)
+            ivAuthMark = itemView.findViewById(R.id.iv_auth_mark_four)
+            ivMore = itemView.findViewById(R.id.iv_more_four)
+            tvContent = itemView.findViewById(R.id.tv_content_four)
+            tagFlowLayout = itemView.findViewById(R.id.tagFlowLayout_four)
+            ivZan = itemView.findViewById(R.id.iv_zan_four)
+            tvZanCount = itemView.findViewById(R.id.tv_zan_count_four)
+            ivPicOne = itemView.findViewById(R.id.iv_pic_one_four)
+            ivPicTwo = itemView.findViewById(R.id.iv_pic_two_four)
+            ivPicThree = itemView.findViewById(R.id.iv_pic_three_four)
+            ivPicFour = itemView.findViewById(R.id.iv_pic_four_four)
         }
 
         override fun setData(data: Dynamic) {
@@ -309,16 +306,16 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         private var picRecyclerView: RecyclerView? = null
 
         init {
-            ivAvatar = itemView.findViewById(R.id.iv_avatar)
-            tvUsername = itemView.findViewById(R.id.tv_username)
-            tvCreateDate = itemView.findViewById(R.id.tv_createDate)
-            ivAuthMark = itemView.findViewById(R.id.iv_auth_mark)
-            ivMore = itemView.findViewById(R.id.iv_more)
-            tvContent = itemView.findViewById(R.id.tv_content)
-            tagFlowLayout = itemView.findViewById(R.id.tagFlowLayout)
-            ivZan = itemView.findViewById(R.id.iv_zan)
-            tvZanCount = itemView.findViewById(R.id.tv_zan_count)
-            picRecyclerView = itemView.findViewById(R.id.pic_recyclerView)
+            ivAvatar = itemView.findViewById(R.id.iv_avatar_greaterfour)
+            tvUsername = itemView.findViewById(R.id.tv_username_greaterfour)
+            tvCreateDate = itemView.findViewById(R.id.tv_createDate_greaterfour)
+            ivAuthMark = itemView.findViewById(R.id.iv_auth_mark_greaterfour)
+            ivMore = itemView.findViewById(R.id.iv_more_greaterfour)
+            tvContent = itemView.findViewById(R.id.tv_content_greaterfour)
+            tagFlowLayout = itemView.findViewById(R.id.tagFlowLayout_greaterfour)
+            ivZan = itemView.findViewById(R.id.iv_zan_greaterfour)
+            tvZanCount = itemView.findViewById(R.id.tv_zan_count_greaterfour)
+            picRecyclerView = itemView.findViewById(R.id.pic_recyclerView_greaterfour)
         }
 
         override fun setData(data: Dynamic) {
@@ -359,7 +356,6 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
     }
 
     private fun setUserName(userName: TextView?, data: Dynamic) {
-        Log.e("@@@", "userName = ${data.userName}")
         userName?.text = data.userName
     }
 
@@ -398,15 +394,24 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
     }
 
     private fun setZan(zan: ImageView?, zanCount: TextView?, data: Dynamic, position: Int) {
-        if (data.isSelected) {
+        val selected = data.isSelected
+        if (selected) {
             zan?.setImageResource(R.mipmap.ico_zan_selected)
         } else {
             zan?.setImageResource(R.mipmap.ico_zan_unselected)
         }
         zanCount?.text = (data.likeNum ?: 0).toString()
         zan?.setOnClickListener {
+            if(selected){
+                ToastUtils.showSafeToast(mContext,"不能取消点赞")
+                return@setOnClickListener
+            }else{
+                zan.setImageResource(R.mipmap.ico_zan_selected)
+                val likeNum = ((data.likeNum ?: 0) + 1)
+                zanCount?.text = likeNum.toString()
+            }
             if (mMenuClick != null && !PreventRepeatedUtils.isFastDoubleClick()) {
-                mMenuClick?.onSelectLikeClick(position)
+                mMenuClick?.onSelectLikeClick(position,data)
             }
         }
     }
@@ -423,16 +428,20 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         val images = data.images
         if (images != null && images.size > 0) {
             ivPic?.setImageURI(images[0])
+
+            setImageClick(ivPic, 0, images[0], data)
         }
+
     }
 
     private fun setTwoPic(ivPicOne: SimpleDraweeView?, ivPicTwo: SimpleDraweeView?, data: Dynamic) {
         val images = data.images
         if (images != null && images.size > 0) {
             ivPicOne?.setImageURI(images[0])
+            setImageClick(ivPicOne, 0, images[0], data)
             if (images[1].isNotEmpty()) {
                 ivPicTwo?.setImageURI(images[1])
-
+                setImageClick(ivPicTwo, 1, images[1], data)
             }
         }
     }
@@ -444,11 +453,14 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         val images = data.images
         if (images != null && images.size > 0) {
             ivPicOne?.setImageURI(images[0])
+            setImageClick(ivPicOne, 0, images[0], data)
             if (images[1].isNotEmpty()) {
                 ivPicTwo?.setImageURI(images[1])
+                setImageClick(ivPicTwo, 1, images[1], data)
             }
             if (images[2].isNotEmpty()) {
                 ivPicThree?.setImageURI(images[2])
+                setImageClick(ivPicThree, 2, images[2], data)
             }
         }
     }
@@ -460,14 +472,18 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         val images = data.images
         if (images != null && images.size > 0) {
             ivPicOne?.setImageURI(images[0])
+            setImageClick(ivPicOne, 0, images[0], data)
             if (images[1].isNotEmpty()) {
                 ivPicTwo?.setImageURI(images[1])
+                setImageClick(ivPicTwo, 1, images[1], data)
             }
             if (images[2].isNotEmpty()) {
                 ivPicThree?.setImageURI(images[2])
+                setImageClick(ivPicThree, 2, images[2], data)
             }
             if (images[3].isNotEmpty()) {
                 ivPicFour?.setImageURI(images[3])
+                setImageClick(ivPicFour, 3, images[3], data)
             }
         }
     }
@@ -481,9 +497,29 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         val images = data.images
         if (images != null && images.size > 0) {
             adapter.addAll(images)
+            adapter.setOnItemClickListener(object : OnItemClickListener {
+
+                override fun onItemClick(position: Int, view: View) {
+                    val item = adapter.getItem(position) ?: return
+                    if (mMenuClick != null) {
+                        mMenuClick?.onImageClick(view, position, item, data)
+                    }
+                }
+
+            })
         }
     }
 
+    private fun setImageClick(imageView: SimpleDraweeView?, pos: Int, url: String, data: Dynamic) {
+
+        imageView?.let { view ->
+            view.setOnClickListener {
+                if (mMenuClick != null) {
+                    mMenuClick?.onImageClick(it, pos, url, data)
+                }
+            }
+        }
+    }
 
     fun setOnDynamicItemMenuClick(itemMenuClick: OnDynamicItemMenuClick) {
         mMenuClick = itemMenuClick

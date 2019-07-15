@@ -1,5 +1,8 @@
 package com.suncity.dailynotices.callback
 
+import android.view.View
+import com.suncity.dailynotices.model.Dynamic
+
 /**
  * @ProjectName:    dailynotices
  * @Package:        com.suncity.dailynotices.callback
@@ -11,10 +14,11 @@ interface OnDynamicItemMenuClick {
 
     fun onMoreClick(position: Int)
 
-    fun onImageClick(position:Int,url:String)
+    fun onImageClick(view: View, position: Int, url: String, data: Dynamic)
 
-    fun onSelectLikeClick(position:Int)
+    fun onSelectLikeClick(position: Int,data: Dynamic)
 
-    fun onTagFlowClick(position:Int,tagPos:Int,tagString:String)
+    fun onTagFlowClick(position: Int, tagPos: Int, tagString: String)
+
 
 }

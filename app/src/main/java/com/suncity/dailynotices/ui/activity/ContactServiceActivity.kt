@@ -1,5 +1,7 @@
 package com.suncity.dailynotices.ui.activity
 
+import android.content.Context
+import android.content.Intent
 import android.widget.EditText
 import android.widget.TextView
 import com.suncity.dailynotices.R
@@ -20,6 +22,22 @@ import kotlinx.android.synthetic.main.view_title.*
  */
 class ContactServiceActivity : BaseActivity() {
 
+    companion object {
+        const val TYPE_CONTACTSERVICE = 0
+        const val TYPE_COMPLAINT = 1
+        private const val TYPE_NAME = "type"
+        private val STR_CONTACTSERVICE = Config.getString(R.string.str_service)
+        private val STR_COMPLAINT = Config.getString(R.string.str_complain)
+
+        fun start(context: Context, type: Int) {
+
+            val intent = Intent()
+            intent.setClass(context, ContactServiceActivity::class.java)
+            intent.putExtra(TYPE_NAME, type)
+            context.startActivity(intent)
+        }
+    }
+
     override fun setScreenManager() {
         ImmersionBar.with(this)
             .statusBarColor(R.color.color_white)
@@ -32,7 +50,12 @@ class ContactServiceActivity : BaseActivity() {
     }
 
     override fun initData() {
-        tv_title_center?.text = Config.getString(R.string.str_service)
+        val type = intent.getIntExtra(TYPE_NAME, TYPE_CONTACTSERVICE)
+        tv_title_center?.text = if (type == TYPE_CONTACTSERVICE) {
+            STR_CONTACTSERVICE
+        } else {
+            STR_COMPLAINT
+        }
         val submitText = findViewById<TextView>(R.id.tv_submit)
         val editTextSuggestion = findViewById<EditText>(R.id.et_suggestion)
         val textChangeListener = TextChangeListenerUtils(submitText)
