@@ -973,5 +973,41 @@ object Query {
 
         })
     }
+
+    /**
+     * 发现表的查询
+     */
+    fun queryFoundTable(callback: (MutableList<Found>?, AVException?) -> Unit){
+        val dynamicQuery = AVQuery<AVObject>(TableConstants.TABLE_FOUND)
+        dynamicQuery.orderByDescending("createdAt")
+        dynamicQuery.findInBackground(object : FindCallback<AVObject>(){
+
+            override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
+                if(avObjects != null && avObjects.size > 0){
+                    val foundList = mutableListOf<Found>()
+                    avObjects.forEach {
+                        val item = Found()
+                        item.objectId = it.objectId
+                        item.contain1 = it.getAVFile<AVFile>("contain1")?.url
+                        item.contain2 = it.getAVFile<AVFile>("contain2")?.url
+                        item.contain3 = it.getAVFile<AVFile>("contain3")?.url
+                        item.contain4 = it.getAVFile<AVFile>("contain4")?.url
+                        item.contain5 = it.getAVFile<AVFile>("contain5")?.url
+                        item.contain6 = it.getAVFile<AVFile>("contain6")?.url
+                        item.title = it.getString("title")
+                        item.string = it.getString("string")
+                        item.contents = it.getString("contents")
+                        item.createdAt = it.getDate("createdAt")
+                        item.updatedAt = it.getDate("updatedAt")
+                        foundList.add(item)
+                    }
+                   callback(foundList,avException)
+                }else{
+                    callback(null,avException)
+                }
+            }
+
+        })
+    }
 }
 

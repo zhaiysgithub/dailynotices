@@ -27,6 +27,16 @@ object DateUtils {
 
     }
 
+    fun formatDateToYMD(date: Date): String {
+        return try {
+            val dateInstance = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            dateInstance.format(date)
+        } catch (e: Exception) {
+            ""
+        }
+
+    }
+
     fun compareDate(endTime: String): Boolean {
         return try {
             val format = SimpleDateFormat("yyyy-MM-dd")

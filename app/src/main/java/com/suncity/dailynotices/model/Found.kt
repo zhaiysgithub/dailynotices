@@ -14,12 +14,12 @@ import java.util.*
 class Found : Serializable {
 
     var objectId:String? = null
-    var contain1:File? = null
-    var contain2:File? = null
-    var contain3:File? = null
-    var contain4:File? = null
-    var contain5:File? = null
-    var contain6:File? = null
+    var contain1:String? = null
+    var contain2:String? = null
+    var contain3:String? = null
+    var contain4:String? = null
+    var contain5:String? = null
+    var contain6:String? = null
     var string:String? = null
     var title:String? = null
     var contents:String? = null
