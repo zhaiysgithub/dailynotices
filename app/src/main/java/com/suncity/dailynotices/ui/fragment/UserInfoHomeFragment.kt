@@ -15,6 +15,7 @@ import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.model.UserInfoRecord
 import com.suncity.dailynotices.ui.BaseFragment
 import com.suncity.dailynotices.ui.activity.DynamicDetailActivity
+import com.suncity.dailynotices.ui.activity.UpdateRecordActivity
 import com.suncity.dailynotices.ui.activity.UserInfoActivity
 import com.suncity.dailynotices.ui.adapter.DynamicAdapter
 import com.suncity.dailynotices.ui.adapter.RecordAdapter
@@ -22,6 +23,7 @@ import com.suncity.dailynotices.ui.views.flowlayout.FlowLayout
 import com.suncity.dailynotices.ui.views.flowlayout.TagAdapter
 import com.suncity.dailynotices.ui.views.flowlayout.TagFlowLayout
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
+import com.suncity.dailynotices.utils.PreferenceStorage
 import com.suncity.dailynotices.utils.ProgressUtil
 import com.suncity.dailynotices.utils.StringUtils
 import kotlinx.android.synthetic.main.fragment_userinfo.*
@@ -38,6 +40,7 @@ import java.lang.Exception
 class UserInfoHomeFragment : BaseFragment() {
 
     private val recordSecret = "保密"
+    private var userInfo:AVObject? = null
 
     companion object {
         private const val ARGUMENT_TAG = "argument_tag"
@@ -65,8 +68,10 @@ class UserInfoHomeFragment : BaseFragment() {
      */
     @SuppressLint("SetTextI18n")
     override fun initData() {
-        val userInfo = arguments?.getParcelable<AVObject>(ARGUMENT_TAG)
+        userInfo = arguments?.getParcelable(ARGUMENT_TAG)
         val userObjcetId = userInfo?.getString("user") ?: return
+        val currentObjectId = PreferenceStorage.userObjectId
+        val isMine = (userObjcetId == currentObjectId)
         if (activity is UserInfoActivity && activity != null && activity?.isFinishing == false) {
             ProgressUtil.showProgress(activity!!, "", "请稍等")
         }
@@ -125,6 +130,7 @@ class UserInfoHomeFragment : BaseFragment() {
             }
         }
         //设置个人档案和兴趣特长
+        iv_update_record?.visibility = if (isMine) View.VISIBLE else View.GONE
         val recordAdapter = RecordAdapter(requireContext())
         recyclerView_record?.setHasFixedSize(true)
         val gridLayoutManager = GridLayoutManager(requireContext(), 2)
@@ -139,9 +145,10 @@ class UserInfoHomeFragment : BaseFragment() {
         recyclerView_record?.layoutManager = gridLayoutManager
         recyclerView_record?.isNestedScrollingEnabled = false
         recyclerView_record?.adapter = recordAdapter
-        setRecordData(recordAdapter, userInfo)
+        setRecordData(recordAdapter, userInfo!!)
 
-        val interestJson = userInfo.getJSONArray("interest")
+        iv_update_interest?.visibility = if (isMine) View.VISIBLE else View.GONE
+        val interestJson = userInfo?.getJSONArray("interest")
         if (interestJson == null) {
             interestVisiable(false)
         } else {
@@ -245,8 +252,14 @@ class UserInfoHomeFragment : BaseFragment() {
     }
 
     override fun initListener() {
+        iv_update_record?.setOnClickListener {
+            startActivity(UpdateRecordActivity::class.java)
 
+        }
 
+        iv_update_interest?.setOnClickListener {
+
+        }
     }
 
 

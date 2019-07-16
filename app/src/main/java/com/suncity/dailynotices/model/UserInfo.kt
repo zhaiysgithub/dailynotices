@@ -17,7 +17,7 @@ class UserInfo :Serializable{
     var objectId:String? = null
     var fire:Int? = null
     var shoeSize:String? = null
-    var bwh:ArrayList<String>? = null
+    var bwh:String? = null
     var graduation:String? = null
     var living:String? = null
     var age:String? = null

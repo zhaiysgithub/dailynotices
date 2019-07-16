@@ -96,4 +96,18 @@
     <string name="str_userinfopic_empty">还没有展示图片，赶快添加吧</string>
     <string name="str_direct_msg">私信</string>
     <string name="str_communication_immediately">立即沟通</string>
+    <string name="str_stage_name">艺名</string>
+    <string name="str_sex">性别</string>
+    <string name="str_birth_date">出生日期</string>
+    <string name="str_live_address">现居地</string>
+    <string name="str_next">下一步</string>
+    <string name="str_record_height">身高  (cm)</string>
+    <string name="str_record_weight">体重  (kg)</string>
+    <string name="str_record_bwh">三围  (cm)</string>
+    <string name="str_record_shoes">鞋码</string>
+    <string name="str_record_national">民族</string>
+    <string name="str_record_nativeplace">籍贯</string>
+    <string name="str_record_country">国籍</string>
+    <string name="str_record_university">毕业院校</string>
+    <string name="str_complete">完成</string>
 </resources>

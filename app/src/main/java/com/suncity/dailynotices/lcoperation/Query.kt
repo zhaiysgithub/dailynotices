@@ -750,17 +750,17 @@ object Query {
                     JSONObject.parseArray(jsonArray.toString(), String::class.javaObjectType)
                 dynamic.images = arrList
                 val skill = it.getString("skill")?.trim()
-                if (StringUtils.isNotEmptyAndNull(skill)){
+                if (StringUtils.isNotEmptyAndNull(skill)) {
                     dynamic.skill = "# $skill"
-                }else{
+                } else {
                     dynamic.skill = null
                 }
                 dynamic.likeNum = it.getInt("likeNum")
                 dynamic.able = it.getInt("able")
                 val style = it.getString("style")?.trim()
-                if (StringUtils.isNotEmptyAndNull(style)){
+                if (StringUtils.isNotEmptyAndNull(style)) {
                     dynamic.style = "# $style"
-                }else{
+                } else {
                     dynamic.style = null
                 }
                 dynamic.fire = it.getInt("fire")
@@ -964,7 +964,7 @@ object Query {
                         val imageFile = it.getAVFile<AVFile>("image")
                         imageList.add(imageFile.url)
                     }
-                    callback(imageList,null)
+                    callback(imageList, null)
                 } else {
                     callback(null, avException)
                 }
@@ -976,19 +976,19 @@ object Query {
     /**
      * 用户中心查询演绎动态的内容
      */
-    fun queryUserDynamicById(userId:String,callback: (ArrayList<Dynamic>?, AVException?) -> Unit){
+    fun queryUserDynamicById(userId: String, callback: (ArrayList<Dynamic>?, AVException?) -> Unit) {
         val dynamicQuery = AVQuery<AVObject>(TableConstants.TABLE_DYNAMIC)
-        dynamicQuery.whereEqualTo(TableConstants.USER,AVObject.createWithoutData(TableConstants.TABLE_USER,userId))
+        dynamicQuery.whereEqualTo(TableConstants.USER, AVObject.createWithoutData(TableConstants.TABLE_USER, userId))
         dynamicQuery.findInBackground(object : FindCallback<AVObject>() {
 
             override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
                 val dynamicList = arrayListOf<Dynamic>()
-                if (avObjects != null && avObjects.size > 0){
+                if (avObjects != null && avObjects.size > 0) {
                     setDynamicData(dynamicList, avObjects, null) {
                         callback(it, null)
                     }
-                }else{
-                    callback(null,avException)
+                } else {
+                    callback(null, avException)
                 }
             }
 
@@ -998,13 +998,13 @@ object Query {
     /**
      * 发现表的查询
      */
-    fun queryFoundTable(callback: (MutableList<Found>?, AVException?) -> Unit){
+    fun queryFoundTable(callback: (MutableList<Found>?, AVException?) -> Unit) {
         val dynamicQuery = AVQuery<AVObject>(TableConstants.TABLE_FOUND)
         dynamicQuery.orderByDescending("createdAt")
-        dynamicQuery.findInBackground(object : FindCallback<AVObject>(){
+        dynamicQuery.findInBackground(object : FindCallback<AVObject>() {
 
             override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
-                if(avObjects != null && avObjects.size > 0){
+                if (avObjects != null && avObjects.size > 0) {
                     val foundList = mutableListOf<Found>()
                     avObjects.forEach {
                         val item = Found()
@@ -1022,13 +1022,72 @@ object Query {
                         item.updatedAt = it.getDate("updatedAt")
                         foundList.add(item)
                     }
-                   callback(foundList,avException)
-                }else{
-                    callback(null,avException)
+                    callback(foundList, avException)
+                } else {
+                    callback(null, avException)
                 }
             }
 
         })
+    }
+
+    /**
+     * 查询 userinfo 表通过
+     */
+    fun queryUserInfoByObjectUserId(userId: String, callback: (UserInfo?, AVException?) -> Unit) {
+        val query = AVQuery<AVObject>(TableConstants.TABLE_USERINFO)
+        query.whereEqualTo("user", userId)
+
+        query.getFirstInBackground(object : GetCallback<AVObject>() {
+            override fun done(userInfoObject: AVObject?, e: AVException?) {
+                if (userInfoObject != null) {
+                    val userinfo = UserInfo()
+                    userinfo.objectId = userInfoObject.objectId
+                    userinfo.fire = userInfoObject.getInt("fire")
+                    userinfo.shoeSize = userInfoObject.getString("shoeSize")
+                    userinfo.bwh = setBwh(userInfoObject)
+                    userinfo.graduation = userInfoObject.getString("graduation")
+                    userinfo.living = userInfoObject.getString("living")
+                    userinfo.age = userInfoObject.getString("age")
+                    userinfo.sex = userInfoObject.getString("sex")
+                    userinfo.nationality = userInfoObject.getString("nationality")
+                    userinfo.birthday = userInfoObject.getString("birthday")
+                    userinfo.region = userInfoObject.getString("region")
+                    userinfo.native = userInfoObject.getString("native")
+                    userinfo.weight = userInfoObject.getString("weight")
+                    userinfo.resume = userInfoObject.getString("resume")
+                    userinfo.autonym = userInfoObject.getInt("autonym")
+                    userinfo.user = userInfoObject.getString("user")
+                    userinfo.height = userInfoObject.getString("height")
+                    userinfo.nation = userInfoObject.getString("nation")
+                    callback(userinfo,e)
+                } else {
+                    callback(null, e)
+                }
+            }
+
+        })
+    }
+
+
+    private fun setBwh(userInfoObject: AVObject): String {
+        val recordSecret = "保密"
+        return try {
+            val jsonArray = userInfoObject.getJSONArray("bwh")
+            if (jsonArray == null) {
+                recordSecret
+            } else {
+                val arrList: MutableList<String> =
+                    JSONObject.parseArray(jsonArray.toString(), String::class.javaObjectType) ?: mutableListOf()
+                if (arrList.contains("0") || arrList.size != 3) {
+                    recordSecret
+                } else {
+                    "${arrList[0]}cm-${arrList[1]}cm-${arrList[2]}cm"
+                }
+            }
+        } catch (e: Exception) {
+            recordSecret
+        }
     }
 }
 
