@@ -269,6 +269,7 @@ class UserInfoHomeFragment : BaseFragment() {
     }
 
     private fun dynamicVisiable(isVisible: Boolean) {
+        tv_dynamic?.visibility = if (isVisible) View.VISIBLE else View.GONE
         recyclerView_userinfo_dynamic?.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 

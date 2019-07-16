@@ -260,6 +260,7 @@ object Query {
                     val queryList = arrayListOf<AVQuery<AVUser>>()
                     avObjects.forEach {
                         val notice = Notice()
+                        notice.workTime = it.getString("workTime")
                         notice.title = it.getString("title")
                         notice.endTime = it.getString("endTime")
                         notice.payment = it.getString("payment")
@@ -267,6 +268,13 @@ object Query {
                         val userPoint: AVUser = it.getAVUser("user")
                         val userObjectId = userPoint.objectId
                         notice.userId = userObjectId
+                        val imageFile = it.getAVFile<AVFile>("image")
+                        val imageUrl = imageFile?.url ?: ""
+                        notice.image = imageUrl
+                        notice.workPlace = it.getString("workPlace")
+                        notice.beginTime = it.getString("beginTime")
+                        notice.createdAt = it.getDate("createdAt")
+                        notice.updatedAt = it.getDate("updatedAt")
                         noticeList.add(notice)
 
                         val userQuery = AVQuery<AVUser>(TableConstants.TABLE_USER)
@@ -310,6 +318,9 @@ object Query {
                         noticeList.forEach {
                             if (it.userId == avUser.objectId) {
                                 it.userName = avUser.username
+                                it.userAvatar = avUser.getAVFile<AVFile>("avatar").url
+                                it.userCreateAt = avUser.createdAt
+                                it.updatedAt = avUser.updatedAt
                             }
                         }
 
@@ -469,6 +480,8 @@ object Query {
                     val queryList = arrayListOf<AVQuery<AVUser>>()
                     avObjects.forEach {
                         val notice = Notice()
+
+                        notice.workTime = it.getString("workTime")
                         notice.title = it.getString("title")
                         notice.endTime = it.getString("endTime")
                         notice.payment = it.getString("payment")
@@ -476,6 +489,14 @@ object Query {
                         val userPoint: AVUser = it.getAVUser("user")
                         val userObjectId = userPoint.objectId
                         notice.userId = userObjectId
+                        val imageFile = it.getAVFile<AVFile>("image")
+                        val imageUrl = imageFile?.url ?: ""
+                        notice.image = imageUrl
+                        notice.workPlace = it.getString("workPlace")
+                        notice.beginTime = it.getString("beginTime")
+                        notice.createdAt = it.getDate("createdAt")
+                        notice.updatedAt = it.getDate("updatedAt")
+
                         noticeList.add(notice)
 
                         val userQuery = AVQuery<AVUser>(TableConstants.TABLE_USER)

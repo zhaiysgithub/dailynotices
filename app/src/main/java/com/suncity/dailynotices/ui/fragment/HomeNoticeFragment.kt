@@ -7,6 +7,7 @@ import com.suncity.dailynotices.R
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.model.Notice
 import com.suncity.dailynotices.ui.BaseFragment
+import com.suncity.dailynotices.ui.activity.NoticeDetailActivity
 import com.suncity.dailynotices.ui.adapter.CommuncatedAdapter
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.Config
@@ -90,8 +91,8 @@ class HomeNoticeFragment : BaseFragment() {
     private val mNoticeItemClick = object : RecyclerArrayAdapter.OnItemClickListener{
 
         override fun onItemClick(position: Int, view: View) {
-            //TODO 进入通告详情页
-            LogUtils.e("进入通告详情页")
+            val item = communcatedAdapter?.getItem(position)?:return
+            NoticeDetailActivity.start(requireContext(),item)
         }
 
     }

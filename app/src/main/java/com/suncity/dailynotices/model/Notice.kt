@@ -25,4 +25,7 @@ class Notice : Serializable {
     var createdAt: Date? = null
     var updatedAt: Date? = null
     var userName: String? = null
+    var userAvatar:String? = null
+    var userCreateAt:Date? = null
+    var userUpdatedAt:Date? = null
 }
