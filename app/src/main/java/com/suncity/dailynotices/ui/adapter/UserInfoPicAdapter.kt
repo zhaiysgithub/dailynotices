@@ -38,7 +38,7 @@ class UserInfoPicAdapter(context: Context) : RecyclerArrayAdapter<String>(contex
         }
 
         override fun setData(data: String) {
-
+            Log.e("@@@","data = $data")
             val layoutParams = image?.layoutParams
             layoutParams?.width = imageWidth
             layoutParams?.height = imageWidth

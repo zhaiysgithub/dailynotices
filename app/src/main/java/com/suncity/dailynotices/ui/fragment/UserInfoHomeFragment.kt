@@ -11,8 +11,6 @@ import android.widget.TextView
 import com.avos.avoscloud.AVObject
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.ui.BaseFragment
-import kotlinx.android.synthetic.main.fragment_userinfo.*
-import java.util.ArrayList
 
 /**
  * @ProjectName:    dailynotices

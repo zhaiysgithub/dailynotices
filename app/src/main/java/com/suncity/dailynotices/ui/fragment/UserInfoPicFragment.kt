@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
+import android.util.Log
 import android.view.View
 import com.avos.avoscloud.AVObject
 import com.suncity.dailynotices.R
@@ -57,6 +58,7 @@ class UserInfoPicFragment : BaseFragment() {
         recyclerView_userinfo_pic?.setHasFixedSize(true)
         recyclerView_userinfo_pic?.layoutManager = GridLayoutManager(requireContext(), 2)
         recyclerView_userinfo_pic?.addItemDecoration(RecycleGridDivider(space_dimen,space_color))
+//        recyclerView_userinfo_pic?.isNestedScrollingEnabled = false
         recyclerView_userinfo_pic?.adapter = mAdapter
 
         tv_empty_desc?.text = Config.getString(R.string.str_userinfopic_empty)
@@ -66,9 +68,16 @@ class UserInfoPicFragment : BaseFragment() {
         val userId = userInfo.getString("user")
         Query.queryHomeImagesByUserid(userId) { imgList, _ ->
             if (imgList != null && imgList.size > 0) {
+                Log.e("@@@","imgList = $imgList")
                 imgs = imgList
                 recyclerView_userinfo_pic?.visibility = View.VISIBLE
                 layout_empty?.visibility = View.GONE
+                mAdapter?.addAll(imgList)
+                mAdapter?.addAll(imgList)
+                mAdapter?.addAll(imgList)
+                mAdapter?.addAll(imgList)
+                mAdapter?.addAll(imgList)
+                mAdapter?.addAll(imgList)
                 mAdapter?.addAll(imgList)
             } else {
                 if(mAdapter?.itemCount == 0){
