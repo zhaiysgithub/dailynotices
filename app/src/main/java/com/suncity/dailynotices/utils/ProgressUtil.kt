@@ -11,6 +11,8 @@ object ProgressUtil {
 
     @Suppress("DEPRECATION")
     private var mProgressDialog: ProgressDialog? = null
+    private val mTitle = "温馨提示"
+    private val mMessage = "正在提交中，请稍等"
 
     val isShowing: Boolean
         get() = if (mProgressDialog == null) {
@@ -19,9 +21,9 @@ object ProgressUtil {
             mProgressDialog!!.isShowing
         }
 
-    fun showProgress(activity: Activity) {
+    fun showProgress(activity: Activity,title:String? = mTitle,message:String? = mMessage) {
         if (mProgressDialog == null) {
-            mProgressDialog = ProgressDialog.show(activity, "温馨提示", "正在提交中，请稍等")
+            mProgressDialog = ProgressDialog.show(activity, title, message)
             mProgressDialog?.setCancelable(false)
             mProgressDialog?.setProgressStyle(ProgressDialog.STYLE_SPINNER)
         } else {

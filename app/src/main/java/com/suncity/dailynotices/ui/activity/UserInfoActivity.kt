@@ -1,16 +1,21 @@
 package com.suncity.dailynotices.ui.activity
 
+import android.animation.ArgbEvaluator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.support.design.widget.AppBarLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.content.ContextCompat
+import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
 import com.avos.avoscloud.AVFile
 import com.avos.avoscloud.AVObject
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.callback.AppBarStateChangeListener
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.bar.ImmersionBar
@@ -18,6 +23,7 @@ import com.suncity.dailynotices.ui.fragment.UserInfoHomeFragment
 import com.suncity.dailynotices.ui.fragment.UserInfoPicFragment
 import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.PreventRepeatedUtils
+import com.suncity.dailynotices.utils.ScreentUtils
 import com.suncity.dailynotices.utils.StringUtils
 import kotlinx.android.synthetic.main.ac_userinfo2.*
 
@@ -33,8 +39,8 @@ class UserInfoActivity : BaseActivity() {
     private var objectId: String? = null
     private var ivHeaderBg: String = ""
     private val tabTitles = arrayOf("主页", "图片")
-
-    private val mFragments = arrayListOf<Fragment>()
+    private var userInfoObject:AVObject? = null
+    private var mAdapter: ViewPagerAdapter? = null
 
     companion object {
         private const val OBJECTID = "objectId"
@@ -66,23 +72,29 @@ class UserInfoActivity : BaseActivity() {
         ivHeaderBg = intent.getStringExtra(IMGBG)
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+        actionBar?.setDisplayShowHomeEnabled(true)
+        actionBar?.setHomeAsUpIndicator(R.mipmap.ico_nav_back)
+        collapsing_toolbar?.isTitleEnabled = false
+        collapsing_toolbar?.requestLayout()
+        actionBarResponsive()
+
+        mAdapter = ViewPagerAdapter(supportFragmentManager)
+        viewPager?.offscreenPageLimit = (mAdapter?.count ?: 0)
+        tabLayout?.setupWithViewPager(viewPager)
 
         queryData()
 
     }
 
-    private fun addFragments(infoObject:AVObject){
-        mFragments.clear()
-        mFragments.add(UserInfoHomeFragment.getInstance(infoObject))
-        mFragments.add(UserInfoPicFragment.getInstance(infoObject))
-        val adapter = UserInfoPagerAdapter(supportFragmentManager,mFragments,tabTitles)
-        viewPager?.adapter = adapter
-        viewPager?.currentItem = 0
-        viewPager?.offscreenPageLimit = mFragments.size
-        tabLayout?.setViewPager(viewPager,tabTitles)
-
+    private fun actionBarResponsive() {
+        val actionBarHeight = ScreentUtils.getActionBarHeightPixel(this)
+        val tabHeight = ScreentUtils.getTabHeight(this)
+        if (actionBarHeight > 0) {
+            toolbar?.layoutParams?.height = actionBarHeight + tabHeight
+            toolbar?.requestLayout()
+        }
     }
-
     @SuppressLint("SetTextI18n")
     private fun queryData() {
         if (objectId.isNullOrEmpty()) return
@@ -98,10 +110,13 @@ class UserInfoActivity : BaseActivity() {
                 }
                 iv_userinfo_avatar?.setImageURI(avatarUrl)
                 tv_userinfo_name?.text = username
+                toolbar_title?.text = username
                 val userinfoId = avUser.getAVObject<AVObject>("info").objectId
                 Query.queryUserInfoByObjectId(userinfoId) { userInfo, _ ->
                     if (userInfo != null) {
-                        addFragments(userInfo)
+                        userInfoObject = userInfo
+                        //设置底部的布局
+                        viewPager?.adapter = mAdapter
                         val sex = userInfo.getString("sex")
                         if (sex == "1") {//女性
                             iv_userinfo_sex?.setBackgroundResource(R.drawable.shape_sex_girl)
@@ -137,14 +152,74 @@ class UserInfoActivity : BaseActivity() {
 
     override fun initListener() {
 
-        fl_title_back?.setOnClickListener {
-            finish()
-        }
-
         tv_direct_msg?.setOnClickListener {
             if(PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
-            //TODO 进入聊天会话页面
         }
+
+        app_bar?.addOnOffsetChangedListener(mAppBarOffsetChangeListener)
+    }
+
+    private val mAppBarOffsetChangeListener = object : AppBarStateChangeListener(){
+
+        override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
+            when (state) {
+                State.COLLAPSED -> {
+                    toolbar_title?.alpha = 1f
+                    collapsing_toolbar?.setContentScrimColor(
+                        ContextCompat.getColor(
+                            this@UserInfoActivity,
+                            R.color.colorPrimary
+                        )
+                    )
+                }
+                State.EXPANDED -> {
+                    toolbar_title?.alpha = 0f
+                    collapsing_toolbar?.setContentScrimColor(
+                        ContextCompat.getColor(
+                            this@UserInfoActivity,
+                            android.R.color.transparent
+                        )
+                    )
+                }
+                else -> {
+                }
+            }
+        }
+
+        override fun onOffsetChanged(state: State, offset: Float) {
+            when (state) {
+                State.IDLE -> {
+                    toolbar_title?.alpha = offset
+                    collapsing_toolbar?.setContentScrimColor(
+                        ArgbEvaluator().evaluate(
+                            offset,
+                            ContextCompat.getColor(
+                                this@UserInfoActivity,
+                                android.R.color.transparent
+                            ), ContextCompat
+                                .getColor(
+                                    this@UserInfoActivity,
+                                    R.color.colorPrimary
+                                )
+                        ) as Int
+                    )
+                }
+                else -> {
+                    setAlphaForView(toolbar_title, offset)
+                    collapsing_toolbar?.setContentScrimColor(
+                        ArgbEvaluator()
+                            .evaluate(
+                                offset, ContextCompat.getColor(
+                                    this@UserInfoActivity,
+                                    android.R.color.transparent
+                                ), ContextCompat
+                                    .getColor(this@UserInfoActivity, R.color.colorPrimary)
+                            ) as Int
+                    )
+                }
+            }
+        }
+
     }
 
 
@@ -155,21 +230,37 @@ class UserInfoActivity : BaseActivity() {
         v?.startAnimation(alphaAnimation)
     }
 
-    class UserInfoPagerAdapter(
-        fm: FragmentManager, private val fragments: ArrayList<Fragment>
-        , private val mTitles: Array<String>
-    ) : FragmentPagerAdapter(fm) {
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            android.R.id.home -> {
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
-        override fun getItem(position: Int): Fragment {
-            return fragments[position]
+    private inner class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
+
+        override fun getItem(position: Int): Fragment? {
+            return when (position) {
+                0 -> {
+                    UserInfoHomeFragment.getInstance(userInfoObject)
+                }
+                1 -> {
+                    UserInfoPicFragment.getInstance(userInfoObject)
+                }
+                else -> {
+                    null
+                }
+            }
         }
 
         override fun getCount(): Int {
-            return fragments.size
+            return tabTitles.size
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
-            return mTitles[position]
+            return tabTitles[position]
         }
     }
 

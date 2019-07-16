@@ -8,22 +8,24 @@
 
 
     <android.support.design.widget.AppBarLayout
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_415"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 app:contentScrim="?attr/colorPrimary"
-                app:expandedTitleMarginEnd="64dp"
-                app:expandedTitleMarginStart="48dp"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:statusBarScrim="@android:color/transparent">
 
             <RelativeLayout
                     android:id="@+id/view_container_header"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="@dimen/dp_423"
+                    android:fitsSystemWindows="true"
                     app:layout_collapseMode="parallax">
 
                 <!--背景图-->
@@ -32,6 +34,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:contentDescription="@null"
+                        android:fitsSystemWindows="true"
                         app:placeholderImage="@color/color_ffde00"/>
 
                 <!--头像-->
@@ -135,60 +138,45 @@
             <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
+                    android:layout_height="@dimen/dp_48"
+                    android:gravity="top"
+                    android:paddingTop="@dimen/dp_10"
                     app:layout_collapseMode="pin"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        </android.support.design.widget.CollapsingToolbarLayout>
-    </android.support.design.widget.AppBarLayout>
+                <TextView
+                        android:id="@+id/toolbar_title"
+                        style="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
+                        android:layout_width="match_parent"
+                        android:textColor="@color/color_222"
+                        android:textSize="@dimen/sp_16"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"/>
+            </android.support.v7.widget.Toolbar>
 
-    <android.support.v4.widget.NestedScrollView
-            android:id="@+id/activity_main_nestedscrollview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-            <com.suncity.dailynotices.ui.views.tablayout.SlidingTabLayout
+            <android.support.design.widget.TabLayout
                     android:id="@+id/tabLayout"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_48"
+                    android:layout_gravity="bottom"
                     android:background="@color/color_white"
-                    app:tl_tab_space_equal="true"
-                    app:tl_textUnselectColor="@color/color_222"
-                    app:tl_textSelectColor="@color/color_222"
-                    app:tl_textSelectsize="@dimen/sp_16"
-                    app:tl_indicator_color="@color/color_ffde00"
-                    app:tl_indicator_height="@dimen/dp_2"
-                    app:tl_indicator_width_equal_title="true"/>
+                    app:tabTextColor="@color/color_222"
+                    app:tabTextAppearance="@style/TabLayoutTextStyle"
+                    app:tabIndicatorColor="@color/color_ffde00"
+                    app:tabIndicatorHeight="@dimen/dp_2"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabGravity="fill"
+                    app:tabMode="fixed"/>
 
-            <android.support.v4.view.ViewPager
-                    android:id="@+id/viewPager"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-            />
+        </android.support.design.widget.CollapsingToolbarLayout>
 
-        </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
-            android:id="@+id/fl_title_back"
-            android:layout_width="@dimen/dp_40"
-            android:layout_height="@dimen/dp_40"
-            android:layout_marginTop="@dimen/dp_24"
-            tools:ignore="UselessParent">
-
-        <ImageView
-                android:layout_width="@dimen/dp_8"
-                android:layout_height="@dimen/dp_16"
-                android:src="@mipmap/ico_nav_back"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                tools:ignore="ContentDescription"/>
-    </FrameLayout>
+    <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <TextView
             android:id="@+id/tv_direct_msg"

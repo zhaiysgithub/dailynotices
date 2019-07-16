@@ -674,7 +674,7 @@ object Query {
         dynamicQuery.findInBackground(object : FindCallback<AVObject>() {
 
             override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
-                if (avException == null && avObjects != null && avObjects.size > 0) {
+                if (avObjects != null && avObjects.size > 0) {
                     val dynamicList = arrayListOf<Dynamic>()
                     if ((shieldIdList?.size == 0)) {
                         setDynamicData(dynamicList, avObjects, likeIdList) {
@@ -728,12 +728,20 @@ object Query {
                 val arrList: MutableList<String> =
                     JSONObject.parseArray(jsonArray.toString(), String::class.javaObjectType)
                 dynamic.images = arrList
-                val skill = it.getString("skill")
-                dynamic.skill = skill
+                val skill = it.getString("skill")?.trim()
+                if (StringUtils.isNotEmptyAndNull(skill)){
+                    dynamic.skill = "# $skill"
+                }else{
+                    dynamic.skill = null
+                }
                 dynamic.likeNum = it.getInt("likeNum")
                 dynamic.able = it.getInt("able")
-                val style = it.getString("style")
-                dynamic.style = style
+                val style = it.getString("style")?.trim()
+                if (StringUtils.isNotEmptyAndNull(style)){
+                    dynamic.style = "# $style"
+                }else{
+                    dynamic.style = null
+                }
                 dynamic.fire = it.getInt("fire")
                 val tags = arrayListOf<String>()
                 if (StringUtils.isNotEmptyAndNull(skill)) {
@@ -938,6 +946,28 @@ object Query {
                     callback(imageList,null)
                 } else {
                     callback(null, avException)
+                }
+            }
+
+        })
+    }
+
+    /**
+     * 用户中心查询演绎动态的内容
+     */
+    fun queryUserDynamicById(userId:String,callback: (ArrayList<Dynamic>?, AVException?) -> Unit){
+        val dynamicQuery = AVQuery<AVObject>(TableConstants.TABLE_DYNAMIC)
+        dynamicQuery.whereEqualTo(TableConstants.USER,AVObject.createWithoutData(TableConstants.TABLE_USER,userId))
+        dynamicQuery.findInBackground(object : FindCallback<AVObject>() {
+
+            override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
+                val dynamicList = arrayListOf<Dynamic>()
+                if (avObjects != null && avObjects.size > 0){
+                    setDynamicData(dynamicList, avObjects, null) {
+                        callback(it, null)
+                    }
+                }else{
+                    callback(null,avException)
                 }
             }
 
