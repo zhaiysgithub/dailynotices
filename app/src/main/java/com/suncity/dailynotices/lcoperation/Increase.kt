@@ -74,4 +74,15 @@ object Increase {
 
         })
     }
+
+
+    fun addFeedback(userObjectId:String,content:String,callback: (AVException?) -> Unit){
+        val feedbackObject = AVObject(TableConstants.TABLE_FEEDBACK)
+        feedbackObject.put("feedBack",content)
+        feedbackObject.saveInBackground(object : SaveCallback(){
+            override fun done(e: AVException?) {
+                callback(e)
+            }
+        })
+    }
 }

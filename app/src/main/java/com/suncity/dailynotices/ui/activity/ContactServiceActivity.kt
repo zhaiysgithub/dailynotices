@@ -6,9 +6,13 @@ import android.widget.EditText
 import android.widget.TextView
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.IEditTextChangeListener
+import com.suncity.dailynotices.dialog.TipDialog
+import com.suncity.dailynotices.lcoperation.Increase
 import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.utils.Config
+import com.suncity.dailynotices.utils.PreferenceStorage
+import com.suncity.dailynotices.utils.StringUtils
 import com.suncity.dailynotices.utils.TextChangeListenerUtils
 import kotlinx.android.synthetic.main.ac_contact_service.*
 import kotlinx.android.synthetic.main.view_title.*
@@ -28,6 +32,7 @@ class ContactServiceActivity : BaseActivity() {
         private const val TYPE_NAME = "type"
         private val STR_CONTACTSERVICE = Config.getString(R.string.str_service)
         private val STR_COMPLAINT = Config.getString(R.string.str_complain)
+        private val errorServer = Config.getString(R.string.str_error_server)
 
         fun start(context: Context, type: Int) {
 
@@ -68,6 +73,20 @@ class ContactServiceActivity : BaseActivity() {
             finish()
         }
         tv_submit?.setOnClickListener {
+            val content = et_suggestion?.text?.toString()
+            val trimContent = content?.trim()
+            if(StringUtils.isNotEmptyAndNull(trimContent)){
+                //提交到数据库中
+                val userObjectId = PreferenceStorage.userObjectId
+                Increase.addFeedback(userObjectId,trimContent!!){
+                    if(it == null){
+                        et_suggestion?.setText("")
+                        TipDialog.show(this@ContactServiceActivity,"提交成功，感谢你的支持",TipDialog.SHOW_TIME_SHORT,TipDialog.TYPE_FINISH)
+                    }else{
+                        TipDialog.show(this@ContactServiceActivity,errorServer,TipDialog.SHOW_TIME_SHORT,TipDialog.TYPE_ERROR)
+                    }
+                }
+            }
 
         }
     }

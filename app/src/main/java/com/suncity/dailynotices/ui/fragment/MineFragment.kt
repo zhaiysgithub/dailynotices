@@ -243,7 +243,9 @@ class MineFragment : BaseFragment() {
                     if (!isLogined()) {
                         startActivity(LoginActivity::class.java)
                     } else {
-                        startActivity(MinePushedActivity::class.java)
+                        val userObjectId = PreferenceStorage.userObjectId
+                        if (StringUtils.isEmpty(userObjectId)) return
+                        UserInfoActivity.start(requireContext(),userObjectId)
                     }
                 }
                 2 -> {

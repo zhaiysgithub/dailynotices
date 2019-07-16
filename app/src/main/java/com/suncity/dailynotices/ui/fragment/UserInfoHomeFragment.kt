@@ -14,17 +14,18 @@ import com.suncity.dailynotices.R
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.model.UserInfoRecord
 import com.suncity.dailynotices.ui.BaseFragment
+import com.suncity.dailynotices.ui.activity.DynamicDetailActivity
 import com.suncity.dailynotices.ui.activity.UserInfoActivity
 import com.suncity.dailynotices.ui.adapter.DynamicAdapter
 import com.suncity.dailynotices.ui.adapter.RecordAdapter
 import com.suncity.dailynotices.ui.views.flowlayout.FlowLayout
 import com.suncity.dailynotices.ui.views.flowlayout.TagAdapter
 import com.suncity.dailynotices.ui.views.flowlayout.TagFlowLayout
+import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.ProgressUtil
 import com.suncity.dailynotices.utils.StringUtils
 import kotlinx.android.synthetic.main.fragment_userinfo.*
 import java.lang.Exception
-import java.text.FieldPosition
 
 /**
  * @ProjectName:    dailynotices
@@ -110,6 +111,13 @@ class UserInfoHomeFragment : BaseFragment() {
                 recyclerView_userinfo_dynamic?.layoutManager = LinearLayoutManager(requireContext())
                 recyclerView_userinfo_dynamic?.adapter = dynamicAdapter
                 dynamicAdapter.addAll(dynamicList)
+                dynamicAdapter?.setOnItemClickListener(object : RecyclerArrayAdapter.OnItemClickListener {
+                    override fun onItemClick(position: Int, view: View) {
+                        val item = dynamicAdapter?.getItem(position) ?: return
+                        DynamicDetailActivity.start(requireContext(), item)
+                    }
+
+                })
             } else {
                 tagVisiable(false)
                 styleVisiable(false)
@@ -119,10 +127,10 @@ class UserInfoHomeFragment : BaseFragment() {
         //设置个人档案和兴趣特长
         val recordAdapter = RecordAdapter(requireContext())
         recyclerView_record?.setHasFixedSize(true)
-        val gridLayoutManager = GridLayoutManager(requireContext(),2)
-        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
+        val gridLayoutManager = GridLayoutManager(requireContext(), 2)
+        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                if (position == 7 || position == 8){
+                if (position == 7 || position == 8) {
                     return 2
                 }
                 return 1
@@ -139,10 +147,15 @@ class UserInfoHomeFragment : BaseFragment() {
         } else {
             val interestList = JSON.parseArray(interestJson.toString(), String::class.javaObjectType)
             val interestSize = interestList.size
+            val preInterestList = mutableListOf<String>()
             interestVisiable(interestSize > 0)
             if (interestSize > 0) {
                 tv_interest_num?.text = "·$interestSize"
-                setTags(tagFlowLayout_interest, interestList)
+                interestList.forEach {
+                    val preInterest = "# $it"
+                    preInterestList.add(preInterest)
+                }
+                setTags(tagFlowLayout_interest, preInterestList)
             }
         }
 

@@ -90,9 +90,9 @@ class HomeRedsFragment : BaseFragment() {
 
         override fun onItemClick(position: Int, view: View) {
             val item = redsAdapter?.getItem(position)
-            val objectId = item?.objectId
+            val objectId = item?.userObjectId
             if (objectId == null || PreventRepeatedUtils.isFastDoubleClick()) return
-            UserInfoActivity.start(requireContext(),objectId)
+            UserInfoActivity.start(requireContext(),objectId,item.coverUrl)
         }
 
     }
