@@ -8,6 +8,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import cn.leancloud.chatkit.LCChatKit
 import com.avos.avoscloud.*
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.IEditTextChangeListener
@@ -20,6 +21,9 @@ import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.utils.*
 import kotlinx.android.synthetic.main.ac_login.*
 import com.avos.avoscloud.AVUser
+import com.avos.avoscloud.im.v2.AVIMClient
+import com.avos.avoscloud.im.v2.AVIMException
+import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
 import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.TableConstants
 import com.suncity.dailynotices.callback.GlobalObserverHelper
@@ -74,9 +78,9 @@ class LoginActivity : BaseActivity() {
     }
 
     override fun initListener() {
-        fl_login_del?.setOnClickListener {
+        /*fl_login_del?.setOnClickListener {
             finish()
-        }
+        }*/
         tv_login_agreement_tip?.setOnClickListener {
             startActivity(UserAgreementActivity::class.java, false)
 
@@ -291,18 +295,35 @@ class LoginActivity : BaseActivity() {
         PreferenceStorage.userName = avUser?.username ?: ""
         PreferenceStorage.userPhoneNum = avUser?.getString("mobilePhoneNumber") ?: ""
         PreferenceStorage.userAvatar = avUser?.getAVFile<AVFile>("avatar")?.url ?: ""
+        //开启聊天功能
+        val client = AVIMClient.getInstance(avUser)
+        client.open(object : AVIMClientCallback() {
 
-        GlobalObserverHelper.loginSuccess()
-        val tipDialog = TipDialog.show(
-            this@LoginActivity, loginSuccessText
-            , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_FINISH
-        )
-        tipDialog.setOnDismissListener(object : OnDismissListener {
-            override fun onDismiss() {
-                HomeActivity.start(this@LoginActivity, POS_MINE)
-                this@LoginActivity.finish()
+            override fun done(client: AVIMClient?, e: AVIMException?) {
+                LogUtils.e("开启聊天功能 -> $e")
+                if (e == null) {
+                    GlobalObserverHelper.loginSuccess()
+                    val tipDialog = TipDialog.show(
+                        this@LoginActivity, loginSuccessText
+                        , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_FINISH
+                    )
+                    tipDialog.setOnDismissListener(object : OnDismissListener {
+                        override fun onDismiss() {
+                            HomeActivity.start(this@LoginActivity, POS_MINE)
+                            this@LoginActivity.finish()
+                        }
+                    })
+                } else {
+                    TipDialog.show(
+                        this@LoginActivity, e.message ?: loginErrorText
+                        , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR
+                    )
+                }
             }
+
         })
+
+
     }
 
 

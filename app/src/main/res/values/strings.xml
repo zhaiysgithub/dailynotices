@@ -110,4 +110,14 @@
     <string name="str_record_country">国籍</string>
     <string name="str_record_university">毕业院校</string>
     <string name="str_complete">完成</string>
+
+    <string name="lcim_message_shorthand_image">[图片]</string>
+    <string name="lcim_message_shorthand_location">[位置]</string>
+    <string name="lcim_message_shorthand_audio">[语音]</string>
+    <string name="lcim_message_shorthand_unknown">[未知]</string>
+
+    <string name="str_date_old_hours">小时前</string>
+    <string name="str_date_old_minutes">分钟前</string>
+    <string name="str_date_old_was">刚刚</string>
+    <string name="str_date_yesterday">昨天</string>
 </resources>

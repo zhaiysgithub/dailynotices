@@ -1,8 +1,6 @@
 package com.suncity.dailynotices.lcoperation
 
-import android.support.v7.app.ActionBar
 import android.util.Log
-import android.widget.TabHost
 import com.alibaba.fastjson.JSONObject
 import com.avos.avoscloud.*
 import com.google.gson.Gson

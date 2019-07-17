@@ -2,7 +2,9 @@ package com.suncity.dailynotices
 
 import android.app.Application
 import android.content.Context
-import com.avos.avoscloud.AVOSCloud
+import cn.leancloud.chatkit.LCChatKit
+import com.avos.avoscloud.*
+import com.avos.avoscloud.im.v2.AVIMClient
 import com.facebook.cache.disk.DiskCacheConfig
 import com.facebook.common.util.ByteConstants
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -12,6 +14,8 @@ import com.scwang.smartrefresh.header.MaterialHeader
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.scwang.smartrefresh.layout.api.*
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter
+import com.suncity.dailynotices.ui.activity.HomeActivity
+import com.suncity.dailynotices.ui.chat.CustomUserProvider
 import com.suncity.dailynotices.utils.AppUtils
 import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.LogUtils
@@ -110,5 +114,23 @@ class BaseApplication : Application() {
         LogUtils.e("initAvos -> avosAppKey=$avosAppKey,avosAppId=$avosAppId ")
         AVOSCloud.initialize(this, avosAppId, avosAppKey)
         AVOSCloud.setDebugLogEnabled(true) //打开可调式的开关
+        LCChatKit.getInstance().profileProvider = CustomUserProvider.instance
+        LCChatKit.getInstance().init(this, avosAppId, avosAppKey)
+        AVIMClient.setAutoOpen(true)
+        PushService.setDefaultPushCallback(this, HomeActivity::class.java)
+        PushService.setAutoWakeUp(true)
+        PushService.setDefaultChannelId(this, "default")
+        AVInstallation.getCurrentInstallation().saveInBackground(object : SaveCallback() {
+            override fun done(e: AVException?) {
+                if (e == null) {
+                    // 保存成功
+                    val installationId = AVInstallation.getCurrentInstallation().installationId
+                    LogUtils.e("---  $installationId")
+                } else {
+                    // 保存失败，输出错误信息
+                    LogUtils.e("failed to save installation. = $e")
+                }
+            }
+        })
     }
 }

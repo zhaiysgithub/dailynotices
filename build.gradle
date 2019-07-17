@@ -19,8 +19,8 @@ buildscript {
         retrofit2_version = '2.4.0'
         fresco_version = '1.13.0'
         frescogif_version = '1.8.0'
-        avoscloud_version = '4.7.10'
-        avoscloud_mix_version = '4.7.10@aar'
+        avoscloud_version = '4.7.12'
+        avoscloud_mix_version = '4.7.12@aar'
     }
     repositories {
         google()

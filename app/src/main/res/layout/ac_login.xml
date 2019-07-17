@@ -24,6 +24,7 @@
                 android:id="@+id/fl_login_del"
                 android:layout_width="@dimen/dp_40"
                 android:layout_height="@dimen/dp_64"
+                android:visibility="gone"
                 >
 
             <ImageView

@@ -96,4 +96,5 @@
     <dimen name="sp_18">18sp</dimen>
     <dimen name="dp_54">54dp</dimen>
     <dimen name="dp_82">82dp</dimen>
+    <dimen name="dp_9">9dp</dimen>
 </resources>
