@@ -18,7 +18,10 @@ import com.suncity.dailynotices.utils.PreferenceStorage
 
 object Increase {
 
-    fun createUserInfoToBack(objectId: String, callback: ((AVException?) -> Unit)) {
+    /**
+     * 保存userInfo 到后台返回userinfoId
+     */
+    fun createUserInfoToBack(objectId: String, callback: ((String?,AVException?) -> Unit)) {
 
         val userInfo = AVObject(TableConstants.TABLE_USERINFO)
         userInfo.put("user", objectId)
@@ -27,10 +30,13 @@ object Increase {
         userInfo.put("fire", 0)
         userInfo.put("region", "")
         userInfo.put("age", "")
-        userInfo.put("sex", "0")
+        userInfo.put("sex", "1")
         userInfo.saveInBackground(object : SaveCallback() {
             override fun done(e: AVException?) {
-                callback(e)
+                Query.queryUserInfoObjectId(objectId){userInfo,avException ->
+                    val userInfoId = userInfo?.objectId
+                    callback(userInfoId,avException)
+                }
             }
         })
     }

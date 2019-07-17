@@ -7,6 +7,8 @@ import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import com.suncity.dailynotices.callback.GlobalObservable
+import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.callback.NetworkMonitor
 import com.suncity.dailynotices.manager.ScreenManager
 import com.suncity.dailynotices.receive.NetworkChangedReceiver

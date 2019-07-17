@@ -20,7 +20,8 @@ object PreferenceStorage {
     private const val userObjcetIdStr = Constants.USEROBJECTID
     private const val userNameStr = Constants.USERNAME
     private const val userPhoneNumStr = Constants.USERPHONENUM
-    private const val userAvatarStr = Constants.USERAvatar
+    private const val userAvatarStr = Constants.USERAVATAR
+    private const val userIsAutonym = Constants.USERISAUTONYM
 
     private val needClearData = arrayOf(isLoginedStr,userObjcetIdStr,userNameStr,userPhoneNumStr,userAvatarStr)
 
@@ -66,6 +67,15 @@ object PreferenceStorage {
         @JvmStatic
         set(value) {
             editor.putString(userAvatarStr,value)
+            editor.commit()
+        }
+    //是否认证
+    var isAutonym:Int
+        @JvmStatic
+        get() = (sharedPreferences.getInt(userIsAutonym,0))
+        @JvmStatic
+        set(value) {
+            editor.putInt(userIsAutonym,value)
             editor.commit()
         }
 

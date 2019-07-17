@@ -13,7 +13,6 @@ import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.callback.SimpleGlobalObservable
 import com.suncity.dailynotices.lcoperation.Query
-import com.suncity.dailynotices.model.User
 import com.suncity.dailynotices.model.UserInfo
 import com.suncity.dailynotices.ui.BaseFragment
 import com.suncity.dailynotices.ui.activity.*
@@ -69,16 +68,11 @@ class MineFragment : BaseFragment() {
     }
 
     private fun initUIData() {
-        Log.e("@@@", "initUIData")
+        Log.e("@@@", "initUIData = ${PreferenceStorage.userName}")
         val isLogin = isLogined()
         changeLoginFlagUi(isLogin)
         if (isLogin) {
-            val userJson = SharedPrefHelper.retireveAny(Constants.SP_KEY_USER)
-            if (userJson == null) {
-                getCurrentUserByLC()
-            } else {
-                notifyUI(userJson)
-            }
+            notifyUI()
         }
 
         mineAdapter = MineAdapter(requireContext())
@@ -101,24 +95,14 @@ class MineFragment : BaseFragment() {
         }
 
         mineAdapter?.addAll(dataList)
-
-
     }
 
-    private fun notifyUI(json: String) {
+    private fun notifyUI() {
         try {
-            val userInfoJson = SharedPrefHelper.retireveAny(Constants.SP_KEY_USERINFO)
             val userObjectId = PreferenceStorage.userObjectId
-            val gson = Gson()
-            val user = gson.fromJson(json, User::class.javaObjectType)
-            val userInfo = gson.fromJson(userInfoJson, UserInfo::class.javaObjectType)
-            tv_login_user_name?.text = user?.username ?: ""
-            PreferenceStorage.userPhoneNum = (user?.mobilePhoneNumber ?: "")
-            val avFile = user?.avatar
-            val userAvatarUrl = avFile?.url
-            PreferenceStorage.userAvatar = (userAvatarUrl ?: "")
-            iv_mine_login_avatar?.setImageURI(userAvatarUrl)
-            val autonym = userInfo?.autonym ?: 0 //代表是否认证了
+            tv_login_user_name?.text = PreferenceStorage.userName
+            iv_mine_login_avatar?.setImageURI(PreferenceStorage.userAvatar)
+            val autonym = PreferenceStorage.isAutonym //代表是否认证了
             if (autonym == 1) {
                 tv_unreal_name_auth.text = CERTIFIED
                 iv_unreal_name_auth.setImageResource(authResourceId)
@@ -160,30 +144,6 @@ class MineFragment : BaseFragment() {
         }
     }
 
-    /**
-     * 通过网络获取用户信息
-     */
-    private fun getCurrentUserByLC() {
-        val objectId = PreferenceStorage.userObjectId
-        AVUser.getQuery().getInBackground(objectId, object : GetCallback<AVUser>() {
-            override fun done(o: AVUser?, e: AVException?) {
-                if (o != null && e == null) {
-                    SharedPrefHelper.saveAny(Constants.SP_KEY_USER, o)
-                    setUIData()
-                } else {
-                    ToastUtils.showSafeToast(requireContext(), GET_USERINFO_ERROR)
-                }
-            }
-
-        })
-    }
-
-    private fun setUIData() {
-        val jsonStr = SharedPrefHelper.retireveAny(Constants.SP_KEY_USER)
-        if (jsonStr != null) {
-            notifyUI(jsonStr)
-        }
-    }
 
     override fun initListener() {
         layout_unlogin?.setOnClickListener {
@@ -287,6 +247,15 @@ class MineFragment : BaseFragment() {
         override fun onLogoutSuccess() {
             initUIData()
         }
+
+        override fun onLoginSuccess() {
+            initUIData()
+        }
+
+        override fun onUpdateUserinfoSuccess() {
+            initUIData()
+        }
+
     }
 
     override fun onDestroy() {

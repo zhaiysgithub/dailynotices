@@ -9,12 +9,13 @@ package com.suncity.dailynotices.callback
 
 open class SimpleGlobalObservable : GlobalObservable{
 
+    override fun onUpdateUserinfoSuccess() {
+    }
+
     override fun onLoginSuccess() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onLogoutSuccess() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 }

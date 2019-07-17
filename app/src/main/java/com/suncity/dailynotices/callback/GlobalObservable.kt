@@ -19,4 +19,9 @@ interface GlobalObservable {
      * 登出成功
      */
     fun onLogoutSuccess()
+
+    /**
+     * 更新用户数据成功
+     */
+    fun onUpdateUserinfoSuccess()
 }

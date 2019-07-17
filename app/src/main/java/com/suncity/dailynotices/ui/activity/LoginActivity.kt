@@ -22,7 +22,9 @@ import kotlinx.android.synthetic.main.ac_login.*
 import com.avos.avoscloud.AVUser
 import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.TableConstants
+import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.lcoperation.Increase
+import com.suncity.dailynotices.lcoperation.Modify
 
 
 /**
@@ -37,7 +39,7 @@ class LoginActivity : BaseActivity() {
     private val loadingText = Config.getString(R.string.str_loading)
     private val loginSuccessText = Config.getString(R.string.str_login_success)
     private val loginErrorText = Config.getString(R.string.str_login_error)
-    private var avUser:AVUser? = null
+    private var avUser: AVUser? = null
 
     override fun setScreenManager() {
 
@@ -193,6 +195,7 @@ class LoginActivity : BaseActivity() {
             }
         })
     }
+
     /**
      * 通过objectId 查询是否自动创建了userInfo的关联
      */
@@ -201,20 +204,30 @@ class LoginActivity : BaseActivity() {
         query.whereEqualTo(TableConstants.USER, objectId).getFirstInBackground(object : GetCallback<AVObject>() {
             override fun done(userInfo: AVObject?, e: AVException?) {
                 if (userInfo == null) {
-                    Increase.createUserInfoToBack(objectId){
+                    Increase.createUserInfoToBack(objectId) { userinfoId, exception ->
                         ProgressUtil.hideProgress()
-                        if (e == null) { // 保存成功
-                            saveUser()
-                        } else {
+                        if (userinfoId == null) {
                             TipDialog.show(
-                                this@LoginActivity, e.message ?: loginErrorText
+                                this@LoginActivity, exception?.message ?: loginErrorText
                                 , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR
                             )
+                        } else {
+                            Modify.updateUserToBack(objectId, userinfoId) { updateUserException ->
+                                if (updateUserException == null) { // 保存成功
+                                    saveUser()
+                                } else {
+                                    TipDialog.show(
+                                        this@LoginActivity, exception?.message ?: loginErrorText
+                                        , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR
+                                    )
+                                }
+                            }
                         }
+
                     }
                 } else {
                     ProgressUtil.hideProgress()
-                    SharedPrefHelper.saveAny(Constants.SP_KEY_USERINFO,userInfo)
+                    PreferenceStorage.isAutonym = userInfo.getInt("autonym")
                     saveUser()
                 }
             }
@@ -275,8 +288,11 @@ class LoginActivity : BaseActivity() {
     private fun saveUser() {
         if (avUser == null) return
         PreferenceStorage.isLogin = true
+        PreferenceStorage.userName = avUser?.username ?: ""
+        PreferenceStorage.userPhoneNum = avUser?.getString("mobilePhoneNumber") ?: ""
+        PreferenceStorage.userAvatar = avUser?.getAVFile<AVFile>("avatar")?.url ?: ""
 
-        SharedPrefHelper.saveAny(Constants.SP_KEY_USER,avUser!!)
+        GlobalObserverHelper.loginSuccess()
         val tipDialog = TipDialog.show(
             this@LoginActivity, loginSuccessText
             , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_FINISH

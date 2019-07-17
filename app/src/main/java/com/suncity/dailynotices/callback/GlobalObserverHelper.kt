@@ -27,7 +27,6 @@ object GlobalObserverHelper {
         mObservers.removeObserver(observer)
     }
 
-
     fun loginSuccess(){
         mObservers.forEach {
             it.onLoginSuccess()
@@ -39,5 +38,12 @@ object GlobalObserverHelper {
             it.onLogoutSuccess()
         }
     }
+
+    fun updateUserInfo(){
+        mObservers.forEach {
+            it.onUpdateUserinfoSuccess()
+        }
+    }
+
 
 }

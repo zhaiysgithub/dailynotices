@@ -68,13 +68,7 @@ class MineRecommentActivity : BaseActivity() {
         }
     }
 
-    private fun queryFireDataFromLocal() {
-        val jsonStr = SharedPrefHelper.retireveAny(Constants.SP_KEY_FIRE)
-        if (StringUtils.isNotEmptyAndNull(jsonStr)) {
-            val gson = Gson()
-            val fireObject = gson.fromJson(jsonStr, Fire::class.javaObjectType)
-        }
-    }
+
 
     private fun queryFireList(it: RefreshLayout) {
         val objectId = PreferenceStorage.userObjectId

@@ -256,7 +256,7 @@ class TipDialog private constructor() : BaseDialog() {
 
     fun setCanCancel(canCancel: Boolean): TipDialog {
         isCanCancel = canCancel
-        if (dialogHelper != null) dialogHelper?.setCancelable(canCancel)
+        if (dialogHelper != null) dialogHelper?.isCancelable = canCancel
         return this
     }
 

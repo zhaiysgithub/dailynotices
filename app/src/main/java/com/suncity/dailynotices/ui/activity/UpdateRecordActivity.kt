@@ -8,6 +8,7 @@ import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.utils.PreventRepeatedUtils
 import kotlinx.android.synthetic.main.ac_user_record.*
+import kotlinx.android.synthetic.main.view_title.*
 
 /**
  * @ProjectName:    dailynotices
@@ -18,7 +19,13 @@ import kotlinx.android.synthetic.main.ac_user_record.*
  */
 class UpdateRecordActivity : BaseActivity() {
 
-    private var mUserInfo:UserInfo? = null
+
+    private var hasEdit = false
+    private var mUserInfo: UserInfo? = null
+    private var databaseUserName: String? = null
+    private var databaseUserSex: String? = null
+    private var databaseUserBirth: String? = null
+    private var databaseUserAddress: String? = null
     override fun setScreenManager() {
         ImmersionBar.with(this)
             .statusBarColor(R.color.color_white)
@@ -35,31 +42,86 @@ class UpdateRecordActivity : BaseActivity() {
 
 
     override fun initData() {
+
+        tv_title_center?.text = "个人档案"
+
         val currentUser = AVUser.getCurrentUser()
         val objectId = currentUser.objectId
         val username = currentUser.username
+        databaseUserName = username
         et_stage_name?.setText(username)
 
-        Query.queryUserInfoByObjectUserId(objectId){ userInfo, _ ->
+        Query.queryUserInfoByObjectUserId(objectId) { userInfo, _ ->
             mUserInfo = userInfo
-            if(userInfo != null){
+            if (userInfo != null) {
                 val sex = userInfo.sex ?: "0"
-                if (sex == "1"){
-                    et_sex?.setText("男")
-                }else if(sex == "2"){
-                    et_sex?.setText("女")
-                }
+                et_sex?.setText(getSexValue(sex))
 
-                et_birth_date?.setText(userInfo.birthday)
-                et_live_address?.setText(userInfo.living)
+                et_birth_date?.setText(getBirthday(userInfo.birthday))
+                et_live_address?.setText(getLiving(userInfo.living))
             }
         }
     }
 
-    override fun initListener() {
-        tv_next?.setOnClickListener {
-            if(mUserInfo == null || PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
-            UpdateRecordActivity2.start(this@UpdateRecordActivity,mUserInfo!!)
+    private fun getSexValue(sexValue: String): String? {
+        databaseUserSex = when (sexValue) {
+            "1" -> "男"
+            "2" -> "女"
+            else -> null
         }
+
+        return databaseUserSex
+    }
+
+    private fun getBirthday(birthday:String?):String?{
+        databaseUserBirth = birthday
+        return databaseUserBirth
+    }
+
+    private fun getLiving(living:String?):String?{
+        databaseUserAddress = living
+        return databaseUserAddress
+    }
+
+    override fun initListener() {
+
+        fl_title_back?.setOnClickListener {
+            finish()
+        }
+
+        tv_next?.setOnClickListener {
+            if (mUserInfo == null || PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
+            val userNameEdit = et_stage_name?.text?.toString()?.trim()
+            val sexEdit = et_sex?.text?.toString()?.trim()
+            val birthdayEdit = et_birth_date?.text?.toString()?.trim()
+            val liveAddressEdit = et_live_address?.text?.toString()?.trim()
+            val modify = hasModify(userNameEdit, sexEdit, birthdayEdit, liveAddressEdit)
+            val userNameUpdate = userNameEdit(userNameEdit)
+            UpdateRecordActivity2.start(
+                this@UpdateRecordActivity,
+                mUserInfo!!,
+                userNameEdit,
+                sexEdit,
+                birthdayEdit,
+                liveAddressEdit,
+                modify,
+                userNameUpdate
+            )
+        }
+    }
+
+    private fun hasModify(
+        userNameEdit: String?,
+        sexEdit: String?,
+        birthdayEdit: String?,
+        liveAddressEdit: String?
+    ): Boolean {
+        hasEdit =
+            (databaseUserName != userNameEdit || databaseUserSex != sexEdit || databaseUserBirth != birthdayEdit || databaseUserAddress != liveAddressEdit)
+        return hasEdit
+    }
+
+    private fun userNameEdit(userNameEdit: String?): Boolean {
+        return (databaseUserName != userNameEdit)
     }
 }

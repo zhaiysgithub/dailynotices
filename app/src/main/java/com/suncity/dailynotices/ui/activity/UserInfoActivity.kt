@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -16,15 +17,14 @@ import com.avos.avoscloud.AVFile
 import com.avos.avoscloud.AVObject
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.AppBarStateChangeListener
+import com.suncity.dailynotices.callback.GlobalObserverHelper
+import com.suncity.dailynotices.callback.SimpleGlobalObservable
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.ui.fragment.UserInfoHomeFragment
 import com.suncity.dailynotices.ui.fragment.UserInfoPicFragment
-import com.suncity.dailynotices.utils.Config
-import com.suncity.dailynotices.utils.PreventRepeatedUtils
-import com.suncity.dailynotices.utils.ScreentUtils
-import com.suncity.dailynotices.utils.StringUtils
+import com.suncity.dailynotices.utils.*
 import kotlinx.android.synthetic.main.ac_userinfo2.*
 
 /**
@@ -54,6 +54,11 @@ class UserInfoActivity : BaseActivity() {
             intent.putExtra(IMGBG,mImgBg)
             context.startActivity(intent)
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        GlobalObserverHelper.addObserver(mObservable)
     }
 
     override fun setScreenManager() {
@@ -97,6 +102,7 @@ class UserInfoActivity : BaseActivity() {
     }
     @SuppressLint("SetTextI18n")
     private fun queryData() {
+        LogUtils.e("objectId = $objectId")
         if (objectId.isNullOrEmpty()) return
         Query.queryUserByObjectId(objectId!!) { avUser, e ->
             if (avUser != null) {
@@ -264,5 +270,24 @@ class UserInfoActivity : BaseActivity() {
         }
     }
 
+    private val mObservable = object : SimpleGlobalObservable() {
+
+        override fun onLoginSuccess() {
+            queryData()
+        }
+
+        override fun onLogoutSuccess() {
+            queryData()
+        }
+
+        override fun onUpdateUserinfoSuccess() {
+            queryData()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        GlobalObserverHelper.removeObserver(mObservable)
+    }
 
 }

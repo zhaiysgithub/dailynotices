@@ -29,6 +29,20 @@ object Query {
     private val limite = 20
 
     /**
+     * 通过user的objectId，查询userinfo的objectId
+     */
+    fun queryUserInfoObjectId(userObjectId: String,callback: (AVObject?, AVException?) -> Unit){
+        val query = AVQuery<AVObject>(TableConstants.TABLE_USERINFO)
+        query.whereEqualTo("user",userObjectId)
+        query.getFirstInBackground(object : GetCallback<AVObject>(){
+            override fun done(userInfo: AVObject?, e: AVException?) {
+                callback(userInfo,e)
+            }
+
+        })
+    }
+
+    /**
      * 推荐我的Fire对象
      */
     fun queryFire(userObjectId: String, callback: ((Fire?, AVException?) -> Unit)) {
@@ -1045,7 +1059,7 @@ object Query {
                     userinfo.objectId = userInfoObject.objectId
                     userinfo.fire = userInfoObject.getInt("fire")
                     userinfo.shoeSize = userInfoObject.getString("shoeSize")
-                    userinfo.bwh = setBwh(userInfoObject)
+                    userinfo.bwhString = setBwh(userInfoObject)
                     userinfo.graduation = userInfoObject.getString("graduation")
                     userinfo.living = userInfoObject.getString("living")
                     userinfo.age = userInfoObject.getString("age")
