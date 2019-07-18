@@ -6,9 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.support.v4.app.Fragment
 import android.view.View
+import cn.leancloud.chatkit.LCChatKit
 import com.avos.avoscloud.AVException
 import com.avos.avoscloud.AVObject
 import com.avos.avoscloud.SaveCallback
+import com.avos.avoscloud.im.v2.AVIMClient
+import com.avos.avoscloud.im.v2.AVIMException
+import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.OnTabSelectListener
 import com.suncity.dailynotices.ui.BaseActivity
@@ -20,6 +24,7 @@ import com.suncity.dailynotices.ui.fragment.MineFragment
 import com.suncity.dailynotices.ui.views.tablayout.CustomTabEntity
 import com.suncity.dailynotices.ui.views.tablayout.TabEntity
 import com.suncity.dailynotices.utils.LogUtils
+import com.suncity.dailynotices.utils.PreferenceStorage
 import com.suncity.dailynotices.utils.UIUtils
 import kotlinx.android.synthetic.main.ac_home.*
 
@@ -89,6 +94,10 @@ class HomeActivity : BaseActivity() {
     }
 
     override fun initData() {
+        //判断是否已经登录了，已经登录的情况下需要每次都登录聊天室
+        if(isLogined()){
+            startLoginChatKit()
+        }
         homeTexts = UIUtils.getStringArray(R.array.home_bottom_text)
         val size = homeTexts?.size ?: return
         for (i in 0 until size) {
@@ -110,6 +119,17 @@ class HomeActivity : BaseActivity() {
         tablayout?.setTabData(mTabEntities, this@HomeActivity, R.id.container, mFragments, ignorePos)
         tablayout?.currentTab = 0
         lastPos = 0
+    }
+
+    private fun startLoginChatKit() {
+        val currentUserObjectId = PreferenceStorage.userObjectId
+        LCChatKit.getInstance().open(currentUserObjectId,object : AVIMClientCallback(){
+
+            override fun done(client: AVIMClient?, e: AVIMException?) {
+                LogUtils.e("LCChatKit.getInstance().open -> $e")
+            }
+
+        })
     }
 
     override fun initListener() {

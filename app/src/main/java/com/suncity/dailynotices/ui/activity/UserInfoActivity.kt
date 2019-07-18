@@ -13,8 +13,16 @@ import android.support.v4.content.ContextCompat
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
+import cn.leancloud.chatkit.LCChatKit
+import cn.leancloud.chatkit.activity.LCIMConversationActivity
+import cn.leancloud.chatkit.utils.LCIMConstants
 import com.avos.avoscloud.AVFile
 import com.avos.avoscloud.AVObject
+import com.avos.avoscloud.AVUser
+import com.avos.avoscloud.im.v2.AVIMClient
+import com.avos.avoscloud.im.v2.AVIMConversation
+import com.avos.avoscloud.im.v2.AVIMException
+import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.AppBarStateChangeListener
 import com.suncity.dailynotices.callback.GlobalObserverHelper
@@ -160,9 +168,41 @@ class UserInfoActivity : BaseActivity() {
 
         tv_direct_msg?.setOnClickListener {
             if(PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
+            if(objectId == null) return@setOnClickListener
+            startOpenLCIM(objectId!!)
         }
 
         app_bar?.addOnOffsetChangedListener(mAppBarOffsetChangeListener)
+    }
+
+    private fun startOpenLCIM(objectId: String){
+        if (null == LCChatKit.getInstance().client){
+            startLoginChatKit(objectId)
+        }else{
+            startLCIM(objectId)
+        }
+    }
+
+    private fun startLoginChatKit(objectId: String){
+        LCChatKit.getInstance().open(objectId, object : AVIMClientCallback() {
+
+            override fun done(client: AVIMClient?, e: AVIMException?) {
+                LogUtils.e("LCChatKit.getInstance().open -> $e")
+                if(e == null){
+                    startLCIM(objectId)
+                }else{
+                    ToastUtils.showSafeToast(this@UserInfoActivity,"登录过期请重新登录")
+                    startActivity(LoginActivity::class.java)
+                }
+            }
+
+        })
+    }
+
+    private fun startLCIM(bjectId: String){
+        val intent = Intent(this,LCIMConversationActivity::class.java)
+        intent.putExtra(LCIMConstants.PEER_ID,bjectId)
+        startActivity(intent)
     }
 
     private val mAppBarOffsetChangeListener = object : AppBarStateChangeListener(){

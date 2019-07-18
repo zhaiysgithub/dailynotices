@@ -28,10 +28,10 @@ public class LCIMChatItemTextHolder extends LCIMChatItemHolder {
     super.initView();
     if (isLeft) {
       conventLayout.addView(View.inflate(getContext(), R.layout.lcim_chat_item_left_text_layout, null));
-      contentView = (TextView) itemView.findViewById(R.id.chat_left_text_tv_content);
+      contentView = itemView.findViewById(R.id.chat_left_text_tv_content);
     } else {
       conventLayout.addView(View.inflate(getContext(), R.layout.lcim_chat_item_right_text_layout, null));
-      contentView = (TextView) itemView.findViewById(R.id.chat_right_text_tv_content);
+      contentView = itemView.findViewById(R.id.chat_right_text_tv_content);
     }
   }
 

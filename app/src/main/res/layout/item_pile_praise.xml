@@ -5,6 +5,6 @@
         android:id="@+id/iv_dynamic_user_avatar"
         android:layout_width="@dimen/dp_20"
         android:layout_height="@dimen/dp_20"
-        app:placeholderImage="@drawable/ico_default_avatar"
+        app:placeholderImage="@drawable/im_default_avatar"
         app:roundAsCircle="true"
 />

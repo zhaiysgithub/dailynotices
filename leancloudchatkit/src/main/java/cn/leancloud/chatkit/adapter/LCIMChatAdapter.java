@@ -1,7 +1,6 @@
 package cn.leancloud.chatkit.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.ViewGroup;
 
 import com.avos.avoscloud.im.v2.AVIMMessage;
@@ -9,7 +8,6 @@ import com.avos.avoscloud.im.v2.AVIMReservedMessageType;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,8 +60,9 @@ public class LCIMChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     if (null != messages) {
       for (AVIMMessage msg : messages) {
         if (messageIdSet.add(msg.getMessageId())) {
-          messageList.add(msg);
+//          messageList.add(msg);
         }
+        messageList.add(msg);
       }
     }
   }
@@ -76,8 +75,9 @@ public class LCIMChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     for (int i = messages.size(); i> 0; i--) {
       AVIMMessage msg = messages.get(i - 1);
       if (messageIdSet.add(msg.getMessageId())) {
-        messageList.add(0, msg);
+//        messageList.add(0, msg);
       }
+      messageList.add(0, msg);
     }
   }
 
@@ -87,8 +87,9 @@ public class LCIMChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
    */
   public void addMessage(AVIMMessage message) {
     if (messageIdSet.add(message.getMessageId())) {
-      messageList.add(message);
+//      messageList.add(message);
     }
+    messageList.add(message);
   }
 
   public void updateMessage(AVIMMessage message) {

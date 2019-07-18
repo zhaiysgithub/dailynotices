@@ -3,13 +3,17 @@ package com.suncity.dailynotices.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.view.View
+import cn.leancloud.chatkit.LCChatKit
+import cn.leancloud.chatkit.activity.LCIMConversationActivity
+import cn.leancloud.chatkit.utils.LCIMConstants
+import com.avos.avoscloud.im.v2.AVIMClient
+import com.avos.avoscloud.im.v2.AVIMException
+import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.model.Notice
 import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.bar.ImmersionBar
-import com.suncity.dailynotices.utils.Config
-import com.suncity.dailynotices.utils.DateUtils
-import com.suncity.dailynotices.utils.StringUtils
+import com.suncity.dailynotices.utils.*
 import kotlinx.android.synthetic.main.ac_notice_detail.*
 import kotlinx.android.synthetic.main.view_title.*
 
@@ -102,5 +106,39 @@ class NoticeDetailActivity : BaseActivity() {
             UserInfoActivity.start(this@NoticeDetailActivity,userId)
         }
 
+        commun_notice_detail?.setOnClickListener {
+            val userId = notice?.userId ?: return@setOnClickListener
+            startOpenLCIM(userId)
+        }
+    }
+
+    private fun startOpenLCIM(objectId: String){
+        if (null == LCChatKit.getInstance().client){
+            startLoginChatKit(objectId)
+        }else{
+            startLCIM(objectId)
+        }
+    }
+
+    private fun startLoginChatKit(objectId: String){
+        LCChatKit.getInstance().open(objectId, object : AVIMClientCallback() {
+
+            override fun done(client: AVIMClient?, e: AVIMException?) {
+                LogUtils.e("LCChatKit.getInstance().open -> $e")
+                if(e == null){
+                    startLCIM(objectId)
+                }else{
+                    ToastUtils.showSafeToast(this@NoticeDetailActivity,"登录过期请重新登录")
+                    startActivity(LoginActivity::class.java)
+                }
+            }
+
+        })
+    }
+
+    private fun startLCIM(bjectId: String){
+        val intent = Intent(this, LCIMConversationActivity::class.java)
+        intent.putExtra(LCIMConstants.PEER_ID,bjectId)
+        startActivity(intent)
     }
 }

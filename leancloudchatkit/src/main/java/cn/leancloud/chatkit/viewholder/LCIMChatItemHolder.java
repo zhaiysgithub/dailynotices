@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.avos.avoscloud.AVCallback;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.im.v2.AVIMMessage;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -39,7 +40,7 @@ public class LCIMChatItemHolder extends LCIMCommonViewHolder {
   protected boolean isLeft;
 
   protected AVIMMessage message;
-  protected ImageView avatarView;
+  protected SimpleDraweeView avatarView;
   protected TextView timeView;
   protected TextView nameView;
   protected LinearLayout conventLayout;
@@ -56,23 +57,23 @@ public class LCIMChatItemHolder extends LCIMCommonViewHolder {
 
   public void initView() {
     if (isLeft) {
-      avatarView = (ImageView) itemView.findViewById(R.id.chat_left_iv_avatar);
-      timeView = (TextView) itemView.findViewById(R.id.chat_left_tv_time);
-      nameView = (TextView) itemView.findViewById(R.id.chat_left_tv_name);
-      conventLayout = (LinearLayout) itemView.findViewById(R.id.chat_left_layout_content);
-      statusLayout = (FrameLayout) itemView.findViewById(R.id.chat_left_layout_status);
-      statusView = (TextView) itemView.findViewById(R.id.chat_left_tv_status);
-      progressBar = (ProgressBar) itemView.findViewById(R.id.chat_left_progressbar);
-      errorView = (ImageView) itemView.findViewById(R.id.chat_left_tv_error);
+      avatarView = itemView.findViewById(R.id.chat_left_iv_avatar);
+      timeView = itemView.findViewById(R.id.chat_left_tv_time);
+      nameView = itemView.findViewById(R.id.chat_left_tv_name);
+      conventLayout = itemView.findViewById(R.id.chat_left_layout_content);
+      statusLayout = itemView.findViewById(R.id.chat_left_layout_status);
+      statusView = itemView.findViewById(R.id.chat_left_tv_status);
+      progressBar = itemView.findViewById(R.id.chat_left_progressbar);
+      errorView = itemView.findViewById(R.id.chat_left_tv_error);
     } else {
-      avatarView = (ImageView) itemView.findViewById(R.id.chat_right_iv_avatar);
-      timeView = (TextView) itemView.findViewById(R.id.chat_right_tv_time);
-      nameView = (TextView) itemView.findViewById(R.id.chat_right_tv_name);
-      conventLayout = (LinearLayout) itemView.findViewById(R.id.chat_right_layout_content);
-      statusLayout = (FrameLayout) itemView.findViewById(R.id.chat_right_layout_status);
-      progressBar = (ProgressBar) itemView.findViewById(R.id.chat_right_progressbar);
-      errorView = (ImageView) itemView.findViewById(R.id.chat_right_tv_error);
-      statusView = (TextView) itemView.findViewById(R.id.chat_right_tv_status);
+      avatarView = itemView.findViewById(R.id.chat_right_iv_avatar);
+      timeView = itemView.findViewById(R.id.chat_right_tv_time);
+      nameView = itemView.findViewById(R.id.chat_right_tv_name);
+      conventLayout = itemView.findViewById(R.id.chat_right_layout_content);
+      statusLayout = itemView.findViewById(R.id.chat_right_layout_status);
+      progressBar = itemView.findViewById(R.id.chat_right_progressbar);
+      errorView = itemView.findViewById(R.id.chat_right_tv_error);
+      statusView = itemView.findViewById(R.id.chat_right_tv_status);
     }
 
     setAvatarClickEvent();
@@ -85,7 +86,7 @@ public class LCIMChatItemHolder extends LCIMCommonViewHolder {
     message = (AVIMMessage) o;
     timeView.setText(millisecsToDateString(message.getTimestamp()));
     nameView.setText("");
-    avatarView.setImageResource(R.drawable.lcim_default_avatar_icon);
+    avatarView.setImageResource(R.drawable.im_default_avatar);
     LCIMProfileCache.getInstance().getCachedUser(message.getFrom(), new AVCallback<LCChatKitUser>() {
       @Override
       protected void internalDone0(LCChatKitUser userProfile, AVException e) {
@@ -95,8 +96,7 @@ public class LCIMChatItemHolder extends LCIMCommonViewHolder {
           nameView.setText(userProfile.getName());
           final String avatarUrl = userProfile.getAvatarUrl();
           if (!TextUtils.isEmpty(avatarUrl)) {
-            Picasso.with(getContext()).load(avatarUrl)
-              .placeholder(R.drawable.lcim_default_avatar_icon).into(avatarView);
+            avatarView.setImageURI(avatarUrl);
           }
         }
       }

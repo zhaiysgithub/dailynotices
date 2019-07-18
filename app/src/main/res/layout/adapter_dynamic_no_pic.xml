@@ -19,8 +19,8 @@
                 android:id="@+id/iv_avatar_no"
                 android:layout_width="@dimen/dp_36"
                 android:layout_height="@dimen/dp_36"
-                app:placeholderImage="@drawable/ico_default_avatar"
-                app:failureImage="@drawable/ico_default_avatar"
+                app:placeholderImage="@drawable/im_default_avatar"
+                app:failureImage="@drawable/im_default_avatar"
                 app:roundAsCircle="true"
         />
         <!--头部-->

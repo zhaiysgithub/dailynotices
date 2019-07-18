@@ -303,16 +303,8 @@ class LoginActivity : BaseActivity() {
                 LogUtils.e("开启聊天功能 -> $e")
                 if (e == null) {
                     GlobalObserverHelper.loginSuccess()
-                    val tipDialog = TipDialog.show(
-                        this@LoginActivity, loginSuccessText
-                        , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_FINISH
-                    )
-                    tipDialog.setOnDismissListener(object : OnDismissListener {
-                        override fun onDismiss() {
-                            HomeActivity.start(this@LoginActivity, POS_MINE)
-                            this@LoginActivity.finish()
-                        }
-                    })
+
+                    startLoginChatKit(avUser!!.objectId)
                 } else {
                     TipDialog.show(
                         this@LoginActivity, e.message ?: loginErrorText
@@ -324,6 +316,26 @@ class LoginActivity : BaseActivity() {
         })
 
 
+    }
+
+    private fun startLoginChatKit(objectId: String?) {
+        LCChatKit.getInstance().open(objectId, object : AVIMClientCallback() {
+
+            override fun done(client: AVIMClient?, e: AVIMException?) {
+                LogUtils.e("LCChatKit.getInstance().open -> $e")
+                val tipDialog = TipDialog.show(
+                    this@LoginActivity, loginSuccessText
+                    , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_FINISH
+                )
+                tipDialog.setOnDismissListener(object : OnDismissListener {
+                    override fun onDismiss() {
+                        HomeActivity.start(this@LoginActivity, POS_MINE)
+                        this@LoginActivity.finish()
+                    }
+                })
+            }
+
+        })
     }
 
 

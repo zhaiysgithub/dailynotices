@@ -1,8 +1,13 @@
 package com.suncity.dailynotices.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import cn.leancloud.chatkit.LCChatKit
+import cn.leancloud.chatkit.activity.LCIMConversationActivity
+import cn.leancloud.chatkit.cache.LCIMConversationItemCache
+import cn.leancloud.chatkit.utils.LCIMConstants
 import com.avos.avoscloud.AVUser
 import com.avos.avoscloud.im.v2.*
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
@@ -17,9 +22,12 @@ import com.suncity.dailynotices.ui.adapter.MessageAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.LogUtils
+import com.suncity.dailynotices.utils.PreventRepeatedUtils
+import com.suncity.dailynotices.utils.ToastUtils
 import kotlinx.android.synthetic.main.fg_msg.*
 import kotlinx.android.synthetic.main.view_empty.*
 import kotlinx.android.synthetic.main.view_title.*
+import java.util.ArrayList
 
 /**
  * @ProjectName:    dailynotices
@@ -62,7 +70,8 @@ class MessageFragment : BaseFragment() {
 
     private fun updateConversationList(refreshLayout: RefreshLayout? = null, isLoadMore: Boolean? = false) {
         //获取对应的对话列表
-            val client = AVIMClient.getInstance(AVUser.getCurrentUser())
+        val currentUser = AVUser.getCurrentUser() ?: return
+        val client = AVIMClient.getInstance(currentUser)
         client?.open(object : AVIMClientCallback() {
 
             override fun done(client: AVIMClient?, e: AVIMException?) {
@@ -124,14 +133,17 @@ class MessageFragment : BaseFragment() {
     private val mObservable = object : SimpleGlobalObservable() {
 
         override fun onLoginSuccess() {
+            LogUtils.e("onLoginSuccess")
             updateConversationList()
         }
 
         override fun onUpdateUserinfoSuccess() {
+            LogUtils.e("onUpdateUserinfoSuccess")
             updateConversationList()
         }
 
         override fun onLogoutSuccess() {
+            LogUtils.e("onLogoutSuccess")
             msgAdapter?.clear()
         }
     }
@@ -139,18 +151,79 @@ class MessageFragment : BaseFragment() {
     override fun initListener() {
         msgAdapter?.setOnItemClickListener(object : RecyclerArrayAdapter.OnItemClickListener {
             override fun onItemClick(position: Int, view: View) {
-                val item = msgAdapter?.getItem(position)
-                LogUtils.e("position = $position,item = $item")
+                if(PreventRepeatedUtils.isFastDoubleClick()) return
+                val item = msgAdapter?.getItem(position) ?: return
+                if (null == LCChatKit.getInstance().client){
+                    startLoginChatKit(AVUser.getCurrentUser().objectId,item)
+                }else{
+                   startLCIM(item)
+                }
+
             }
 
         })
         smartRefreshLayout?.setOnRefreshListener {
-            updateConversationList(it)
+            if (!isLogined()) {
+                startActivity(LoginActivity::class.java, false)
+            } else {
+                updateConversationList(it)
+            }
         }
 
         smartRefreshLayout?.setOnLoadMoreListener {
-            updateConversationList(it, true)
-//            queryConversation(it,true)
+            if (!isLogined()) {
+                startActivity(LoginActivity::class.java, false)
+            } else {
+                updateConversationList()
+            }
         }
+    }
+
+    private fun startLCIM(item:AVIMConversation){
+        val intent = Intent(requireContext(),LCIMConversationActivity::class.java)
+        intent.putExtra(LCIMConstants.CONVERSATION_ID,item.conversationId)
+        requireContext().startActivity(intent)
+    }
+
+    private fun startLoginChatKit(objectId: String,item: AVIMConversation){
+        LCChatKit.getInstance().open(objectId, object : AVIMClientCallback() {
+
+            override fun done(client: AVIMClient?, e: AVIMException?) {
+                LogUtils.e("LCChatKit.getInstance().open -> $e")
+                if(e == null){
+                    startLCIM(item)
+                }else{
+                    ToastUtils.showSafeToast(requireContext(),"登录过期请重新登录")
+                    startActivity(LoginActivity::class.java)
+                }
+            }
+
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!isLogined()) {
+            startActivity(LoginActivity::class.java, false)
+        } else {
+            updateConversationList()
+        }
+    }
+
+    private fun updateCacheConversationList() {
+        val convIdList = LCIMConversationItemCache.getInstance().sortedConversationList
+        val conversationList = ArrayList<AVIMConversation>()
+        for (convId in convIdList) {
+            val conversation = LCChatKit.getInstance().client?.getConversation(convId)
+            if(conversation != null){
+                conversationList.add(conversation)
+            }
+        }
+        if(conversationList.size > 0){
+            msgAdapter?.clear()
+            msgAdapter?.addAll(conversationList)
+        }
+
+
     }
 }

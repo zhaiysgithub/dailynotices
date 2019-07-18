@@ -44,7 +44,7 @@
                         android:layout_height="@dimen/dp_80"
                         android:layout_marginTop="@dimen/dp_167"
                         android:layout_marginStart="@dimen/dp_20"
-                        app:placeholderImage="@drawable/ico_default_avatar"
+                        app:placeholderImage="@drawable/im_default_avatar"
                         app:placeholderImageScaleType="centerCrop"
                         app:roundAsCircle="true"/>
 

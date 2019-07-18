@@ -82,7 +82,6 @@
     <style name="LCIMAvatar">
         <item name="android:layout_width">45dp</item>
         <item name="android:layout_height">45dp</item>
-        <item name="android:scaleType">centerCrop</item>
         <!--<item name="android:src">@drawable/chat_default_user_avatar</item>-->
     </style>
 
