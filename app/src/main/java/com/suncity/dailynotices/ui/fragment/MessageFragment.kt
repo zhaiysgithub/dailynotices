@@ -203,9 +203,7 @@ class MessageFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        if (!isLogined()) {
-            startActivity(LoginActivity::class.java, false)
-        } else {
+        if (isLogined()) {
             updateConversationList()
         }
     }

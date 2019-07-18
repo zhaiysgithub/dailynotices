@@ -51,7 +51,6 @@ class LoginActivity : BaseActivity() {
             .titleBar(R.id.fl_login_del, false)
             .statusBarDarkFont(true, 0f)
             .transparentBar()
-            .keyboardEnable(true)
             .init()
     }
 
