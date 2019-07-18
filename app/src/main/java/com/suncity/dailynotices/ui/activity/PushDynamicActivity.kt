@@ -40,7 +40,6 @@ class PushDynamicActivity : BaseActivity() {
 
     override fun initData() {
 
-
     }
 
 

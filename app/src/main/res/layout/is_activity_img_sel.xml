@@ -6,7 +6,6 @@
               android:orientation="vertical">
 
     <RelativeLayout
-            android:id="@+id/rlTitleBar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_40"
             android:background="@color/color_white">

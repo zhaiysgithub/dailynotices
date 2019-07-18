@@ -1,4 +1,4 @@
-package com.suncity.dailynotices.ui.activity
+package com.suncity.dailynotices.islib.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -13,74 +13,49 @@ import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.*
 import com.suncity.dailynotices.R
-import com.suncity.dailynotices.ui.BaseActivity
-import com.suncity.dailynotices.ui.bar.ImmersionBar
-import com.suncity.dailynotices.utils.Config
-import com.suncity.dailynotices.utils.ToastUtils
 import com.suncity.dailynotices.islib.common.Callback
 import com.suncity.dailynotices.islib.common.Constant
 import com.suncity.dailynotices.islib.config.ISListConfig
 import com.suncity.dailynotices.islib.ui.fragment.ImgSelFragment
 import com.suncity.dailynotices.utils.FileUtils
-import kotlinx.android.synthetic.main.ac_img_selector_list.*
+import com.suncity.dailynotices.ui.bar.ImmersionBar
+
 import java.io.File
 import java.util.ArrayList
 
 /**
- * @ProjectName:    dailynotices
- * @Package:        com.suncity.dailynotices.ui.activity
- * @ClassName:      ImgSelectorListActivity
- * @Description:     作用描述
- * @UpdateDate:     18/7/2019
+ * https://github.com/smuyyh/ImageSelector
+ *
+ * @author yuyh.
+ * @date 2016/8/5.
  */
-class ImgSelectorListActivity : BaseActivity() , Callback{
+class ISListActivity : AppCompatActivity(), View.OnClickListener, Callback {
 
-    override fun setScreenManager() {
 
-        ImmersionBar.with(this)
-            .statusBarDarkFont(true,0f)
-            .fitsSystemWindows(true)
-            .statusBarColor(R.color.color_white)
-            .init()
-    }
+    var config: ISListConfig? = null
+        private set
 
-    companion object {
-        const val INTENT_RESULT = "result"
-        private const val IMAGE_CROP_CODE = 1
-        private const val STORAGE_REQUEST_CODE = 1
-
-        fun startForResult(activity: Activity, config: ISListConfig, RequestCode: Int) {
-            val intent = Intent(activity, ImgSelectorListActivity::class.java)
-            intent.putExtra("config", config)
-            activity.startActivityForResult(intent, RequestCode)
-        }
-
-        fun startForResult(fragment: Fragment, config: ISListConfig, RequestCode: Int) {
-            val intent = Intent(fragment.activity, ImgSelectorListActivity::class.java)
-            intent.putExtra("config", config)
-            fragment.startActivityForResult(intent, RequestCode)
-        }
-    }
-
-    private var config: ISListConfig? = null
-
+    private var tvTitle: TextView? = null
+    private var btnConfirm: TextView? = null
+    private var ivBack: ImageView? = null
     private var cropImagePath: String? = null
 
     private var fragment: ImgSelFragment? = null
 
     private val result = ArrayList<String>()
 
-    override fun getActivityLayoutId(): Int {
-        return R.layout.ac_img_selector_list
-    }
-
-    override fun initData() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setScreenManager()
+        setContentView(R.layout.is_activity_img_sel)
 
         config = intent.getSerializableExtra("config") as ISListConfig
 
+        // Android 6.0 checkSelfPermission
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -92,45 +67,109 @@ class ImgSelectorListActivity : BaseActivity() , Callback{
             )
         } else {
             fragment = ImgSelFragment.instance()
-            if(fragment != null){
+            if (fragment != null) {
                 supportFragmentManager.beginTransaction()
-                    .add(R.id.image_list, fragment!!, null)
+                    .add(R.id.fmImageList, fragment!!, null)
                     .commit()
             }
-        }
-        if(config != null){
-            if(config?.multiSelect == true){
-                if(config?.rememberSelected == false){
-                    Constant.imageList.clear()
-                }
-                confirm_img_selector?.text = String.format(
-                    Config.getString(R.string.str_confirm_format),
-                    confirm_img_selector,
-                    Constant.imageList.size,
-                    (config?.maxNum ?: 9)
-                )
-            }else{
-                Constant.imageList.clear()
-                confirm_img_selector?.visibility = View.GONE
-            }
-        }
 
+        }
+        initView()
         if (!FileUtils.isSdCardAvailable) {
-            ToastUtils.showSafeToast(this,getString(R.string.str_sd_disable))
+            Toast.makeText(this, getString(R.string.str_sd_disable), Toast.LENGTH_SHORT).show()
         }
     }
 
-    override fun initListener() {
-        fl_title_back?.setOnClickListener {
-            onBackPressed()
-        }
+    private fun setScreenManager() {
+        ImmersionBar.with(this)
+            .fitsSystemWindows(true)
+            .statusBarColor(R.color.color_white)
+            .statusBarDarkFont(true, 0f)
+            .init()
+    }
 
-        confirm_img_selector?.setOnClickListener {
+    private fun initView() {
+        tvTitle = findViewById(R.id.tvTitle)
+
+        btnConfirm = findViewById(R.id.btnConfirm)
+        btnConfirm?.setOnClickListener(this)
+
+        ivBack = findViewById(R.id.ivBack)
+        ivBack?.setOnClickListener(this)
+
+        if (config != null) {
+
+            if (config?.multiSelect == true) {
+                if (config?.rememberSelected == false) {
+                    Constant.imageList.clear()
+                }
+                btnConfirm?.text = String.format(
+                    getString(R.string.str_confirm_format),
+                    "确定",
+                    Constant.imageList.size,
+                    (config?.maxNum ?: 9)
+                )
+            } else {
+                Constant.imageList.clear()
+                btnConfirm?.visibility = View.GONE
+            }
+        }
+    }
+
+    override fun onClick(v: View) {
+        val id = v.id
+        if (id == R.id.btnConfirm) {
             if (!Constant.imageList.isEmpty()) {
                 exit()
             } else {
                 Toast.makeText(this, getString(R.string.str_minnum), Toast.LENGTH_SHORT).show()
             }
+        } else if (id == R.id.ivBack) {
+            onBackPressed()
+        }
+    }
+
+    override fun onSingleImageSelected(path: String) {
+        if (config?.needCrop == true) {
+            crop(path)
+        } else {
+            Constant.imageList.add(path)
+            exit()
+        }
+    }
+
+    override fun onImageSelected(path: String) {
+        btnConfirm?.text = String.format(
+            getString(R.string.str_confirm_format),
+            "确定",
+            Constant.imageList.size,
+            (config?.maxNum ?: 9)
+        )
+    }
+
+    override fun onImageUnselected(path: String) {
+        btnConfirm?.text = String.format(
+            getString(R.string.str_confirm_format),
+            "确定",
+            Constant.imageList.size,
+            (config?.maxNum ?: 9)
+        )
+    }
+
+    override fun onCameraShot(imageFile: File) {
+        if (config?.needCrop == true) {
+            crop(imageFile.absolutePath)
+        } else {
+            Constant.imageList.add(imageFile.absolutePath)
+            config?.multiSelect = false // 多选点击拍照，强制更改为单选
+            exit()
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun onPreviewChanged(select: Int, sum: Int, visible: Boolean) {
+        if (visible) {
+            tvTitle?.text = "$select/$sum"
         }
     }
 
@@ -209,74 +248,56 @@ class ImgSelectorListActivity : BaseActivity() , Callback{
         finish()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             STORAGE_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.image_list, ImgSelFragment.instance(), null)
+                    .add(R.id.fmImageList, ImgSelFragment.instance(), null)
                     .commitAllowingStateLoss()
             } else {
-                ToastUtils.showSafeToast(this@ImgSelectorListActivity,getString(R.string.str_permission_storage_denied))
+                Toast.makeText(this, getString(R.string.str_permission_storage_denied), Toast.LENGTH_SHORT).show()
             }
             else -> {
             }
         }
     }
 
-
-    override fun onSingleImageSelected(path: String) {
-        if (config?.needCrop == true) {
-            crop(path)
-        } else {
-            Constant.imageList.add(path)
-            exit()
-        }
-    }
-
-    override fun onImageSelected(path: String) {
-        confirm_img_selector?.text =
-            String.format(getString(R.string.str_confirm_format), confirm_img_selector, Constant.imageList.size, 9)
-    }
-
-    override fun onImageUnselected(path: String) {
-        confirm_img_selector?.text =
-            String.format(getString(R.string.str_confirm_format), confirm_img_selector, Constant.imageList.size, 9)
-
-    }
-
-    override fun onCameraShot(imageFile: File) {
-        if (config?.needCrop == true) {
-            crop(imageFile.absolutePath)
-        } else {
-            Constant.imageList.add(imageFile.absolutePath)
-            config?.multiSelect = false // 多选点击拍照，强制更改为单选
-            exit()
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    override fun onPreviewChanged(select: Int, sum: Int, visible: Boolean) {
-        if (visible) {
-            tvTitle?.text = "$select/$sum"
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putSerializable("config",config)
+        outState.putSerializable("config", config)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+    public override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        config = savedInstanceState?.getSerializable("config") as ISListConfig
+        config = savedInstanceState.getSerializable("config") as ISListConfig
     }
 
     override fun onBackPressed() {
-        if (fragment == null || fragment?.hidePreview() == false) {
+        if (fragment == null || (fragment?.hidePreview() == false)) {
             Constant.imageList.clear()
             super.onBackPressed()
+        }
+    }
+
+
+    companion object {
+
+        const val INTENT_RESULT = "result"
+        private const val IMAGE_CROP_CODE = 1
+        private const val STORAGE_REQUEST_CODE = 1
+
+        fun startForResult(activity: Activity, config: ISListConfig, RequestCode: Int) {
+            val intent = Intent(activity, ISListActivity::class.java)
+            intent.putExtra("config", config)
+            activity.startActivityForResult(intent, RequestCode)
+        }
+
+        fun startForResult(fragment: Fragment, config: ISListConfig, RequestCode: Int) {
+            val intent = Intent(fragment.activity, ISListActivity::class.java)
+            intent.putExtra("config", config)
+            fragment.startActivityForResult(intent, RequestCode)
         }
     }
 }

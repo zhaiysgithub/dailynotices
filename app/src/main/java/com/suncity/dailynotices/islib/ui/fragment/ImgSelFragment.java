@@ -43,7 +43,7 @@ import com.suncity.dailynotices.islib.common.Constant;
 import com.suncity.dailynotices.islib.common.OnItemClickListener;
 import com.suncity.dailynotices.islib.config.ISListConfig;
 import com.suncity.dailynotices.islib.ui.ISListActivity;
-import com.suncity.dailynotices.islib.utils.FileUtils;
+import com.suncity.dailynotices.utils.FileUtils;
 import com.suncity.dailynotices.utils.DisplayUtils;
 import com.suncity.dailynotices.utils.LogUtils;
 
@@ -110,7 +110,7 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
             return;
         }
 
-        btnAlbumSelected.setText(config.allImagesText);
+        btnAlbumSelected.setText(config.getAllImagesText());
 
         rvImageList.setLayoutManager(new GridLayoutManager(rvImageList.getContext(), 3));
         rvImageList.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -125,12 +125,12 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
                 outRect.bottom = halfSpacing;
             }
         });
-        if (config.needCamera)
+        if (config.getNeedCamera())
             imageList.add(new Image());
 
-        imageListAdapter = new ImageListAdapter(getActivity(), imageList, config);
-        imageListAdapter.setShowCamera(config.needCamera);
-        imageListAdapter.setMutiSelect(config.multiSelect);
+        imageListAdapter = new ImageListAdapter(getActivity(), imageList);
+        imageListAdapter.setShowCamera(config.getNeedCamera());
+        imageListAdapter.setMutiSelect(config.getMultiSelect());
         rvImageList.setAdapter(imageListAdapter);
         imageListAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -140,10 +140,10 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
 
             @Override
             public void onImageClick(int position, Image image) {
-                if (config.needCamera && position == 0) {
+                if (config.getNeedCamera() && position == 0) {
                     showCameraAction();
                 } else {
-                    if (config.multiSelect) {
+                    if (config.getMultiSelect()) {
                         viewPager.setAdapter((previewAdapter = new PreviewAdapter(getActivity(), imageList, config)));
                         previewAdapter.setListener(new OnItemClickListener() {
                             @Override
@@ -156,12 +156,12 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
                                 hidePreview();
                             }
                         });
-                        if (config.needCamera) {
+                        if (config.getNeedCamera()) {
                             callback.onPreviewChanged(position, imageList.size() - 1, true);
                         } else {
                             callback.onPreviewChanged(position + 1, imageList.size(), true);
                         }
-                        viewPager.setCurrentItem(config.needCamera ? position - 1 : position);
+                        viewPager.setCurrentItem(config.getNeedCamera() ? position - 1 : position);
                         viewPager.setVisibility(View.VISIBLE);
                     } else {
 
@@ -170,27 +170,27 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
             }
         });
 
-        folderListAdapter = new FolderListAdapter(getActivity(), folderList, config);
+        folderListAdapter = new FolderListAdapter(getActivity(), folderList);
 
         getActivity().getSupportLoaderManager().initLoader(LOADER_ALL, null, mLoaderCallback);
     }
 
     private int checkedImage(int position, Image image) {
         if (image != null) {
-            if (Constant.imageList.contains(image.path)) {
-                Constant.imageList.remove(image.path);
+            if (Constant.INSTANCE.getImageList().contains(image.getPath())) {
+                Constant.INSTANCE.getImageList().remove(image.getPath());
                 if (callback != null) {
-                    callback.onImageUnselected(image.path);
+                    callback.onImageUnselected(image.getPath());
                 }
             } else {
-                if (config.maxNum <= Constant.imageList.size()) {
-                    Toast.makeText(getActivity(), String.format(getString(R.string.str_maxnum), config.maxNum), Toast.LENGTH_SHORT).show();
+                if (config.getMaxNum() <= Constant.INSTANCE.getImageList().size()) {
+                    Toast.makeText(getActivity(), String.format(getString(R.string.str_maxnum), config.getMaxNum()), Toast.LENGTH_SHORT).show();
                     return 0;
                 }
 
-                Constant.imageList.add(image.path);
+                Constant.INSTANCE.getImageList().add(image.getPath());
                 if (callback != null) {
-                    callback.onImageSelected(image.path);
+                    callback.onImageSelected(image.getPath());
                 }
             }
             return 1;
@@ -240,29 +240,29 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
 
                             Folder parent = null;
                             for (Folder folder : folderList) {
-                                if (TextUtils.equals(folder.path, folderFile.getAbsolutePath())) {
+                                if (TextUtils.equals(folder.getPath(), folderFile.getAbsolutePath())) {
                                     parent = folder;
                                 }
                             }
                             if (parent != null) {
-                                parent.images.add(image);
+                                parent.getImages().add(image);
                             } else {
                                 parent = new Folder();
-                                parent.name = folderFile.getName();
-                                parent.path = folderFile.getAbsolutePath();
-                                parent.cover = image;
+                                parent.setName(folderFile.getName());
+                                parent.setPath(folderFile.getAbsolutePath());
+                                parent.setCover(image);
 
                                 List<Image> imageList = new ArrayList<>();
                                 imageList.add(image);
 
-                                parent.images = imageList;
+                                parent.setImages(imageList);
                                 folderList.add(parent);
                             }
                         }
                     } while (data.moveToNext());
 
                     imageList.clear();
-                    if (config.needCamera)
+                    if (config.getNeedCamera())
                         imageList.add(new Image());
                     imageList.addAll(tempImageList);
 
@@ -294,15 +294,15 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
             folderPopupWindow.dismiss();
             if (position == 0) {
                 getActivity().getSupportLoaderManager().restartLoader(LOADER_ALL, null, mLoaderCallback);
-                btnAlbumSelected.setText(config.allImagesText);
+                btnAlbumSelected.setText(config.getAllImagesText());
             } else {
                 imageList.clear();
-                if (config.needCamera)
+                if (config.getNeedCamera())
                     imageList.add(new Image());
-                imageList.addAll(folder.images);
+                imageList.addAll(folder.getImages());
                 imageListAdapter.notifyDataSetChanged();
 
-                btnAlbumSelected.setText(folder.name);
+                btnAlbumSelected.setText(folder.getName());
             }
         });
         folderPopupWindow.setOnDismissListener(() -> setBackgroundAlpha(1.0f));
@@ -356,8 +356,8 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
 
     private void showCameraAction() {
 
-        if (config.maxNum <= Constant.imageList.size()) {
-            Toast.makeText(getActivity(), String.format(getString(R.string.str_maxnum), config.maxNum), Toast.LENGTH_SHORT).show();
+        if (config.getMaxNum() <= Constant.INSTANCE.getImageList().size()) {
+            Toast.makeText(getActivity(), String.format(getString(R.string.str_maxnum), config.getMaxNum()), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -370,12 +370,12 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            tempFile = new File(FileUtils.createRootPath(getActivity()) + "/" + System.currentTimeMillis() + ".jpg");
+            tempFile = new File(FileUtils.INSTANCE.createRootPath(getActivity()) + "/" + System.currentTimeMillis() + ".jpg");
             LogUtils.INSTANCE.e(tempFile.getAbsolutePath());
-            FileUtils.createFile(tempFile);
+            FileUtils.INSTANCE.createFile(tempFile);
 
             Uri uri = FileProvider.getUriForFile(getActivity(),
-                    FileUtils.getApplicationId(getActivity()) + ".image_provider", tempFile);
+                    FileUtils.INSTANCE.getApplicationId(getActivity()) + ".image_provider", tempFile);
 
             List<ResolveInfo> resInfoList = getActivity().getPackageManager()
                     .queryIntentActivities(cameraIntent, PackageManager.MATCH_DEFAULT_ONLY);
@@ -433,7 +433,7 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
 
     @Override
     public void onPageSelected(int position) {
-        if (config.needCamera) {
+        if (config.getNeedCamera()) {
             callback.onPreviewChanged(position + 1, imageList.size() - 1, true);
         } else {
             callback.onPreviewChanged(position + 1, imageList.size(), true);
