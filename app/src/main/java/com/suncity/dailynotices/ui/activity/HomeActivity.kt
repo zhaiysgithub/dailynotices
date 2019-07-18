@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment
 import android.view.View
 import com.avos.avoscloud.AVException
 import com.avos.avoscloud.AVObject
-import com.avos.avoscloud.AVUser
 import com.avos.avoscloud.SaveCallback
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.OnTabSelectListener
@@ -90,7 +89,6 @@ class HomeActivity : BaseActivity() {
     }
 
     override fun initData() {
-        initAvoscloud()
         homeTexts = UIUtils.getStringArray(R.array.home_bottom_text)
         val size = homeTexts?.size ?: return
         for (i in 0 until size) {
@@ -135,6 +133,8 @@ class HomeActivity : BaseActivity() {
         iv_push?.setOnClickListener {
             if (!isLogined()) {
                 startActivity(LoginActivity::class.java, false)
+            }else{
+                startActivity(PicFolderActivity::class.java)
             }
         }
     }

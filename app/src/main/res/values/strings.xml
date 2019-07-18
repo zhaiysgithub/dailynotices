@@ -120,4 +120,9 @@
     <string name="str_date_old_minutes">分钟前</string>
     <string name="str_date_old_was">刚刚</string>
     <string name="str_date_yesterday">昨天</string>
+
+    <string name="str_add_dynamic">添加演艺动态</string>
+    <string name="str_picture_jurisdiction">读取内存卡权限被拒绝</string>
+    <string name="str_picture_camera_roll">相机胶卷</string>
+    <string name="str_picture_all_audio">所有音频</string>
 </resources>

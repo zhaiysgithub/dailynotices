@@ -1,20 +1,16 @@
 package com.suncity.dailynotices.ui
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.suncity.dailynotices.callback.GlobalObservable
-import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.callback.NetworkMonitor
 import com.suncity.dailynotices.manager.ScreenManager
 import com.suncity.dailynotices.receive.NetworkChangedReceiver
 import com.suncity.dailynotices.utils.LogUtils
 import com.suncity.dailynotices.utils.PreferenceStorage
-import com.tbruyelle.rxpermissions2.RxPermissions
 
 /**
  * @ProjectName:    dailynotices
@@ -31,6 +27,7 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LogUtils.e("${this.javaClass} onCreate")
+        onCreateSaveInstance(savedInstanceState)
         setScreenManager()
         ScreenManager.setScreenRoate(isScreenPortrait,this)
         ScreenManager.setFullScreen(isFullScreen,this)
@@ -43,6 +40,10 @@ abstract class BaseActivity : AppCompatActivity() {
         registerNetReceiver()
         initData()
         initListener()
+    }
+
+    open fun onCreateSaveInstance(savedInstanceState: Bundle?){
+
     }
 
     override fun onResume() {
@@ -126,10 +127,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
     open fun initData(){}
 
-    @SuppressLint("CheckResult")
-    protected fun requestPermissions(vararg list: String, result: (pass: Boolean) -> Unit) {
-        RxPermissions(this).request(*list).subscribe({ result(it) }, { result(false) })
-    }
 
     /**
      * @param cls 需要打开的页面 class
