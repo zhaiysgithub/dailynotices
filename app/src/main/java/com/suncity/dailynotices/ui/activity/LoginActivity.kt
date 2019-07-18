@@ -77,9 +77,7 @@ class LoginActivity : BaseActivity() {
     }
 
     override fun initListener() {
-        /*fl_login_del?.setOnClickListener {
-            finish()
-        }*/
+
         tv_login_agreement_tip?.setOnClickListener {
             startActivity(UserAgreementActivity::class.java, false)
 
