@@ -88,6 +88,7 @@ android {
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/rxjava.properties'
     }
 
     lintOptions {
@@ -171,4 +172,5 @@ dependencies {
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-31'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation project(":leancloudchatkit")
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:2.2.3'
 }

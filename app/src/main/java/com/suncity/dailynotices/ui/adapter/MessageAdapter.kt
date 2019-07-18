@@ -1,7 +1,6 @@
 package com.suncity.dailynotices.ui.adapter
 
 import android.content.Context
-import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -19,6 +18,7 @@ import com.suncity.dailynotices.ui.views.recyclerview.adapter.HAFViewHolder
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.LogUtils
+import com.suncity.dailynotices.utils.StringUtils
 import com.suncity.dailynotices.utils.imPostDate
 import java.lang.Exception
 
@@ -84,6 +84,8 @@ class MessageAdapter(context: Context) : RecyclerArrayAdapter<AVIMConversation>(
                 val timeStamp = lastMessage.timestamp
                 val lastMsgDate = timeStamp.imPostDate()
                 date?.text = lastMsgDate
+            }else{
+                lastmsg?.text = Config.getString(R.string.lcim_message_shorthand_unknown)
             }
         }
 
@@ -104,7 +106,7 @@ class MessageAdapter(context: Context) : RecyclerArrayAdapter<AVIMConversation>(
                             val messageInterface = message as LCChatMessageInterface
                             shortHand = messageInterface.shorthand
                         }
-                        if (TextUtils.isEmpty(shortHand)) {
+                        if (StringUtils.isEmptyOrNull(shortHand?.toString())) {
                             shortHand = Config.getString(R.string.lcim_message_shorthand_unknown)
                         }
                         return shortHand
@@ -114,9 +116,10 @@ class MessageAdapter(context: Context) : RecyclerArrayAdapter<AVIMConversation>(
                 return try {
                     val content = message.content
                     val jsonObject = JSON.parseObject(content)
-                    jsonObject.getString("_lctext")
+                    val lastMsgStr = jsonObject.getString("_lctext")
+                    return lastMsgStr ?: Config.getString(R.string.lcim_message_shorthand_unknown)
                 }catch (e : Exception){
-                    ""
+                    Config.getString(R.string.lcim_message_shorthand_unknown)
                 }
             }
         }
