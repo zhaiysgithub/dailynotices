@@ -134,7 +134,7 @@ class HomeActivity : BaseActivity() {
             if (!isLogined()) {
                 startActivity(LoginActivity::class.java, false)
             }else{
-                startActivity(PicFolderActivity::class.java)
+                startActivity(PushDynamicActivity::class.java)
             }
         }
     }

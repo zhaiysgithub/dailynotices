@@ -153,6 +153,10 @@
                   android:screenOrientation="portrait"
                   android:launchMode="singleTop"/>
 
+        <activity android:name=".ui.activity.PushDynamicActivity"
+                  android:screenOrientation="portrait"
+                  android:launchMode="singleTop"/>
+
 
         <!-- 即时通讯模块、推送（均需要加入以下声明） START -->
         <!-- 即时通讯模块、推送都要使用 PushService -->
