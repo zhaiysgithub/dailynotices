@@ -103,14 +103,19 @@
         <item name="android:textSize">@dimen/sp_16</item>
     </style>
 
-    <style name="picture_alert_dialog" parent="android:Theme.Dialog">
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowIsTranslucent">false</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowFullscreen">false</item>
-        <item name="android:windowBackground">@color/transparent</item>
-        <item name="android:windowAnimationStyle">@null</item>
-        <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:backgroundDimAmount">0.4</item>
+    <style name="IS_BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#FF4081</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">#FF4081</item>
+
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="IS_SelTheme" parent="@style/IS_BaseAppTheme"/>
+
+    <style name="IS_PopupAnimBottom" parent="@android:style/Animation">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowEnterAnimation">@anim/popup_bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/popup_bottom_out</item>
     </style>
 </resources>

@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.suncity.dailynotices.utils
 
 import android.app.Activity

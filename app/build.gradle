@@ -172,5 +172,6 @@ dependencies {
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-31'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation project(":leancloudchatkit")
-    implementation 'com.github.LuckSiege.PictureSelector:picture_library:2.2.3'
+    //兼容图片选择库的适配器
+    implementation 'com.yuyh.easyadapter:library:1.1.0'
 }
