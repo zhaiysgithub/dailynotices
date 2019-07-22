@@ -1,0 +1,206 @@
+{
+  "data": [
+    {
+      "itemdata": [
+        {
+          "name": "性格外向",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "文静内敛",
+          "imgsrc": "",
+          "cacode": "1"
+        },
+        {
+          "name": "幽默",
+          "imgsrc": "",
+          "cacode": "2"
+        },
+        {
+          "name": "酷",
+          "imgsrc": "",
+          "cacode": "3"
+        },
+        {
+          "name": "儒雅",
+          "imgsrc": "",
+          "cacode": "4"
+        }
+      ],
+      "name": "性格",
+      "imgsrc": "",
+      "cacode": "0"
+    },
+    {
+      "itemdata": [
+        {
+          "name": "高颜值",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "小鲜肉",
+          "imgsrc": "",
+          "cacode": "1"
+        },
+        {
+          "name": "呆萌",
+          "imgsrc": "",
+          "cacode": "2"
+        },
+        {
+          "name": "痞气",
+          "imgsrc": "",
+          "cacode": "3"
+        },
+        {
+          "name": "秀气",
+          "imgsrc": "",
+          "cacode": "4"
+        },
+        {
+          "name": "阳刚",
+          "imgsrc": "",
+          "cacode": "5"
+        },
+        {
+          "name": "灵气",
+          "imgsrc": "",
+          "cacode": "6"
+        },
+        {
+          "name": "成熟",
+          "imgsrc": "",
+          "cacode": "7"
+        },
+        {
+          "name": "硬汉",
+          "imgsrc": "",
+          "cacode": "8"
+        }
+      ],
+      "name": "外貌",
+      "imgsrc": "",
+      "cacode": "1"
+    },
+    {
+      "itemdata": [
+        {
+          "name": "超模脸",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "高级脸",
+          "imgsrc": "",
+          "cacode": "1"
+        },
+        {
+          "name": "东方脸",
+          "imgsrc": "",
+          "cacode": "2"
+        },
+        {
+          "name": "混血脸",
+          "imgsrc": "",
+          "cacode": "3"
+        },
+        {
+          "name": "圆脸",
+          "imgsrc": "",
+          "cacode": "4"
+        },
+        {
+          "name": "瓜子脸",
+          "imgsrc": "",
+          "cacode": "4"
+        },
+        {
+          "name": "网红脸",
+          "imgsrc": "",
+          "cacode": "4"
+        }
+      ],
+      "name": "脸型",
+      "imgsrc": "",
+      "cacode": "2"
+    },
+    {
+      "itemdata": [
+        {
+          "name": "白皙",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "黑皮肤",
+          "imgsrc": "",
+          "cacode": "1"
+        }
+      ],
+      "name": "肤色",
+      "imgsrc": "",
+      "cacode": "3"
+    },
+    {
+      "itemdata": [
+        {
+          "name": "长发",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "短发",
+          "imgsrc": "",
+          "cacode": "1"
+        },
+        {
+          "name": "小胡子",
+          "imgsrc": "",
+          "cacode": "2"
+        },
+        {
+          "name": "长胡子",
+          "imgsrc": "",
+          "cacode": "3"
+        }
+      ],
+      "name": "须发特征",
+      "imgsrc": "",
+      "cacode": "4"
+    },
+    {
+      "itemdata": [
+        {
+          "name": "骨感",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "肥仔",
+          "imgsrc": "",
+          "cacode": "1"
+        },
+        {
+          "name": "丰满",
+          "imgsrc": "",
+          "cacode": "2"
+        },
+        {
+          "name": "大胸",
+          "imgsrc": "",
+          "cacode": "3"
+        },
+        {
+          "name": "健壮",
+          "imgsrc": "",
+          "cacode": "4"
+        }
+      ],
+      "name": "形体",
+      "imgsrc": "",
+      "cacode": "5"
+    }
+  ]
+}

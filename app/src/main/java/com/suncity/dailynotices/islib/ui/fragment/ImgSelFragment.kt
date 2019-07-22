@@ -104,6 +104,7 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
         imageListAdapter = ImageListAdapter(requireContext())
         imageListAdapter?.setShowCamera((config?.needCamera ?: false))
         imageListAdapter?.setMutiSelect((config?.multiSelect ?: false))
+        rvImageList?.setHasFixedSize(true)
         rvImageList?.itemAnimator?.changeDuration = 0
         rvImageList?.adapter = imageListAdapter
         imageListAdapter?.addAll(imageList)

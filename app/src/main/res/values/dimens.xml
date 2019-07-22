@@ -97,4 +97,5 @@
     <dimen name="dp_54">54dp</dimen>
     <dimen name="dp_82">82dp</dimen>
     <dimen name="dp_9">9dp</dimen>
+    <dimen name="dp_100">100dp</dimen>
 </resources>

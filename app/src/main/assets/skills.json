@@ -1,0 +1,75 @@
+{
+  "data": [
+    {
+      "itemdata": [
+        {
+          "name": "模特",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "车模",
+          "imgsrc": "",
+          "cacode": "1"
+        },
+        {
+          "name": "平面模特",
+          "imgsrc": "",
+          "cacode": "2"
+        }
+      ],
+      "name": "模特",
+      "imgsrc": "",
+      "cacode": "0"
+    },
+    {
+      "itemdata": [
+        {
+          "name": "走秀",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "礼仪",
+          "imgsrc": "",
+          "cacode": "1"
+        }
+      ],
+      "name": "Cosplay",
+      "imgsrc": "",
+      "cacode": "2"
+    },
+    {
+      "itemdata": [
+        {
+          "name": "手模",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "脚模",
+          "imgsrc": "",
+          "cacode": "1"
+        },
+        {
+          "name": "腿模",
+          "imgsrc": "",
+          "cacode": "2"
+        },
+        {
+          "name": "发默",
+          "imgsrc": "",
+          "cacode": "3"
+        },
+        {
+          "name": "背模",
+          "imgsrc": "",
+          "cacode": "4"
+        }
+      ],
+      "name": "肢体",
+      "imgsrc": "",
+      "cacode": "2"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+           xmlns:tools="http://schemas.android.com/tools"
+           android:layout_width="@dimen/dp_109"
+           android:layout_height="@dimen/dp_109"
+           android:id="@+id/drawee_add_pic"
+           android:background="@drawable/shape_f2f2f2"
+           android:src="@mipmap/ico_camera_add"
+           android:scaleType="centerInside"
+           tools:ignore="ContentDescription"/>
