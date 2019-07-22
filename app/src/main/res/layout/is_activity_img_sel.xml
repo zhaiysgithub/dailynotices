@@ -12,7 +12,7 @@
 
         <ImageView
                 android:id="@+id/ivBack"
-                android:layout_width="40dp"
+                android:layout_width="@dimen/dp_40"
                 android:layout_height="match_parent"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
@@ -24,12 +24,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="图片"
+                android:text="@string/str_pic"
                 android:textColor="@color/color_222"
                 android:textSize="18sp"/>
 
         <TextView
-                android:id="@+id/btnConfirm"
+                android:id="@+id/tvConfirm"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
@@ -37,17 +37,15 @@
                 android:paddingLeft="@dimen/dp_20"
                 android:paddingRight="@dimen/dp_20"
                 android:gravity="center"
-                android:layout_marginEnd="@dimen/dp_20"
-                android:text="确定"
+                android:text="@string/str_confirm"
                 android:textColor="@color/color_222"
-                android:textSize="16sp"/>
+                android:textSize="@dimen/sp_16"/>
 
     </RelativeLayout>
 
     <FrameLayout
             android:id="@+id/fmImageList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-    />
+            android:layout_height="match_parent"/>
 
 </LinearLayout>

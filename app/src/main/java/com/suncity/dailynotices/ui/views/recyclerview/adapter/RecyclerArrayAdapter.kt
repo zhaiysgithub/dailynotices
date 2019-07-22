@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.suncity.dailynotices.ui.views.recyclerview.FixDataObserver
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  *
@@ -507,7 +508,7 @@ abstract class RecyclerArrayAdapter<T> : RecyclerView.Adapter<HAFViewHolder<T>> 
     }
 
 
-    fun getAllData(): List<T> {
+    fun getAllData(): ArrayList<T> {
         return ArrayList(mObjects)
     }
 

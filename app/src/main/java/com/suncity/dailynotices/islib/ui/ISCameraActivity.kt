@@ -24,10 +24,7 @@ import com.suncity.dailynotices.utils.LogUtils
 
 import java.io.File
 
-/**
- * @author yuyh.
- * @date 2017/4/18.
- */
+
 class ISCameraActivity : AppCompatActivity() {
 
     private var cropImageFile: File? = null

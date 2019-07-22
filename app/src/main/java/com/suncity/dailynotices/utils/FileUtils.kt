@@ -7,10 +7,6 @@ import android.os.Environment
 
 import java.io.File
 
-/**
- * @author yuyh.
- * @date 16/4/9.
- */
 object FileUtils {
 
     val isSdCardAvailable: Boolean

@@ -8,12 +8,8 @@ import com.yuyh.easyadapter.abslistview.EasyLVHolder
 import com.suncity.dailynotices.islib.ISNav
 import com.suncity.dailynotices.islib.bean.Folder
 import com.suncity.dailynotices.islib.common.OnFolderChangeListener
-import com.suncity.dailynotices.islib.config.ISListConfig
 
-/**
- * @author yuyh.
- * @date 2016/8/5.
- */
+
 class FolderListAdapter(
     private val context: Context,
     private val folderList: MutableList<Folder>

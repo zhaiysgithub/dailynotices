@@ -3,16 +3,12 @@ package com.suncity.dailynotices.islib.bean
 
 import java.io.Serializable
 
-/**
- * Folder bean
- * Created by Yancy on 2015/12/2.
- */
 class Folder : Serializable {
 
     var name: String = ""
     var path: String = ""
     var cover: Image? = null
-    var images: List<Image>? = null
+    var images: ArrayList<Image>? = null
     override fun equals(o: Any?): Boolean {
         try {
             val other = o as Folder?

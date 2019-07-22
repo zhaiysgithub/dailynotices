@@ -2,10 +2,6 @@ package com.suncity.dailynotices.islib.bean
 
 import java.io.Serializable
 
-/**
- * Image bean
- * Created by Yancy on 2015/12/2.
- */
 class Image : Serializable {
 
     var path: String = ""

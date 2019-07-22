@@ -7,6 +7,7 @@ import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.TextWatcherHelper
 import com.suncity.dailynotices.islib.ISNav
 import com.suncity.dailynotices.islib.config.ISListConfig
+import com.suncity.dailynotices.islib.ui.ISListActivity
 import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.utils.LogUtils
@@ -69,7 +70,7 @@ class PushDynamicActivity : BaseActivity() {
                 .rememberSelected(true)
                 .build()
 
-            ISNav.getInstance().toListActivity(this,config,REQUEST_LIST_CODE)
+            ISListActivity.startForResult(this, config, REQUEST_LIST_CODE)
         }
 
         content_push_dynamic?.addTextChangedListener(mTextWatcher)
@@ -94,10 +95,10 @@ class PushDynamicActivity : BaseActivity() {
             for (path in pathList) {
                 paths.append(path + "\n")
             }
-            LogUtils.e("PushDynamicActivity -> paths=$paths")
+            LogUtils.e("0----PushDynamicActivity -> paths=$paths")
         } else if (requestCode == REQUEST_CAMERA_CODE && resultCode == Activity.RESULT_OK && data != null) {
             val path = data.getStringExtra("result")
-            LogUtils.e("PushDynamicActivity -> paths=${path + "\n"}")
+            LogUtils.e("1----PushDynamicActivity -> paths=${path + "\n"}")
         }
     }
 }

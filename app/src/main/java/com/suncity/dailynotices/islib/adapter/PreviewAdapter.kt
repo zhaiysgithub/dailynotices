@@ -2,6 +2,7 @@ package com.suncity.dailynotices.islib.adapter
 
 import android.app.Activity
 import android.support.v4.view.PagerAdapter
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -10,19 +11,16 @@ import com.suncity.dailynotices.R
 import com.suncity.dailynotices.islib.bean.Image
 import com.suncity.dailynotices.islib.ISNav
 import com.suncity.dailynotices.islib.common.Constant
-import com.suncity.dailynotices.islib.common.OnItemClickListener
+import com.suncity.dailynotices.islib.common.OnImgItemClickListener
 import com.suncity.dailynotices.islib.config.ISListConfig
+import com.suncity.dailynotices.utils.LogUtils
 
-/**
- * @author yuyh.
- * @date 2016/9/28.
- */
 class PreviewAdapter(
     private val activity: Activity,
     private val images: List<Image>,
     private val config: ISListConfig
 ) : PagerAdapter() {
-    private var listener: OnItemClickListener? = null
+    private var listenerImg: OnImgItemClickListener? = null
 
     override fun getCount(): Int {
         return if (config.needCamera)
@@ -47,8 +45,8 @@ class PreviewAdapter(
             }
 
             ivChecked.setOnClickListener {
-                if (listener != null) {
-                    val ret = listener?.onCheckedClick(position, image)
+                if (listenerImg != null) {
+                    val ret = listenerImg?.onCheckedClick(position, image)
                     if (ret == 1) { // 局部刷新
                         if (Constant.imageList.contains(image.path)) {
                             ivChecked.setImageResource(R.drawable.ic_checked)
@@ -60,8 +58,8 @@ class PreviewAdapter(
             }
 
             photoView.setOnClickListener {
-                if (listener != null) {
-                    listener?.onImageClick(position, images[position])
+                if (listenerImg != null) {
+                    listenerImg?.onImageClick(position, images[position])
                 }
             }
         } else {
@@ -72,9 +70,9 @@ class PreviewAdapter(
             root, ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
-
-        displayImage(photoView, images[if (config.needCamera) position + 1 else position].path)
-
+        val path = images[if (config.needCamera) position + 1 else position].path
+        LogUtils.e("@@@path =$path")
+        displayImage(photoView, path)
         return root
     }
 
@@ -90,7 +88,7 @@ class PreviewAdapter(
         container.removeView(`object` as View)
     }
 
-    fun setListener(listener: OnItemClickListener) {
-        this.listener = listener
+    fun setListener(listenerImg: OnImgItemClickListener) {
+        this.listenerImg = listenerImg
     }
 }

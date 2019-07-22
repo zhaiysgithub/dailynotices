@@ -136,4 +136,5 @@
     <string name="str_open_camera_failure">打开相机失败</string>
     <string name="str_permission_storage_denied">请打开存储空间权限</string>
     <string name="str_permission_camera_denied">请打开相关权限</string>
+    <string name="str_pic">图片</string>
 </resources>

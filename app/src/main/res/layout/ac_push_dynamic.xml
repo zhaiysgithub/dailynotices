@@ -92,15 +92,16 @@
 
     <FrameLayout
             android:id="@+id/layout_camera_add"
-            android:layout_width="@dimen/dp_109"
-            android:layout_height="@dimen/dp_109"
-            android:layout_marginStart="@dimen/dp_20"
-            android:background="@color/color_f2f2f2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/dp_20"
+            android:paddingEnd="@dimen/dp_20"
             android:layout_marginTop="@dimen/dp_10">
         <ImageView
                 android:id="@+id/drawee_add_pic"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/dp_109"
+                android:layout_height="@dimen/dp_109"
+                android:background="@color/color_f2f2f2"
                 android:src="@mipmap/ico_camera_add"
                 android:scaleType="centerInside"
                 tools:ignore="ContentDescription"/>

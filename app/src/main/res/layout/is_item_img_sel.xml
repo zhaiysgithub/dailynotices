@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.suncity.dailynotices.islib.widget.SquareRelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="@dimen/dp_109"
-        android:layout_height="@dimen/dp_109" xmlns:app="http://schemas.android.com/apk/res-auto">
+        android:layout_height="@dimen/dp_109">
 
     <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/ivImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="@dimen/dp_109"
+            android:layout_height="@dimen/dp_109"
             android:layout_centerInParent="true"
-            android:scaleType="centerCrop"
-            app:placeholderImage="@mipmap/ico_empty_holder"
-            />
+            app:viewAspectRatio="1.0"
+    />
+    <!--app:placeholderImage="@mipmap/ico_empty_holder"
+    app:actualImageScaleType="centerCrop"-->
 
     <ImageView
             android:id="@+id/ivPhotoCheaked"

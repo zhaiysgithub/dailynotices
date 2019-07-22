@@ -5,10 +5,7 @@ import com.suncity.dailynotices.utils.FileUtils
 
 import java.io.Serializable
 
-/**
- * @author yuyh.
- * @date 2016/8/5.
- */
+
 class ISCameraConfig(builder: Builder) : Serializable {
 
     /**

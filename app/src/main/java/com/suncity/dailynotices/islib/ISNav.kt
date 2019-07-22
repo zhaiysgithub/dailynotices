@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.support.v4.app.Fragment
+import android.widget.ImageView
 import com.facebook.drawee.view.SimpleDraweeView
 import com.suncity.dailynotices.islib.config.ISCameraConfig
 import com.suncity.dailynotices.islib.config.ISListConfig
@@ -14,7 +15,6 @@ import com.suncity.dailynotices.utils.LogUtils
 
 /**
  * 总线
- * Created by yuyuhang on 2017/10/23.
  */
 @Suppress("DEPRECATION")
 class ISNav {
