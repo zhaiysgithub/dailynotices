@@ -42,4 +42,5 @@
 
     <color name="color_a000">#AA000000</color>
     <color name="color_f7f7f7">#F7F7F7</color>
+    <color name="color_fbbb">#FFBBBBBB</color>
 </resources>

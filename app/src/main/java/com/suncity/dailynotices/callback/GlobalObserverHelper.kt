@@ -51,4 +51,10 @@ object GlobalObserverHelper {
         }
     }
 
+    fun updateAutonymSuccess(){
+        mObservers.forEach {
+            it.onUpdateAutonymSuccess()
+        }
+    }
+
 }

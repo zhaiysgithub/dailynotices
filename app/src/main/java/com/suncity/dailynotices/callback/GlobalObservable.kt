@@ -29,4 +29,9 @@ interface GlobalObservable {
      * 发布动态成功
      */
     fun onUploadDynamicSuccess()
+
+    /**
+     * 实名认证成功
+     */
+    fun onUpdateAutonymSuccess()
 }

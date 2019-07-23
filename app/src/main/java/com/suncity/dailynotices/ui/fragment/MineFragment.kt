@@ -102,13 +102,14 @@ class MineFragment : BaseFragment() {
             val userObjectId = PreferenceStorage.userObjectId
             tv_login_user_name?.text = PreferenceStorage.userName
             iv_mine_login_avatar?.setImageURI(PreferenceStorage.userAvatar)
-            val autonym = PreferenceStorage.isAutonym //代表是否认证了
-            if (autonym == 1) {
-                tv_unreal_name_auth.text = CERTIFIED
-                iv_unreal_name_auth.setImageResource(authResourceId)
-            } else {
-                tv_unreal_name_auth.text = NO_CERTIFIED
-                iv_unreal_name_auth.setImageResource(unAuthResourceId)
+            Query.queryAutonym(userObjectId){isAutonym,e ->
+                if(isAutonym){
+                    tv_unreal_name_auth.text = CERTIFIED
+                    iv_unreal_name_auth.setImageResource(authResourceId)
+                }else{
+                    tv_unreal_name_auth.text = NO_CERTIFIED
+                    iv_unreal_name_auth.setImageResource(unAuthResourceId)
+                }
             }
             //设置推荐我的，我查看的，查看我的，RecentVisit这个表中是查看我和我查看的，
             // 推荐我的在Fire中

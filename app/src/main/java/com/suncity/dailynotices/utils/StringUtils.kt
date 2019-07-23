@@ -88,4 +88,12 @@ object StringUtils{
         }
         return randomString.toString()
     }
+
+
+    /**
+     * 判断输入的内容是否是英文
+     */
+    fun isEnglish(charStr:String):Boolean{
+        return charStr.matches(Regex("^[a-zA-Z]*"))
+    }
 }

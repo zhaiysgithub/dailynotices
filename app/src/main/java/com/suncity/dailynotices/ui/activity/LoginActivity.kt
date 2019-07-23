@@ -24,7 +24,6 @@ import com.avos.avoscloud.AVUser
 import com.avos.avoscloud.im.v2.AVIMClient
 import com.avos.avoscloud.im.v2.AVIMException
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
-import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.TableConstants
 import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.lcoperation.Increase

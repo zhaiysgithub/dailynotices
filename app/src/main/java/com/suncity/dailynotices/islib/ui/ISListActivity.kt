@@ -260,8 +260,8 @@ class ISListActivity : BaseActivity(), Callback {
     companion object {
 
         const val INTENT_RESULT = "result"
-        private const val IMAGE_CROP_CODE = 1
-        private const val STORAGE_REQUEST_CODE = 1
+        const val IMAGE_CROP_CODE = 1
+        const val STORAGE_REQUEST_CODE = 1
 
         fun startForResult(activity: Activity, config: ISListConfig, RequestCode: Int) {
             val intent = Intent(activity, ISListActivity::class.java)

@@ -67,6 +67,26 @@ object Query {
     }
 
     /**
+     * 查询是否认证成功
+     */
+    fun queryAutonym(userObjectId: String,callback: (Boolean, AVException?) -> Unit){
+        val query = AVQuery<AVObject>(TableConstants.TABLE_USERINFO)
+        query.whereEqualTo("user",userObjectId)
+        query.getFirstInBackground(object : GetCallback<AVObject>(){
+            override fun done(userInfo: AVObject?, e: AVException?) {
+                if(e == null && userInfo != null){
+                    val autonym = userInfo.getInt("autonym")
+                    callback(autonym == 1,null)
+                }else{
+                    callback(false,e)
+                }
+
+            }
+
+        })
+    }
+
+    /**
      * 查询 匹配的fire 数据的集合
      */
     fun queryFireList(userObjectId: String, callback: ((MutableList<AVObject>?, AVException?) -> Unit)) {

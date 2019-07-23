@@ -13,7 +13,8 @@ import com.suncity.dailynotices.Constants
 
 object PreferenceStorage {
 
-    private val sharedPreferences: SharedPreferences = Config.getApplicationContext().getSharedPreferences("dailynotice", Context.MODE_PRIVATE)
+    private val sharedPreferences: SharedPreferences =
+        Config.getApplicationContext().getSharedPreferences("dailynotice", Context.MODE_PRIVATE)
     private val editor = sharedPreferences.edit()
 
     private const val isLoginedStr = Constants.ISLOGINED
@@ -22,60 +23,96 @@ object PreferenceStorage {
     private const val userPhoneNumStr = Constants.USERPHONENUM
     private const val userAvatarStr = Constants.USERAVATAR
     private const val userIsAutonym = Constants.USERISAUTONYM
+    //    private val userAuthName =  "${userObjectId}name"
+//    private val userAuthCertficateNum = "${userObjectId}num"
+//    private val userAuthCertficatePic = "${userObjectId}pic"
+    private const val userAuthName = Constants.USERAUTHNAME
+    private const val userAuthCertficateNum = Constants.USERAUTHCERTFICATENUM
+    private const val userAuthCertficatePic = Constants.USERAUTHCERTFICATEPIC
 
-    private val needClearData = arrayOf(isLoginedStr,userObjcetIdStr,userNameStr,userPhoneNumStr,userAvatarStr)
+    private val needClearData = arrayOf(
+        isLoginedStr, userObjcetIdStr, userNameStr
+        , userPhoneNumStr, userAvatarStr
+    )
 
-    var isLogin : Boolean
+    var authName: String?
         @JvmStatic
-        get() = sharedPreferences.getBoolean(isLoginedStr,false)
+        get() = sharedPreferences.getString(userAuthName, "")
         @JvmStatic
         set(value) {
-            editor.putBoolean(isLoginedStr,value)
+            editor.putString(userAuthName, value)
             editor.commit()
         }
 
-    var userObjectId : String
+    var authCertficateNum: String?
         @JvmStatic
-        get() = (sharedPreferences.getString(userObjcetIdStr,"") ?: "")
+        get() = sharedPreferences.getString(userAuthCertficateNum, "")
         @JvmStatic
         set(value) {
-            editor.putString(userObjcetIdStr,value)
+            editor.putString(userAuthCertficateNum, value)
             editor.commit()
         }
 
-    var userName:String
+    var authCertficatePic: String?
         @JvmStatic
-        get() = (sharedPreferences.getString(userNameStr,"") ?: "")
+        get() = sharedPreferences.getString(userAuthCertficatePic, "")
         @JvmStatic
         set(value) {
-            editor.putString(userNameStr,value)
+            editor.putString(userAuthCertficatePic, value)
             editor.commit()
         }
 
-    var userPhoneNum:String
+    var isLogin: Boolean
         @JvmStatic
-        get() = (sharedPreferences.getString(userPhoneNumStr,"") ?: "")
+        get() = sharedPreferences.getBoolean(isLoginedStr, false)
         @JvmStatic
         set(value) {
-            editor.putString(userPhoneNumStr,value)
+            editor.putBoolean(isLoginedStr, value)
             editor.commit()
         }
 
-    var userAvatar:String
+    var userObjectId: String
         @JvmStatic
-        get() = (sharedPreferences.getString(userAvatarStr,"") ?: "")
+        get() = (sharedPreferences.getString(userObjcetIdStr, "") ?: "")
         @JvmStatic
         set(value) {
-            editor.putString(userAvatarStr,value)
+            editor.putString(userObjcetIdStr, value)
+            editor.commit()
+        }
+
+    var userName: String
+        @JvmStatic
+        get() = (sharedPreferences.getString(userNameStr, "") ?: "")
+        @JvmStatic
+        set(value) {
+            editor.putString(userNameStr, value)
+            editor.commit()
+        }
+
+    var userPhoneNum: String
+        @JvmStatic
+        get() = (sharedPreferences.getString(userPhoneNumStr, "") ?: "")
+        @JvmStatic
+        set(value) {
+            editor.putString(userPhoneNumStr, value)
+            editor.commit()
+        }
+
+    var userAvatar: String
+        @JvmStatic
+        get() = (sharedPreferences.getString(userAvatarStr, "") ?: "")
+        @JvmStatic
+        set(value) {
+            editor.putString(userAvatarStr, value)
             editor.commit()
         }
     //是否认证
-    var isAutonym:Int
+    var isAutonym: Int
         @JvmStatic
-        get() = (sharedPreferences.getInt(userIsAutonym,0))
+        get() = (sharedPreferences.getInt(userIsAutonym, 0))
         @JvmStatic
         set(value) {
-            editor.putInt(userIsAutonym,value)
+            editor.putInt(userIsAutonym, value)
             editor.commit()
         }
 

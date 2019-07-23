@@ -185,7 +185,9 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
                         viewPager?.currentItem = if (needCamera) (position - 1) else position
                         viewPager?.visibility = View.VISIBLE
                     } else {
-
+                        if (callback != null) {
+                            callback?.onSingleImageSelected(image.path)
+                        }
                     }
                 }
             }

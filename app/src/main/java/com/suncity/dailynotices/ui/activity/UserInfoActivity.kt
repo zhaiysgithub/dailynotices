@@ -47,19 +47,20 @@ class UserInfoActivity : BaseActivity() {
     private var objectId: String? = null
     private var ivHeaderBg: String = ""
     private val tabTitles = arrayOf("主页", "图片")
-    private var userInfoObject:AVObject? = null
+    private var userInfoObject: AVObject? = null
     private var mAdapter: ViewPagerAdapter? = null
+    private var autonym: Int = 0
 
     companion object {
         private const val OBJECTID = "objectId"
         private const val IMGBG = "imgbg"
-        private var mImgBg : String = ""
+        private var mImgBg: String = ""
         fun start(context: Context, objectId: String, imgBg: String? = null) {
             val intent = Intent()
             intent.setClass(context, UserInfoActivity::class.java)
             intent.putExtra(OBJECTID, objectId)
             mImgBg = imgBg ?: ""
-            intent.putExtra(IMGBG,mImgBg)
+            intent.putExtra(IMGBG, mImgBg)
             context.startActivity(intent)
         }
     }
@@ -108,6 +109,7 @@ class UserInfoActivity : BaseActivity() {
             toolbar?.requestLayout()
         }
     }
+
     @SuppressLint("SetTextI18n")
     private fun queryData() {
         LogUtils.e("objectId = $objectId")
@@ -117,9 +119,9 @@ class UserInfoActivity : BaseActivity() {
                 val username = avUser.username
                 val avatarFile: AVFile = avUser.getAVFile("avatar")
                 val avatarUrl = avatarFile.url
-                if(ivHeaderBg.isEmpty()){
+                if (ivHeaderBg.isEmpty()) {
                     imageView_header?.setImageURI(avatarUrl)
-                }else{
+                } else {
                     imageView_header?.setImageURI(ivHeaderBg)
                 }
                 iv_userinfo_avatar?.setImageURI(avatarUrl)
@@ -143,7 +145,7 @@ class UserInfoActivity : BaseActivity() {
                         if (StringUtils.isEmptyOrNull(age)) age = "18"
                         tv_age?.text = "${age}岁"
 
-                        val autonym = userInfo.getInt("autonym")
+                        autonym = userInfo.getInt("autonym")
                         if (autonym == 1) {//已认证
                             tv_auth_mark?.text = Config.getString(R.string.str_certified_name)
                             val leftDrawable = Config.getDrawable(R.mipmap.ico_certification)
@@ -167,31 +169,37 @@ class UserInfoActivity : BaseActivity() {
     override fun initListener() {
 
         tv_direct_msg?.setOnClickListener {
-            if(PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
-            if(objectId == null) return@setOnClickListener
+            if (PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
+            if (objectId == null) return@setOnClickListener
             startOpenLCIM(objectId!!)
         }
 
         app_bar?.addOnOffsetChangedListener(mAppBarOffsetChangeListener)
+        tv_auth_mark?.setOnClickListener {
+            if (objectId == PreferenceStorage.userObjectId && !PreventRepeatedUtils.isFastDoubleClick()) {
+                RealAuthActivity.start(this@UserInfoActivity, (autonym == 1))
+            }
+
+        }
     }
 
-    private fun startOpenLCIM(objectId: String){
-        if (null == LCChatKit.getInstance().client){
+    private fun startOpenLCIM(objectId: String) {
+        if (null == LCChatKit.getInstance().client) {
             startLoginChatKit(objectId)
-        }else{
+        } else {
             startLCIM(objectId)
         }
     }
 
-    private fun startLoginChatKit(objectId: String){
+    private fun startLoginChatKit(objectId: String) {
         LCChatKit.getInstance().open(objectId, object : AVIMClientCallback() {
 
             override fun done(client: AVIMClient?, e: AVIMException?) {
                 LogUtils.e("LCChatKit.getInstance().open -> $e")
-                if(e == null){
+                if (e == null) {
                     startLCIM(objectId)
-                }else{
-                    ToastUtils.showSafeToast(this@UserInfoActivity,"登录过期请重新登录")
+                } else {
+                    ToastUtils.showSafeToast(this@UserInfoActivity, "登录过期请重新登录")
                     startActivity(LoginActivity::class.java)
                 }
             }
@@ -199,13 +207,13 @@ class UserInfoActivity : BaseActivity() {
         })
     }
 
-    private fun startLCIM(bjectId: String){
-        val intent = Intent(this,LCIMConversationActivity::class.java)
-        intent.putExtra(LCIMConstants.PEER_ID,bjectId)
+    private fun startLCIM(bjectId: String) {
+        val intent = Intent(this, LCIMConversationActivity::class.java)
+        intent.putExtra(LCIMConstants.PEER_ID, bjectId)
         startActivity(intent)
     }
 
-    private val mAppBarOffsetChangeListener = object : AppBarStateChangeListener(){
+    private val mAppBarOffsetChangeListener = object : AppBarStateChangeListener() {
 
         override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
             when (state) {
