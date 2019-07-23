@@ -1,12 +1,10 @@
 package com.suncity.dailynotices.lcoperation
 
-import com.avos.avoscloud.AVException
-import com.avos.avoscloud.AVObject
-import com.avos.avoscloud.AVUser
-import com.avos.avoscloud.SaveCallback
+import com.avos.avoscloud.*
 import com.suncity.dailynotices.TableConstants
 import com.suncity.dailynotices.utils.LogUtils
 import com.suncity.dailynotices.utils.PreferenceStorage
+import com.suncity.dailynotices.utils.StringUtils
 
 /**
  * @ProjectName:    dailynotices
@@ -21,7 +19,7 @@ object Increase {
     /**
      * 保存userInfo 到后台返回userinfoId
      */
-    fun createUserInfoToBack(objectId: String, callback: ((String?,AVException?) -> Unit)) {
+    fun createUserInfoToBack(objectId: String, callback: ((String?, AVException?) -> Unit)) {
 
         val userInfo = AVObject(TableConstants.TABLE_USERINFO)
         userInfo.put("user", objectId)
@@ -33,9 +31,9 @@ object Increase {
         userInfo.put("sex", "1")
         userInfo.saveInBackground(object : SaveCallback() {
             override fun done(e: AVException?) {
-                Query.queryUserInfoObjectId(objectId){userInfo,avException ->
+                Query.queryUserInfoObjectId(objectId) { userInfo, avException ->
                     val userInfoId = userInfo?.objectId
-                    callback(userInfoId,avException)
+                    callback(userInfoId, avException)
                 }
             }
         })
@@ -58,22 +56,22 @@ object Increase {
     /**
      * 更新 Like 表
      */
-    fun createLike(likeId:String){
+    fun createLike(likeId: String) {
         val userObjectId = PreferenceStorage.userObjectId
         val likeObject = AVObject(TableConstants.TABLE_LIKE)
-        likeObject.put("likedId",likeId)
-        likeObject.put("user",AVUser.createWithoutData(TableConstants.TABLE_USER,userObjectId))
+        likeObject.put("likedId", likeId)
+        likeObject.put("user", AVUser.createWithoutData(TableConstants.TABLE_USER, userObjectId))
         likeObject.saveInBackground()
     }
 
 
-    fun createComment(dynamicId:String,commentContents:String,callback: (AVException?) -> Unit){
+    fun createComment(dynamicId: String, commentContents: String, callback: (AVException?) -> Unit) {
         val userObjectId = PreferenceStorage.userObjectId
         val commentObject = AVObject(TableConstants.TABLE_COMMENTS)
-        commentObject.put("user",AVObject.createWithoutData(TableConstants.TABLE_USER,userObjectId))
-        commentObject.put("dynamicId",AVObject.createWithoutData(TableConstants.TABLE_DYNAMIC,dynamicId))
-        commentObject.put("comments",commentContents)
-        commentObject.saveInBackground(object : SaveCallback(){
+        commentObject.put("user", AVObject.createWithoutData(TableConstants.TABLE_USER, userObjectId))
+        commentObject.put("dynamicId", AVObject.createWithoutData(TableConstants.TABLE_DYNAMIC, dynamicId))
+        commentObject.put("comments", commentContents)
+        commentObject.saveInBackground(object : SaveCallback() {
             override fun done(e: AVException?) {
                 callback(e)
             }
@@ -82,13 +80,74 @@ object Increase {
     }
 
 
-    fun addFeedback(userObjectId:String,content:String,callback: (AVException?) -> Unit){
+    fun addFeedback(userObjectId: String, content: String, callback: (AVException?) -> Unit) {
         val feedbackObject = AVObject(TableConstants.TABLE_FEEDBACK)
-        feedbackObject.put("feedBack",content)
-        feedbackObject.saveInBackground(object : SaveCallback(){
+        feedbackObject.put("feedBack", content)
+        feedbackObject.saveInBackground(object : SaveCallback() {
             override fun done(e: AVException?) {
                 callback(e)
             }
         })
     }
+
+    /**
+     * 批量上传文件
+     */
+    fun uploadAVFile(filelocalPaths: ArrayList<String>, callback: (Boolean, ArrayList<String>) -> Unit) {
+        val avFileUrls = arrayListOf<String>()
+        var index = 0
+        val filterResult = filelocalPaths.filter {
+            StringUtils.isNotEmptyAndNull(it)
+        }
+        if (filterResult.isEmpty()){
+            callback(true,avFileUrls)
+            return
+        }
+        val valueSize = filterResult.size
+        filterResult.forEach {
+            val avFile = AVFile.withAbsoluteLocalPath(StringUtils.getRandomFileName(20), it)
+            avFile.saveInBackground(object : SaveCallback() {
+                override fun done(e: AVException?) {
+                    index++
+                    if (e == null) {
+                        avFileUrls.add(avFile.url)
+                    }
+                    LogUtils.e("index = $index,size = ${filterResult.size}")
+                    checkUploadFinished(index,valueSize,avFileUrls,callback)
+                }
+            })
+        }
+    }
+
+    fun checkUploadFinished(index:Int,arraySize:Int,urls:ArrayList<String>,callback: (Boolean, ArrayList<String>) -> Unit){
+        if (index == arraySize) {
+            callback(true, urls)
+        } else {
+            callback(false, urls)
+        }
+    }
+
+    /**
+     * 上传动态内容
+     */
+    fun uploadDynamicData(
+        avFileUrls: ArrayList<String>, desc: String?, skillContent: String?, styleContent: String?
+        , callback: (AVException?) -> Unit
+    ) {
+        val userId = PreferenceStorage.userObjectId
+        val dynamicObject = AVObject(TableConstants.TABLE_DYNAMIC)
+        dynamicObject.put("images", avFileUrls)
+        dynamicObject.put("style", styleContent)
+        dynamicObject.put("skill", skillContent)
+        dynamicObject.put("likeNum", 0)
+        dynamicObject.put("contents", desc)
+        dynamicObject.put("able", 2)
+        dynamicObject.put("user", AVObject.createWithoutData(TableConstants.TABLE_USER, userId))
+        dynamicObject.saveInBackground(object : SaveCallback() {
+            override fun done(e: AVException?) {
+                callback(e)
+            }
+        })
+    }
+
 }

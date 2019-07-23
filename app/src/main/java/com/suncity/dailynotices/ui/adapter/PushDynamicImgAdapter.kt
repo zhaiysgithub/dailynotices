@@ -3,6 +3,7 @@ package com.suncity.dailynotices.ui.adapter
 import android.content.Context
 import android.net.Uri
 import android.view.ViewGroup
+import android.widget.ImageView
 import com.facebook.drawee.view.SimpleDraweeView
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.ui.activity.PushDynamicActivity.Companion.TAG_ADD
@@ -62,9 +63,11 @@ class PushDynamicImgAdapter(context: Context) : RecyclerArrayAdapter<String>(con
     inner class SelPicViewHolder(parent: ViewGroup, reslayoutId: Int) : HAFViewHolder<String>(parent, reslayoutId) {
 
         private var pic: SimpleDraweeView? = null
+        private var iv_del:ImageView? = null
 
         init {
             pic = itemView.findViewById(R.id.iv_pic)
+            iv_del = itemView.findViewById(R.id.iv_del)
         }
 
         override fun setData(data: String) {
@@ -72,6 +75,11 @@ class PushDynamicImgAdapter(context: Context) : RecyclerArrayAdapter<String>(con
             itemView.setOnClickListener {
                 if (mListener != null) {
                     mListener?.onSelItemClick(data)
+                }
+            }
+            iv_del?.setOnClickListener {
+                if (mListener != null) {
+                    mListener?.onDeleteItem(adapterPosition)
                 }
             }
         }
@@ -88,5 +96,7 @@ class PushDynamicImgAdapter(context: Context) : RecyclerArrayAdapter<String>(con
         fun onAddPicClick()
 
         fun onSelItemClick(url: String)
+
+        fun onDeleteItem(position: Int)
     }
 }

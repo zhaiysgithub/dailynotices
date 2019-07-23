@@ -8,14 +8,17 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.callback.TextWatcherHelper
+import com.suncity.dailynotices.dialog.OnDismissListener
+import com.suncity.dailynotices.dialog.TipDialog
 import com.suncity.dailynotices.islib.config.ISListConfig
 import com.suncity.dailynotices.islib.ui.ISListActivity
+import com.suncity.dailynotices.lcoperation.Increase
 import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.adapter.PushDynamicImgAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar
-import com.suncity.dailynotices.utils.DisplayUtils
-import com.suncity.dailynotices.utils.LogUtils
+import com.suncity.dailynotices.utils.*
 import kotlinx.android.synthetic.main.ac_push_dynamic.*
 
 /**
@@ -29,7 +32,6 @@ class PushDynamicActivity : BaseActivity() {
 
     private var mAdapter: PushDynamicImgAdapter? = null
 
-
     override fun setScreenManager() {
         ImmersionBar.with(this)
             .fitsSystemWindows(true)
@@ -37,6 +39,8 @@ class PushDynamicActivity : BaseActivity() {
             .statusBarDarkFont(true, 0f)
             .init()
     }
+
+    private val erroMsg = Config.getString(R.string.str_error_server)
 
     companion object {
         private val REQUEST_LIST_CODE = 0
@@ -47,6 +51,7 @@ class PushDynamicActivity : BaseActivity() {
         val TYPE_SKILL = "type_skill"
         val TYPE_STYLE = "type_style"
         val TYPE_ACTING = "type_acting"
+        val CONTENT_RESULT = "content_result"
     }
 
     override fun getActivityLayoutId(): Int {
@@ -83,20 +88,31 @@ class PushDynamicActivity : BaseActivity() {
         title_right_push_dynamic?.setOnClickListener {
             //TODO 发布动态，修改数据库
             val desc = content_push_dynamic?.text?.toString()?.trim()
+            val skillContent = content_skill?.text?.toString()?.trim()
+            val styleContent = content_style?.text?.toString()?.trim()
+            saveDynamicData(desc, skillContent, styleContent)
 
         }
         layout_associated_skill?.setOnClickListener {
             //TODO 演艺技能选项
+            val skillText = content_skill?.text?.toString()?.trim()
             val intent = Intent()
             intent.setClass(this@PushDynamicActivity, SkillStyleActivity::class.java)
             intent.putExtra(TYPE_ACTING, TYPE_SKILL)
+            if (StringUtils.isNotEmptyAndNull(skillText)) {
+                intent.putExtra(CONTENT_RESULT, skillText)
+            }
             startActivityForResult(intent, REQUEST_SKILL_CODE)
         }
         layout_associated_style?.setOnClickListener {
             //TODO 形象风格选项
+            val styleText = content_style?.text?.toString()?.trim()
             val intent = Intent()
             intent.setClass(this@PushDynamicActivity, SkillStyleActivity::class.java)
             intent.putExtra(TYPE_ACTING, TYPE_STYLE)
+            if (StringUtils.isNotEmptyAndNull(styleText)) {
+                intent.putExtra(CONTENT_RESULT, styleText)
+            }
             startActivityForResult(intent, REQUEST_STYLE_CODE)
         }
         layout_associated_location?.setOnClickListener {
@@ -117,9 +133,52 @@ class PushDynamicActivity : BaseActivity() {
             override fun onSelItemClick(url: String) {
             }
 
+            override fun onDeleteItem(position: Int) {
+                mAdapter?.remove(position)
+            }
+
         })
 
         content_push_dynamic?.addTextChangedListener(mTextWatcher)
+    }
+
+    /**
+     * 保存数据到数据库
+     */
+    private fun saveDynamicData(desc: String?, skillContent: String?, styleContent: String?) {
+        ProgressUtil.showProgress(this, "请稍等", "正在上传中...")
+        val paths = mAdapter?.getAllData()
+        var newPaths: ArrayList<String> = arrayListOf()
+        if (paths != null) {
+            if (paths.contains(TAG_ADD)) {
+                newPaths.addAll(paths.filter {
+                    it != TAG_ADD
+                })
+            } else {
+                newPaths = paths
+            }
+        }
+        Increase.uploadAVFile(newPaths) { isComplete, fileUrls ->
+            if (isComplete) {
+                Increase.uploadDynamicData(fileUrls, desc, skillContent, styleContent) {
+                    ProgressUtil.hideProgress()
+                    if (it == null) {
+                        GlobalObserverHelper.uploadDynamicSuccess()
+                        TipDialog.show(
+                            this, "成功发布,等待后台审核中..."
+                            , TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_FINISH
+                        ).setOnDismissListener(object : OnDismissListener {
+                            override fun onDismiss() {
+                                this@PushDynamicActivity.finish()
+                            }
+                        })
+                    } else {
+                        TipDialog.show(this, erroMsg, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR)
+                    }
+                }
+            }
+        }
+
     }
 
     private val mTextWatcher = object : TextWatcherHelper {
@@ -131,23 +190,35 @@ class PushDynamicActivity : BaseActivity() {
         }
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_LIST_CODE && resultCode == Activity.RESULT_OK && data != null) {
-            val pathList = data.getStringArrayListExtra("result")
-            pathList.add(TAG_ADD)
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            when (requestCode) {
+                REQUEST_LIST_CODE -> {
+                    val pathList = data.getStringArrayListExtra("result")
 
-            if (pathList != null && pathList.size > 0) {
-                mAdapter?.clear()
-                mAdapter?.addAll(pathList)
+                    pathList.add(TAG_ADD)
+
+                    if (pathList != null && pathList.size > 0) {
+                        mAdapter?.clear()
+                        mAdapter?.addAll(pathList)
+                    }
+                }
+                REQUEST_CAMERA_CODE -> {
+                    val path = data.getStringExtra("result")
+                    LogUtils.e("1----PushDynamicActivity -> paths=${path + "\n"}")
+                }
+                REQUEST_SKILL_CODE -> {
+                    val skillContent = data.getStringExtra(CONTENT_RESULT)
+                    content_skill?.text = skillContent
+                }
+                REQUEST_STYLE_CODE -> {
+                    val styleContent = data.getStringExtra(CONTENT_RESULT)
+                    content_style?.text = styleContent
+                }
+
             }
-        } else if (requestCode == REQUEST_CAMERA_CODE && resultCode == Activity.RESULT_OK && data != null) {
-            val path = data.getStringExtra("result")
-            LogUtils.e("1----PushDynamicActivity -> paths=${path + "\n"}")
-        } else if (requestCode == REQUEST_SKILL_CODE && resultCode == Activity.RESULT_OK && data != null) {
-
-        } else if (requestCode == REQUEST_STYLE_CODE && resultCode == Activity.RESULT_OK && data != null) {
-
         }
     }
 }

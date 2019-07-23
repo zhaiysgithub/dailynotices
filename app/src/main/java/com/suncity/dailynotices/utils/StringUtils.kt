@@ -79,4 +79,13 @@ object StringUtils{
 
         return "游客$randomString"
     }
+
+    fun getRandomFileName(length: Int): String{
+        val letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        val randomString = StringBuilder(length)
+        for (i in 0 until length) {
+            randomString.append(letters[Random().nextInt(letters.length)])
+        }
+        return randomString.toString()
+    }
 }

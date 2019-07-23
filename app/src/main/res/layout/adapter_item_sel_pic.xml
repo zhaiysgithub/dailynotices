@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.facebook.drawee.view.SimpleDraweeView
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/iv_pic"
-        android:layout_width="@dimen/dp_106"
-        android:layout_height="@dimen/dp_106"
-        android:layout_gravity="center"
-        app:placeholderImage="@mipmap/ico_home_img_holder"
-        app:failureImage="@mipmap/ico_home_img_holder"
-        app:roundedCornerRadius="@dimen/dp_4"
-/>
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="@dimen/dp_120"
+        android:layout_height="@dimen/dp_120">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/iv_pic"
+            android:layout_width="@dimen/dp_106"
+            android:layout_height="@dimen/dp_106"
+            android:layout_gravity="center"
+            android:layout_centerInParent="true"
+            app:placeholderImage="@mipmap/ico_home_img_holder"
+            app:failureImage="@mipmap/ico_home_img_holder"
+            app:roundedCornerRadius="@dimen/dp_4"
+    />
+    
+    <ImageView
+            android:id="@+id/iv_del"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ico_delete_push"
+            tools:ignore="ContentDescription"/>
+</RelativeLayout>
+

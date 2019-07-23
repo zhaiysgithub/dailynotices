@@ -24,4 +24,9 @@ interface GlobalObservable {
      * 更新用户数据成功
      */
     fun onUpdateUserinfoSuccess()
+
+    /**
+     * 发布动态成功
+     */
+    fun onUploadDynamicSuccess()
 }

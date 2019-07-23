@@ -22,7 +22,7 @@
     />
 
     <com.suncity.dailynotices.ui.views.flowlayout.TagFlowLayout
-            android:id="@+id/tagFlowLayout_no"
+            android:id="@+id/tagFlowLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/dp_20"

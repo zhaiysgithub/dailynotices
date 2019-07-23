@@ -27,8 +27,7 @@ import java.util.ArrayList
 class LinkRightAdapter(context: Context) : RecyclerArrayAdapter<RightBean>(context) {
 
     private val mInflater = LayoutInflater.from(context)
-    private val tagColorSelected = Config.getColor(R.color.color_ffde00)
-    private val tagColorUnSelected = Config.getColor(R.color.color_888)
+    var checkContentResult:String? = null
 
     override fun OnCreateViewHolder(parent: ViewGroup, viewType: Int): HAFViewHolder<RightBean> {
         return LinkTagViewHolder(parent, R.layout.adapter_link_item_tag)

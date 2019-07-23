@@ -125,12 +125,14 @@
                 android:textColorHint="@color/color_222"
                 tools:ignore="RtlHardcoded"/>
         <TextView
+                android:id="@+id/content_skill"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="立即关联,被检索率提高90%"
+                android:hint="立即关联,被检索率提高90%"
                 android:gravity="center_vertical|right"
                 android:textSize="@dimen/sp_13"
+                android:textColor="@color/color_222"
                 android:textColorHint="@color/color_999"
                 tools:ignore="RtlHardcoded"/>
 
@@ -176,12 +178,14 @@
                 android:textColorHint="@color/color_222"
                 tools:ignore="RtlHardcoded"/>
         <TextView
+                android:id="@+id/content_style"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="选择"
+                android:hint="选择"
                 android:gravity="center_vertical|right"
                 android:textSize="@dimen/sp_13"
+                android:textColor="@color/color_222"
                 android:textColorHint="@color/color_999"
                 tools:ignore="RtlHardcoded"/>
 

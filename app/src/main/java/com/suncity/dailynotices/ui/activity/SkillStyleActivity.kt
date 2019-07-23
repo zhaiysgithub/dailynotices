@@ -1,5 +1,7 @@
 package com.suncity.dailynotices.ui.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.alibaba.fastjson.JSON
@@ -8,6 +10,7 @@ import com.suncity.dailynotices.R
 import com.suncity.dailynotices.model.RightBean
 import com.suncity.dailynotices.model.SortBean
 import com.suncity.dailynotices.ui.BaseActivity
+import com.suncity.dailynotices.ui.activity.PushDynamicActivity.Companion.CONTENT_RESULT
 import com.suncity.dailynotices.ui.activity.PushDynamicActivity.Companion.TYPE_ACTING
 import com.suncity.dailynotices.ui.activity.PushDynamicActivity.Companion.TYPE_SKILL
 import com.suncity.dailynotices.ui.activity.PushDynamicActivity.Companion.TYPE_STYLE
@@ -48,11 +51,13 @@ class SkillStyleActivity : BaseActivity() {
 
     override fun initData() {
         val type = intent.getStringExtra(TYPE_ACTING)
+        val contentResult = intent.getStringExtra(CONTENT_RESULT)
         tv_title_center?.text = when (type) {
             TYPE_SKILL -> "演艺技能"
             TYPE_STYLE -> "形象风格"
             else -> "形象风格"
         }
+        setSelectedVisiable(false)
         val jsonResult = if (type == TYPE_SKILL) {
             getAssestData("skills.json")
         } else {
@@ -93,6 +98,7 @@ class SkillStyleActivity : BaseActivity() {
 
 
         mRightdapter = LinkRightAdapter(this)
+        mRightdapter?.checkContentResult = contentResult
         recyclerView_right?.setHasFixedSize(true)
         recyclerView_right?.layoutManager = LinearLayoutManager(this)
         recyclerView_right?.adapter = mRightdapter
@@ -117,6 +123,10 @@ class SkillStyleActivity : BaseActivity() {
             override fun onTagClick(pos: Int, name: String) {
                 LogUtils.e("onTagClick -> pos=$pos,name=$name")
                 //TODO 联动左边
+                val intent = Intent()
+                intent.putExtra(CONTENT_RESULT,name)
+                setResult(Activity.RESULT_OK,intent)
+                finish()
             }
 
         })
@@ -141,6 +151,16 @@ class SkillStyleActivity : BaseActivity() {
             e.printStackTrace()
             LogUtils.e("getAssetsData -> $e")
             return result
+        }
+    }
+
+    private fun setSelectedVisiable(isShow:Boolean){
+        if(isShow){
+            tv_selected?.visibility = View.VISIBLE
+            tagFlowLayout?.visibility = View.VISIBLE
+        }else{
+            tv_selected?.visibility = View.GONE
+            tagFlowLayout?.visibility = View.GONE
         }
     }
 

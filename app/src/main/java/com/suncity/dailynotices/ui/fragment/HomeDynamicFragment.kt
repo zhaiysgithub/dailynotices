@@ -229,6 +229,10 @@ class HomeDynamicFragment : BaseFragment() {
         override fun onLogoutSuccess() {
             queryDynamicData(null)
         }
+
+        override fun onUploadDynamicSuccess() {
+            queryDynamicData(null)
+        }
     }
 
 

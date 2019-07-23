@@ -45,5 +45,10 @@ object GlobalObserverHelper {
         }
     }
 
+    fun uploadDynamicSuccess(){
+        mObservers.forEach {
+            it.onUploadDynamicSuccess()
+        }
+    }
 
 }
