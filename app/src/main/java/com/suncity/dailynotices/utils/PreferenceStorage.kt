@@ -32,7 +32,7 @@ object PreferenceStorage {
 
     private val needClearData = arrayOf(
         isLoginedStr, userObjcetIdStr, userNameStr
-        , userPhoneNumStr, userAvatarStr
+        , userPhoneNumStr, userAvatarStr, userAuthName, userAuthCertficateNum, userAuthCertficatePic
     )
 
     var authName: String?
