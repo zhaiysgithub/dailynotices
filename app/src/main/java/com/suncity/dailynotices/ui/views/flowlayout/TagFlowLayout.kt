@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.utils.DisplayUtils
 import com.suncity.dailynotices.utils.LogUtils
+import com.suncity.dailynotices.utils.ToastUtils
 
 import java.util.HashSet
 
@@ -38,7 +39,7 @@ class TagFlowLayout @JvmOverloads constructor(context: Context, attrs: Attribute
     }
 
     interface OnTagClickListener {
-        fun onTagClick(view: View, position: Int, parent: FlowLayout): Boolean
+        fun onTagClick(view: TagView, position: Int, parent: FlowLayout): Boolean
     }
 
     init {

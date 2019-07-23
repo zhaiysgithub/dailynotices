@@ -455,7 +455,6 @@ abstract class RecyclerArrayAdapter<T> : RecyclerView.Adapter<HAFViewHolder<T>> 
 
 
     override fun onBindViewHolder(holder: HAFViewHolder<T>, position: Int) {
-        holder.itemView.id = position
         if (headers.size != 0 && position < headers.size) {
             headers[position].onBindView(holder.itemView)
             return
@@ -466,11 +465,11 @@ abstract class RecyclerArrayAdapter<T> : RecyclerView.Adapter<HAFViewHolder<T>> 
             footers[i].onBindView(holder.itemView)
             return
         }
-        OnBindViewHolder(holder, position - headers.size)
+        onBindViewholder(holder, position - headers.size)
     }
 
 
-    fun OnBindViewHolder(holder: HAFViewHolder<T>, position: Int) {
+    fun onBindViewholder(holder: HAFViewHolder<T>, position: Int) {
         val item = getItem(position)
         if(item !== null){
             holder.setData(item)

@@ -1,6 +1,7 @@
 package com.suncity.dailynotices.ui.fragment
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
@@ -15,6 +16,8 @@ import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.model.UserInfoRecord
 import com.suncity.dailynotices.ui.BaseFragment
 import com.suncity.dailynotices.ui.activity.DynamicDetailActivity
+import com.suncity.dailynotices.ui.activity.PushDynamicActivity.Companion.TYPE_ACTING
+import com.suncity.dailynotices.ui.activity.SkillStyleActivity
 import com.suncity.dailynotices.ui.activity.UpdateRecordActivity
 import com.suncity.dailynotices.ui.activity.UserInfoActivity
 import com.suncity.dailynotices.ui.adapter.DynamicAdapter
@@ -42,7 +45,10 @@ class UserInfoHomeFragment : BaseFragment() {
     private val recordSecret = "保密"
     private var userInfo:AVObject? = null
 
+    private val REQUEST_INTEREST_CODE = 10
+
     companion object {
+        val TYPE_INTEREST = "type_interest"
         private const val ARGUMENT_TAG = "argument_tag"
         fun getInstance(userInfo: AVObject?): UserInfoHomeFragment {
             val userInfoHomeFragment = UserInfoHomeFragment()
@@ -154,7 +160,7 @@ class UserInfoHomeFragment : BaseFragment() {
         } else {
             val interestList = JSON.parseArray(interestJson.toString(), String::class.javaObjectType)
             val interestSize = interestList.size
-            val preInterestList = mutableListOf<String>()
+            preInterestList.clear()
             interestVisiable(interestSize > 0)
             if (interestSize > 0) {
                 tv_interest_num?.text = "·$interestSize"
@@ -167,6 +173,8 @@ class UserInfoHomeFragment : BaseFragment() {
         }
 
     }
+
+    private var preInterestList = arrayListOf<String>()
 
     /**
      * 设置个人档案数据
@@ -254,12 +262,19 @@ class UserInfoHomeFragment : BaseFragment() {
     override fun initListener() {
         iv_update_record?.setOnClickListener {
             startActivity(UpdateRecordActivity::class.java)
-
         }
 
         iv_update_interest?.setOnClickListener {
-
+            val intent = Intent()
+            intent.setClass(requireContext(), SkillStyleActivity::class.java)
+            intent.putExtra(TYPE_ACTING, TYPE_INTEREST)
+            intent.putStringArrayListExtra(SkillStyleActivity.BUNDLE_TAGS,preInterestList)
+            startActivityForResult(intent, REQUEST_INTEREST_CODE)
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
 
@@ -276,9 +291,10 @@ class UserInfoHomeFragment : BaseFragment() {
     }
 
     private fun interestVisiable(isVisible: Boolean) {
-        layout_interest?.visibility = if (isVisible) View.VISIBLE else View.GONE
+//        layout_interest?.visibility = if (isVisible) View.VISIBLE else View.GONE
+        tv_interest_num?.visibility = if (isVisible) View.VISIBLE else View.GONE
         tagFlowLayout_interest?.visibility = if (isVisible) View.VISIBLE else View.GONE
-        view_line_interest?.visibility = if (isVisible) View.VISIBLE else View.GONE
+//        view_line_interest?.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
     private fun dynamicVisiable(isVisible: Boolean) {
@@ -286,7 +302,7 @@ class UserInfoHomeFragment : BaseFragment() {
         recyclerView_userinfo_dynamic?.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
-    private fun setTags(tagLayout: TagFlowLayout?, tags: MutableList<String>) {
+    private fun setTags(tagLayout: TagFlowLayout?, tags: ArrayList<String>) {
         if (tags.size > 0) {
             val tagAdapter = createTagAdapter(tags)
             tagLayout?.mAdapter = tagAdapter

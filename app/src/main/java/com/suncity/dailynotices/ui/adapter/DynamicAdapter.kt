@@ -19,6 +19,7 @@ import com.suncity.dailynotices.ui.views.recyclerview.adapter.HAFViewHolder
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import java.util.*
 import com.facebook.drawee.generic.RoundingParams
+import com.suncity.dailynotices.ui.views.flowlayout.TagView
 import com.suncity.dailynotices.utils.*
 
 
@@ -383,7 +384,7 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         }
 
         tagLayout?.setOnTagClickListener(object : TagFlowLayout.OnTagClickListener {
-            override fun onTagClick(view: View, position: Int, parent: FlowLayout): Boolean {
+            override fun onTagClick(view: TagView, position: Int, parent: FlowLayout): Boolean {
                 if (mMenuClick != null && !PreventRepeatedUtils.isFastDoubleClick()) {
                     mMenuClick?.onTagFlowClick(pos, position, (tagList?.get(position) ?: ""))
                 }

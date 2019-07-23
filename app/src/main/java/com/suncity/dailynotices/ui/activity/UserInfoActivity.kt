@@ -18,9 +18,7 @@ import cn.leancloud.chatkit.activity.LCIMConversationActivity
 import cn.leancloud.chatkit.utils.LCIMConstants
 import com.avos.avoscloud.AVFile
 import com.avos.avoscloud.AVObject
-import com.avos.avoscloud.AVUser
 import com.avos.avoscloud.im.v2.AVIMClient
-import com.avos.avoscloud.im.v2.AVIMConversation
 import com.avos.avoscloud.im.v2.AVIMException
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
 import com.suncity.dailynotices.R

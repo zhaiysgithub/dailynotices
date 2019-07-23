@@ -1,0 +1,371 @@
+{
+  "data": [
+    {
+      "itemdata": [
+        {
+          "name": "游泳",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "射击",
+          "imgsrc": "",
+          "cacode": "1"
+        },
+        {
+          "name": "漂流",
+          "imgsrc": "",
+          "cacode": "2"
+        },
+        {
+          "name": "蹦床",
+          "imgsrc": "",
+          "cacode": "3"
+        },
+        {
+          "name": "体操",
+          "imgsrc": "",
+          "cacode": "4"
+        },
+        {
+          "name": "田径",
+          "imgsrc": "",
+          "cacode": "5"
+        },
+        {
+          "name": "举重",
+          "imgsrc": "",
+          "cacode": "6"
+        },
+        {
+          "name": "相扑",
+          "imgsrc": "",
+          "cacode": "7"
+        },
+        {
+          "name": "摔跤",
+          "imgsrc": "",
+          "cacode": "8"
+        },
+        {
+          "name": "击剑",
+          "imgsrc": "",
+          "cacode": "9"
+        },
+        {
+          "name": "骑马",
+          "imgsrc": "",
+          "cacode": "10"
+        },
+        {
+          "name": "拔河",
+          "imgsrc": "",
+          "cacode": "11"
+        },
+        {
+          "name": "热气球",
+          "imgsrc": "",
+          "cacode": "12"
+        },
+        {
+          "name": "健美操",
+          "imgsrc": "",
+          "cacode": "13"
+        },
+        {
+          "name": "龙舟",
+          "imgsrc": "",
+          "cacode": "14"
+        },
+        {
+          "name": "机器人格斗",
+          "imgsrc": "",
+          "cacode": "15"
+        }
+      ],
+      "name": "运动",
+      "imgsrc": "",
+      "cacode": "0"
+    },
+    {
+      "itemdata": [
+        {
+          "name": "高尔夫球",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "羽毛球",
+          "imgsrc": "",
+          "cacode": "1"
+        },
+        {
+          "name": "乒乓球",
+          "imgsrc": "",
+          "cacode": "2"
+        },
+        {
+          "name": "篮球",
+          "imgsrc": "",
+          "cacode": "3"
+        },
+        {
+          "name": "足球",
+          "imgsrc": "",
+          "cacode": "4"
+        },
+        {
+          "name": "排球",
+          "imgsrc": "",
+          "cacode": "5"
+        },
+        {
+          "name": "网球",
+          "imgsrc": "",
+          "cacode": "6"
+        },
+        {
+          "name": "冰球",
+          "imgsrc": "",
+          "cacode": "7"
+        },
+        {
+          "name": "棒球",
+          "imgsrc": "",
+          "cacode": "8"
+        },
+        {
+          "name": "手球",
+          "imgsrc": "",
+          "cacode": "9"
+        },
+        {
+          "name": "垒球",
+          "imgsrc": "",
+          "cacode": "10"
+        },
+        {
+          "name": "台球",
+          "imgsrc": "",
+          "cacode": "11"
+        },
+        {
+          "name": "保龄球",
+          "imgsrc": "",
+          "cacode": "12"
+        },
+        {
+          "name": "沙滩排球",
+          "imgsrc": "",
+          "cacode": "13"
+        }
+      ],
+      "name": "球类运动",
+      "imgsrc": "",
+      "cacode": "1"
+    },
+    {
+      "itemdata": [
+        {
+          "name": "速降",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "跳伞",
+          "imgsrc": "",
+          "cacode": "1"
+        },
+        {
+          "name": "滑翔",
+          "imgsrc": "",
+          "cacode": "2"
+        },
+        {
+          "name": "滑板",
+          "imgsrc": "",
+          "cacode": "3"
+        },
+        {
+          "name": "攀岩",
+          "imgsrc": "",
+          "cacode": "4"
+        },
+        {
+          "name": "滑雪",
+          "imgsrc": "",
+          "cacode": "5"
+        },
+        {
+          "name": "蹦极",
+          "imgsrc": "",
+          "cacode": "6"
+        },
+        {
+          "name": "冲浪",
+          "imgsrc": "",
+          "cacode": "7"
+        },
+        {
+          "name": "其他",
+          "imgsrc": "",
+          "cacode": "8"
+        }
+      ],
+      "name": "极限运动",
+      "imgsrc": "",
+      "cacode": "2"
+    },
+    {
+      "itemdata": [
+        {
+          "name": "英语",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "法语",
+          "imgsrc": "",
+          "cacode": "1"
+        },
+        {
+          "name": "韩语",
+          "imgsrc": "",
+          "cacode": "2"
+        },
+        {
+          "name": "日语",
+          "imgsrc": "",
+          "cacode": "3"
+        },
+        {
+          "name": "德语",
+          "imgsrc": "",
+          "cacode": "4"
+        },
+        {
+          "name": "俄语",
+          "imgsrc": "",
+          "cacode": "5"
+        },
+        {
+          "name": "西班牙语",
+          "imgsrc": "",
+          "cacode": "6"
+        },
+        {
+          "name": "泰语",
+          "imgsrc": "",
+          "cacode": "7"
+        },
+        {
+          "name": "葡萄牙语",
+          "imgsrc": "",
+          "cacode": "8"
+        },
+        {
+          "name": "阿拉伯语",
+          "imgsrc": "",
+          "cacode": "9"
+        },
+        {
+          "name": "汉语",
+          "imgsrc": "",
+          "cacode": "10"
+        }
+      ],
+      "name": "语言",
+      "imgsrc": "",
+      "cacode": "3"
+    },
+    {
+      "itemdata": [
+        {
+          "name": "麻将",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "围棋",
+          "imgsrc": "",
+          "cacode": "1"
+        },
+        {
+          "name": "桥牌",
+          "imgsrc": "",
+          "cacode": "2"
+        },
+        {
+          "name": "跳棋",
+          "imgsrc": "",
+          "cacode": "3"
+        },
+        {
+          "name": "军棋",
+          "imgsrc": "",
+          "cacode": "4"
+        },
+        {
+          "name": "五子棋",
+          "imgsrc": "",
+          "cacode": "5"
+        },
+        {
+          "name": "中国象棋",
+          "imgsrc": "",
+          "cacode": "6"
+        },
+        {
+          "name": "国际象棋",
+          "imgsrc": "",
+          "cacode": "7"
+        }
+      ],
+      "name": "棋牌",
+      "imgsrc": "",
+      "cacode": "4"
+    },
+    {
+      "itemdata": [
+        {
+          "name": "绘画",
+          "imgsrc": "",
+          "cacode": "0"
+        },
+        {
+          "name": "书法",
+          "imgsrc": "",
+          "cacode": "1"
+        },
+        {
+          "name": "写作",
+          "imgsrc": "",
+          "cacode": "2"
+        },
+        {
+          "name": "平面设计",
+          "imgsrc": "",
+          "cacode": "3"
+        },
+        {
+          "name": "手工",
+          "imgsrc": "",
+          "cacode": "4"
+        },
+        {
+          "name": "刺绣",
+          "imgsrc": "",
+          "cacode": "5"
+        },
+        {
+          "name": "雕刻",
+          "imgsrc": "",
+          "cacode": "6"
+        }
+      ],
+      "name": "文创",
+      "imgsrc": "",
+      "cacode": "5"
+    }
+  ]
+}

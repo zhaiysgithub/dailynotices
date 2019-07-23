@@ -10,6 +10,7 @@ import com.suncity.dailynotices.model.RightBean
 import com.suncity.dailynotices.ui.views.flowlayout.FlowLayout
 import com.suncity.dailynotices.ui.views.flowlayout.TagAdapter
 import com.suncity.dailynotices.ui.views.flowlayout.TagFlowLayout
+import com.suncity.dailynotices.ui.views.flowlayout.TagView
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.HAFViewHolder
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.Config
@@ -27,12 +28,16 @@ import java.util.ArrayList
 class LinkRightAdapter(context: Context) : RecyclerArrayAdapter<RightBean>(context) {
 
     private val mInflater = LayoutInflater.from(context)
-    var checkContentResult:String? = null
+    var checkContentResult: ArrayList<String> = arrayListOf()
+    //可选的最大值
+    var maxCount = 3
+    //已经选择的值
+    var checkedCount = 0
+
 
     override fun OnCreateViewHolder(parent: ViewGroup, viewType: Int): HAFViewHolder<RightBean> {
         return LinkTagViewHolder(parent, R.layout.adapter_link_item_tag)
     }
-
 
 
     inner class LinkTagViewHolder(parent: ViewGroup, resLayoutId: Int) : HAFViewHolder<RightBean>(parent, resLayoutId) {
@@ -50,13 +55,25 @@ class LinkRightAdapter(context: Context) : RecyclerArrayAdapter<RightBean>(conte
             val tagList = data.names
             if (tagList != null && tagList.size > 0) {
                 val tagAdapter = createTagAdapter(tagList)
+                if(checkContentResult.size > 0){
+                    val checkedPosList = hashSetOf<Int>()
+                    for(index in 0 until tagList.size){
+                        val checkedTag = tagList[index]
+                        if(checkContentResult.contains(checkedTag)){
+                            checkedPosList.add(index)
+                        }
+                    }
+                    tagAdapter.setSelectedList(checkedPosList)
+                }
+
+
                 tagLayout?.mAdapter = tagAdapter
             }
 
             tagLayout?.setOnTagClickListener(object : TagFlowLayout.OnTagClickListener {
-                override fun onTagClick(view: View, position: Int, parent: FlowLayout): Boolean {
+                override fun onTagClick(view: TagView, position: Int, parent: FlowLayout): Boolean {
                     if (listener != null && !PreventRepeatedUtils.isFastDoubleClick()) {
-                        listener?.onTagClick(adapterPosition, (tagList?.get(position) ?: ""))
+                        listener?.onTagClick(view.isChecked, adapterPosition, (tagList?.get(position) ?: ""))
                     }
                     return true
                 }
@@ -82,12 +99,13 @@ class LinkRightAdapter(context: Context) : RecyclerArrayAdapter<RightBean>(conte
 
     private var listener: OnTagClickListener? = null
 
+
     fun setOnTagClickListener(l: OnTagClickListener) {
         listener = l
     }
 
     interface OnTagClickListener {
 
-        fun onTagClick(pos: Int, name: String)
+        fun onTagClick(isChecked: Boolean, pos: Int, name: String)
     }
 }

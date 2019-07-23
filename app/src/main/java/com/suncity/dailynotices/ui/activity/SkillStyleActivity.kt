@@ -4,24 +4,22 @@ import android.app.Activity
 import android.content.Intent
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.alibaba.fastjson.JSON
 import com.google.gson.Gson
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.model.RightBean
 import com.suncity.dailynotices.model.SortBean
 import com.suncity.dailynotices.ui.BaseActivity
-import com.suncity.dailynotices.ui.activity.PushDynamicActivity.Companion.CONTENT_RESULT
 import com.suncity.dailynotices.ui.activity.PushDynamicActivity.Companion.TYPE_ACTING
 import com.suncity.dailynotices.ui.activity.PushDynamicActivity.Companion.TYPE_SKILL
 import com.suncity.dailynotices.ui.activity.PushDynamicActivity.Companion.TYPE_STYLE
 import com.suncity.dailynotices.ui.adapter.LinkLeftAdapter
 import com.suncity.dailynotices.ui.adapter.LinkRightAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar
+import com.suncity.dailynotices.ui.fragment.UserInfoHomeFragment.Companion.TYPE_INTEREST
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.LogUtils
 import com.suncity.dailynotices.utils.StringUtils
 import kotlinx.android.synthetic.main.ac_acting_skill.*
-import kotlinx.android.synthetic.main.view_title.*
 import java.io.IOException
 
 /**
@@ -36,6 +34,13 @@ class SkillStyleActivity : BaseActivity() {
     private var mSortAdapter: LinkLeftAdapter? = null
     private var mRightdapter: LinkRightAdapter? = null
     private var mLinearLayoutManager: LinearLayoutManager? = null
+    private var preInterestList = arrayListOf<String>()
+    private var maxSelectCount = 3
+
+    companion object {
+        const val BUNDLE_TAGS = "bundle_tags"
+    }
+
     override fun setScreenManager() {
 
         ImmersionBar.with(this)
@@ -50,18 +55,35 @@ class SkillStyleActivity : BaseActivity() {
     }
 
     override fun initData() {
-        val type = intent.getStringExtra(TYPE_ACTING)
-        val contentResult = intent.getStringExtra(CONTENT_RESULT)
-        tv_title_center?.text = when (type) {
-            TYPE_SKILL -> "演艺技能"
-            TYPE_STYLE -> "形象风格"
-            else -> "形象风格"
-        }
+        val type = intent?.getStringExtra(TYPE_ACTING) ?: ""
+        preInterestList = intent?.getStringArrayListExtra(BUNDLE_TAGS) ?: arrayListOf()
         setSelectedVisiable(false)
-        val jsonResult = if (type == TYPE_SKILL) {
-            getAssestData("skills.json")
-        } else {
-            getAssestData("styles.json")
+        val jsonResult:String
+        when(type){
+            TYPE_SKILL -> {
+                tv_title_center?.text = "演艺技能"
+//                tv_title_right?.visibility = View.GONE
+                maxSelectCount = 3
+                jsonResult = getAssestData("skills.json")
+            }
+            TYPE_STYLE -> {
+                tv_title_center?.text = "形象风格"
+//                tv_title_right?.visibility = View.GONE
+                maxSelectCount = 3
+                jsonResult = getAssestData("styles.json")
+            }
+            TYPE_INTEREST -> {
+                tv_title_center?.text = "兴趣特长"
+//                tv_title_right?.visibility = View.VISIBLE
+                maxSelectCount = 20
+                jsonResult = getAssestData("interest.json")
+            }
+            else -> {
+                tv_title_center?.text = "形象风格"
+//                tv_title_right?.visibility = View.GONE
+                maxSelectCount = 3
+                jsonResult = getAssestData("styles.json")
+            }
         }
 
         val gson = Gson()
@@ -98,7 +120,9 @@ class SkillStyleActivity : BaseActivity() {
 
 
         mRightdapter = LinkRightAdapter(this)
-        mRightdapter?.checkContentResult = contentResult
+        mRightdapter?.checkContentResult = preInterestList
+        mRightdapter?.maxCount = maxSelectCount
+        mRightdapter?.checkedCount = preInterestList.size
         recyclerView_right?.setHasFixedSize(true)
         recyclerView_right?.layoutManager = LinearLayoutManager(this)
         recyclerView_right?.adapter = mRightdapter
@@ -120,16 +144,22 @@ class SkillStyleActivity : BaseActivity() {
         })
 
         mRightdapter?.setOnTagClickListener(object : LinkRightAdapter.OnTagClickListener {
-            override fun onTagClick(pos: Int, name: String) {
-                LogUtils.e("onTagClick -> pos=$pos,name=$name")
-                //TODO 联动左边
-                val intent = Intent()
-                intent.putExtra(CONTENT_RESULT,name)
-                setResult(Activity.RESULT_OK,intent)
-                finish()
-            }
 
+            override fun onTagClick(isChecked: Boolean, pos: Int, name: String) {
+                if(isChecked && !preInterestList.contains(name)){
+                    preInterestList.add(name)
+                }else if(!isChecked && preInterestList.contains(name)){
+                    preInterestList.remove(name)
+                }
+            }
         })
+
+        tv_title_right?.setOnClickListener {
+            val intent = Intent()
+            intent.putStringArrayListExtra(BUNDLE_TAGS,preInterestList)
+            setResult(Activity.RESULT_OK,intent)
+            finish()
+        }
     }
 
     //从资源文件中获取分类json

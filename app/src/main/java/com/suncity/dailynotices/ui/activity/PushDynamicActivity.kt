@@ -20,6 +20,7 @@ import com.suncity.dailynotices.ui.adapter.PushDynamicImgAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.utils.*
 import kotlinx.android.synthetic.main.ac_push_dynamic.*
+import java.lang.StringBuilder
 
 /**
  * @ProjectName:    dailynotices
@@ -31,6 +32,8 @@ import kotlinx.android.synthetic.main.ac_push_dynamic.*
 class PushDynamicActivity : BaseActivity() {
 
     private var mAdapter: PushDynamicImgAdapter? = null
+    private var selectedSkillList: ArrayList<String>? = null
+    private var selectedStyleList: ArrayList<String>? = null
 
     override fun setScreenManager() {
         ImmersionBar.with(this)
@@ -51,7 +54,6 @@ class PushDynamicActivity : BaseActivity() {
         val TYPE_SKILL = "type_skill"
         val TYPE_STYLE = "type_style"
         val TYPE_ACTING = "type_acting"
-        val CONTENT_RESULT = "content_result"
     }
 
     override fun getActivityLayoutId(): Int {
@@ -99,8 +101,8 @@ class PushDynamicActivity : BaseActivity() {
             val intent = Intent()
             intent.setClass(this@PushDynamicActivity, SkillStyleActivity::class.java)
             intent.putExtra(TYPE_ACTING, TYPE_SKILL)
-            if (StringUtils.isNotEmptyAndNull(skillText)) {
-                intent.putExtra(CONTENT_RESULT, skillText)
+            if (StringUtils.isNotEmptyAndNull(skillText) && (selectedSkillList?.size ?: 0) > 0) {
+                intent.putStringArrayListExtra(SkillStyleActivity.BUNDLE_TAGS, selectedSkillList)
             }
             startActivityForResult(intent, REQUEST_SKILL_CODE)
         }
@@ -110,8 +112,8 @@ class PushDynamicActivity : BaseActivity() {
             val intent = Intent()
             intent.setClass(this@PushDynamicActivity, SkillStyleActivity::class.java)
             intent.putExtra(TYPE_ACTING, TYPE_STYLE)
-            if (StringUtils.isNotEmptyAndNull(styleText)) {
-                intent.putExtra(CONTENT_RESULT, styleText)
+            if (StringUtils.isNotEmptyAndNull(styleText) && (selectedStyleList?.size ?: 0) > 0) {
+                intent.putExtra(SkillStyleActivity.BUNDLE_TAGS, selectedStyleList)
             }
             startActivityForResult(intent, REQUEST_STYLE_CODE)
         }
@@ -210,12 +212,20 @@ class PushDynamicActivity : BaseActivity() {
                     LogUtils.e("1----PushDynamicActivity -> paths=${path + "\n"}")
                 }
                 REQUEST_SKILL_CODE -> {
-                    val skillContent = data.getStringExtra(CONTENT_RESULT)
-                    content_skill?.text = skillContent
+                    selectedSkillList = data.getStringArrayListExtra(SkillStyleActivity.BUNDLE_TAGS)
+                    val builder = StringBuilder()
+                    selectedSkillList?.forEach {
+                        builder.append("$it ")
+                    }
+                    content_skill?.text = builder.toString()
                 }
                 REQUEST_STYLE_CODE -> {
-                    val styleContent = data.getStringExtra(CONTENT_RESULT)
-                    content_style?.text = styleContent
+                    selectedStyleList = data.getStringArrayListExtra(SkillStyleActivity.BUNDLE_TAGS)
+                    val builder = StringBuilder()
+                    selectedStyleList?.forEach {
+                        builder.append("$it ")
+                    }
+                    content_style?.text = builder.toString()
                 }
 
             }
