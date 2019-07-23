@@ -3,6 +3,7 @@ package com.suncity.dailynotices.ui.activity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.avos.avoscloud.AVUser
+import com.facebook.drawee.backends.pipeline.Fresco
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.dialog.AlertDialog
 import com.suncity.dailynotices.dialog.BottomDialogiOSSetting
@@ -67,8 +68,12 @@ class SettingActivity : BaseActivity() {
 
     private fun setAdapterData(): List<SettingModel> {
         dataList.clear()
+        Fresco.getImagePipelineFactory().mainFileCache.trimToMinimum()
+        val size = Fresco.getImagePipelineFactory().mainFileCache.size
+        LogUtils.e("Fresco->size = $size")
+        val cacheSize = ConversionUtils.convertByte2KB(size)
         val accountManager = SettingModel(STR_ACCOUNTMANAGER, "")
-        val cacheClear = SettingModel(STR_CACHECLEAR, "")
+        val cacheClear = SettingModel(STR_CACHECLEAR, cacheSize)
         dataList.add(accountManager)
         dataList.add(cacheClear)
         return dataList
@@ -81,7 +86,7 @@ class SettingActivity : BaseActivity() {
 
         adapter?.setOnItemClickListener(object : RecyclerArrayAdapter.OnItemClickListener {
             override fun onItemClick(position: Int, view: View) {
-                if (position in 0 until dataList.size){
+                if (position in 0 until dataList.size) {
                     when (position) {
                         0 -> {
                             LogUtils.e(STR_ACCOUNTMANAGER)
@@ -92,12 +97,12 @@ class SettingActivity : BaseActivity() {
 //                            if (StringUtils.isNotEmptyAndNull(value)){
 //
 //                            }
-                                AlertDialog(this@SettingActivity).builder().setTitle(STR_TIP)
-                                    .setMsg(msg)
-                                    .setCancelable(false)
-                                    .setPositiveButton(STR_POSITIVE, View.OnClickListener {
-                                        ToastUtils.showSafeToast(this@SettingActivity,msg)
-                                    }).setNegativeButton(STR_CANCEL,View.OnClickListener {}).show()
+                            AlertDialog(this@SettingActivity).builder().setTitle(STR_TIP)
+                                .setMsg(msg)
+                                .setCancelable(false)
+                                .setPositiveButton(STR_POSITIVE, View.OnClickListener {
+                                    ToastUtils.showSafeToast(this@SettingActivity, msg)
+                                }).setNegativeButton(STR_CANCEL, View.OnClickListener {}).show()
                         }
                     }
                 }
@@ -106,10 +111,10 @@ class SettingActivity : BaseActivity() {
         })
 
         tv_logout?.setOnClickListener {
-            if(PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
+            if (PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
             val bottomDialog = BottomDialogiOSSetting(this@SettingActivity)
             bottomDialog.show()
-            bottomDialog.setClickCallback(object : BottomDialogiOSSetting.ClickCallback{
+            bottomDialog.setClickCallback(object : BottomDialogiOSSetting.ClickCallback {
                 override fun doLogout() {
                     excuteLogout()
                 }
