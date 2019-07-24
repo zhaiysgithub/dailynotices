@@ -1,6 +1,7 @@
 package com.suncity.dailynotices.ui.fragment
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
@@ -161,6 +162,8 @@ class UserInfoHomeFragment : BaseFragment() {
             val interestList = JSON.parseArray(interestJson.toString(), String::class.javaObjectType)
             val interestSize = interestList.size
             preInterestList.clear()
+            bundleInterestList.clear()
+            bundleInterestList.addAll(interestList)
             interestVisiable(interestSize > 0)
             if (interestSize > 0) {
                 tv_interest_num?.text = "·$interestSize"
@@ -175,6 +178,8 @@ class UserInfoHomeFragment : BaseFragment() {
     }
 
     private var preInterestList = arrayListOf<String>()
+    private var bundleInterestList = arrayListOf<String>()
+
 
     /**
      * 设置个人档案数据
@@ -268,13 +273,31 @@ class UserInfoHomeFragment : BaseFragment() {
             val intent = Intent()
             intent.setClass(requireContext(), SkillStyleActivity::class.java)
             intent.putExtra(TYPE_ACTING, TYPE_INTEREST)
-            intent.putStringArrayListExtra(SkillStyleActivity.BUNDLE_TAGS,preInterestList)
+            intent.putStringArrayListExtra(SkillStyleActivity.BUNDLE_TAGS,bundleInterestList)
             startActivityForResult(intent, REQUEST_INTEREST_CODE)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && data != null){
+            when(requestCode){
+                REQUEST_INTEREST_CODE -> {
+                    val selectedInterestList = data.getStringArrayListExtra(SkillStyleActivity.BUNDLE_TAGS)
+                    val size = selectedInterestList.size
+                    preInterestList.clear()
+                    interestVisiable(size > 0)
+                    if (size > 0) {
+                        tv_interest_num?.text = "·$size"
+                        selectedInterestList.forEach {
+                            val preInterest = "# $it"
+                            preInterestList.add(preInterest)
+                        }
+                        setTags(tagFlowLayout_interest, preInterestList)
+                    }
+                }
+            }
+        }
     }
 
 

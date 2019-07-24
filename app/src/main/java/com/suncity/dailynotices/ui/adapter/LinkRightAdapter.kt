@@ -31,8 +31,6 @@ class LinkRightAdapter(context: Context) : RecyclerArrayAdapter<RightBean>(conte
     var checkContentResult: ArrayList<String> = arrayListOf()
     //可选的最大值
     var maxCount = 3
-    //已经选择的值
-    var checkedCount = 0
 
 
     override fun OnCreateViewHolder(parent: ViewGroup, viewType: Int): HAFViewHolder<RightBean> {

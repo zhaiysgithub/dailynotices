@@ -6,6 +6,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.google.gson.Gson
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.dialog.OnDismissListener
+import com.suncity.dailynotices.dialog.TipDialog
+import com.suncity.dailynotices.lcoperation.Modify
 import com.suncity.dailynotices.model.RightBean
 import com.suncity.dailynotices.model.SortBean
 import com.suncity.dailynotices.ui.BaseActivity
@@ -17,8 +20,10 @@ import com.suncity.dailynotices.ui.adapter.LinkRightAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.ui.fragment.UserInfoHomeFragment.Companion.TYPE_INTEREST
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
+import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.LogUtils
 import com.suncity.dailynotices.utils.StringUtils
+import com.suncity.dailynotices.utils.ToastUtils
 import kotlinx.android.synthetic.main.ac_acting_skill.*
 import java.io.IOException
 
@@ -36,6 +41,8 @@ class SkillStyleActivity : BaseActivity() {
     private var mLinearLayoutManager: LinearLayoutManager? = null
     private var preInterestList = arrayListOf<String>()
     private var maxSelectCount = 3
+    private var type:String = ""
+    private val erroMsg = Config.getString(R.string.str_error_server)
 
     companion object {
         const val BUNDLE_TAGS = "bundle_tags"
@@ -55,32 +62,32 @@ class SkillStyleActivity : BaseActivity() {
     }
 
     override fun initData() {
-        val type = intent?.getStringExtra(TYPE_ACTING) ?: ""
+        type = intent?.getStringExtra(TYPE_ACTING) ?: ""
         preInterestList = intent?.getStringArrayListExtra(BUNDLE_TAGS) ?: arrayListOf()
         setSelectedVisiable(false)
         val jsonResult:String
         when(type){
             TYPE_SKILL -> {
                 tv_title_center?.text = "演艺技能"
-//                tv_title_right?.visibility = View.GONE
+                tv_title_right?.visibility = View.GONE
                 maxSelectCount = 3
                 jsonResult = getAssestData("skills.json")
             }
             TYPE_STYLE -> {
                 tv_title_center?.text = "形象风格"
-//                tv_title_right?.visibility = View.GONE
+                tv_title_right?.visibility = View.GONE
                 maxSelectCount = 3
                 jsonResult = getAssestData("styles.json")
             }
             TYPE_INTEREST -> {
                 tv_title_center?.text = "兴趣特长"
-//                tv_title_right?.visibility = View.VISIBLE
+                tv_title_right?.visibility = View.VISIBLE
                 maxSelectCount = 20
                 jsonResult = getAssestData("interest.json")
             }
             else -> {
                 tv_title_center?.text = "形象风格"
-//                tv_title_right?.visibility = View.GONE
+                tv_title_right?.visibility = View.GONE
                 maxSelectCount = 3
                 jsonResult = getAssestData("styles.json")
             }
@@ -122,7 +129,6 @@ class SkillStyleActivity : BaseActivity() {
         mRightdapter = LinkRightAdapter(this)
         mRightdapter?.checkContentResult = preInterestList
         mRightdapter?.maxCount = maxSelectCount
-        mRightdapter?.checkedCount = preInterestList.size
         recyclerView_right?.setHasFixedSize(true)
         recyclerView_right?.layoutManager = LinearLayoutManager(this)
         recyclerView_right?.adapter = mRightdapter
@@ -151,17 +157,35 @@ class SkillStyleActivity : BaseActivity() {
                 }else if(!isChecked && preInterestList.contains(name)){
                     preInterestList.remove(name)
                 }
+                if(type != TYPE_INTEREST){
+                    setActivityResult()
+                }
             }
         })
 
         tv_title_right?.setOnClickListener {
-            val intent = Intent()
-            intent.putStringArrayListExtra(BUNDLE_TAGS,preInterestList)
-            setResult(Activity.RESULT_OK,intent)
-            finish()
+            Modify.updateUserInfoInterest(preInterestList){
+                if(it == null){
+                    TipDialog.show(this@SkillStyleActivity,"提交成功",TipDialog.SHOW_TIME_SHORT,TipDialog.TYPE_FINISH)
+                        .setOnDismissListener(object : OnDismissListener{
+                        override fun onDismiss() {
+                            setActivityResult()
+                        }
+                    })
+                }else{
+                    ToastUtils.showSafeToast(this@SkillStyleActivity,erroMsg)
+                }
+            }
         }
     }
 
+
+    private fun setActivityResult(){
+        val intent = Intent()
+        intent.putStringArrayListExtra(BUNDLE_TAGS,preInterestList)
+        setResult(Activity.RESULT_OK,intent)
+        finish()
+    }
     //从资源文件中获取分类json
     private fun getAssestData(path: String): String {
         var result = ""

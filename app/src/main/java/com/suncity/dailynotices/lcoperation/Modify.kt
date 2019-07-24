@@ -74,5 +74,31 @@ object Modify {
         })
     }
 
+    /**
+     * 更新userInfo 表中的interest內容
+     */
+    fun updateUserInfoInterest(interestArray:ArrayList<String>,callback: (AVException?) -> Unit){
+        val objectId = PreferenceStorage.userObjectId
+        val query = AVQuery<AVObject>(TableConstants.TABLE_USERINFO)
+        query.whereEqualTo("user",objectId)
+        query.getFirstInBackground(object : GetCallback<AVObject>(){
+
+            override fun done(userInfo: AVObject?, e: AVException?) {
+                if(userInfo != null && e == null){
+                    userInfo.put("interest",interestArray)
+                    userInfo.saveInBackground(object : SaveCallback(){
+                        override fun done(e: AVException?) {
+                            callback(e)
+                        }
+
+                    })
+                }else{
+                    callback(e)
+                }
+            }
+
+        })
+    }
+
 
 }
