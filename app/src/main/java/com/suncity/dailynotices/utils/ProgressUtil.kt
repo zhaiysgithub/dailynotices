@@ -13,14 +13,14 @@ object ProgressUtil {
 
     @Suppress("DEPRECATION")
     private var mProgressDialog: ProgressDialog? = null
-    private val mTitle = "温馨提示"
-    private val mMessage = "正在提交中，请稍等"
+    private const val mTitle = "温馨提示"
+    private const val mMessage = "正在提交中，请稍等"
 
     val isShowing: Boolean
         get() = if (mProgressDialog == null) {
             false
         } else {
-            mProgressDialog!!.isShowing
+            mProgressDialog?.isShowing ?: false
         }
 
     fun showProgress(activity: Activity,title:String? = mTitle,message:String? = mMessage) {
