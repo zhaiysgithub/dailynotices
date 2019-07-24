@@ -1,5 +1,6 @@
 package com.suncity.dailynotices.ui.activity
 
+import android.content.Intent
 import com.avos.avoscloud.*
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.TableConstants
@@ -90,8 +91,7 @@ class SettingVerifyCodeActivity : BaseActivity() {
 //                            UserManager.removeUserInfo()
 //                            startActivity(LoginActivity::class.java)
                             PreferenceStorage.userPhoneNum = phoneNum
-                            HomeActivity.start(this@SettingVerifyCodeActivity, HomeActivity.POS_MINE)
-                            finish()
+                            returnHomeActivity(HomeActivity.POS_MINE)
                         }else{
                             ToastUtils.showSafeToast(this@SettingVerifyCodeActivity, e.message ?: updateError)
                         }
@@ -116,13 +116,20 @@ class SettingVerifyCodeActivity : BaseActivity() {
                     ToastUtils.showSafeToast(this@SettingVerifyCodeActivity, "修改成功，请重新登录")
 //                    UserManager.removeUserInfo()
 //                    startActivity(LoginActivity::class.java)
-                    HomeActivity.start(this@SettingVerifyCodeActivity, HomeActivity.POS_MINE)
-                    finish()
+                    returnHomeActivity(HomeActivity.POS_MINE)
                 }else{
                     ToastUtils.showSafeToast(this@SettingVerifyCodeActivity, e.message ?: updateError)
                 }
             }
 
         })
+    }
+
+    private fun returnHomeActivity(pos: Int) {
+        val intent = Intent()
+        intent.setClass(this, HomeActivity::class.java)
+        intent.putExtra(HomeActivity.EXTRA_POS, pos)
+        startActivity(intent)
+        finish()
     }
 }

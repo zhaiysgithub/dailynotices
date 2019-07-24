@@ -1,10 +1,12 @@
 package com.suncity.dailynotices.ui.activity
 
+import android.content.Intent
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextUtils
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -28,6 +30,7 @@ import com.suncity.dailynotices.TableConstants
 import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.lcoperation.Increase
 import com.suncity.dailynotices.lcoperation.Modify
+import com.suncity.dailynotices.ui.activity.HomeActivity.Companion.POS_HOME
 import com.suncity.dailynotices.ui.dialog.NormalDialogUtils
 
 
@@ -207,7 +210,7 @@ class LoginActivity : BaseActivity() {
             override fun done(userInfo: AVObject?, e: AVException?) {
                 if (userInfo == null) {
                     Increase.createUserInfoToBack(objectId) { userinfoId, exception ->
-//                        ProgressUtil.hideProgress()
+                        //                        ProgressUtil.hideProgress()
                         NormalDialogUtils.dismissNormalDialog()
                         if (userinfoId == null) {
                             TipDialog.show(
@@ -330,8 +333,7 @@ class LoginActivity : BaseActivity() {
                 )
                 tipDialog.setOnDismissListener(object : OnDismissListener {
                     override fun onDismiss() {
-                        HomeActivity.start(this@LoginActivity, POS_MINE)
-                        this@LoginActivity.finish()
+                        returnHomeActivity(POS_MINE)
                     }
                 })
             }
@@ -353,7 +355,17 @@ class LoginActivity : BaseActivity() {
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    private fun returnHomeActivity(pos: Int) {
+        val intent = Intent()
+        intent.setClass(this, HomeActivity::class.java)
+        intent.putExtra(HomeActivity.EXTRA_POS, pos)
+        startActivity(intent)
+        finish()
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        returnHomeActivity(POS_HOME)
+    }
+
 }

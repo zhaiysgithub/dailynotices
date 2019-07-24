@@ -211,7 +211,11 @@ class MineFragment : BaseFragment() {
                 }
                 2 -> {
                     // 屏蔽过的人
-                    startActivity(ShieldingActivity::class.java)
+                    if (!isLogined()) {
+                        startActivity(LoginActivity::class.java)
+                    }else{
+                        startActivity(ShieldingActivity::class.java)
+                    }
                 }
                 3 -> {
                     //联系客服
