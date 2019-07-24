@@ -366,7 +366,7 @@ class DynamicDetailActivity : BaseActivity() {
         ivMore?.setOnClickListener {
             if (idPointer?.isEmpty() == true) return@setOnClickListener
             if (!isLogined()) {
-                startActivity(LoginActivity::class.java)
+                LoginActivity.start(this)
             }else{
                 if (!PreventRepeatedUtils.isFastDoubleClick()) {
                     createBottomDialog(idPointer!!)

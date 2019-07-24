@@ -159,7 +159,7 @@ class HomeActivity : BaseActivity() {
         })
         iv_push?.setOnClickListener {
             if (!isLogined()) {
-                startActivity(LoginActivity::class.java, false)
+                LoginActivity.start(this, POS_MINE)
             }else{
                 startActivity(PushDynamicActivity::class.java)
             }

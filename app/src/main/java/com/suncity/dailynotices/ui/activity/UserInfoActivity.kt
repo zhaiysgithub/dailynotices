@@ -169,7 +169,12 @@ class UserInfoActivity : BaseActivity() {
         tv_direct_msg?.setOnClickListener {
             if (PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
             if (objectId == null) return@setOnClickListener
-            startOpenLCIM(objectId!!)
+            if(isLogined()){
+                startOpenLCIM(objectId!!)
+            }else{
+                LoginActivity.start(this@UserInfoActivity,-1)
+            }
+
         }
 
         app_bar?.addOnOffsetChangedListener(mAppBarOffsetChangeListener)
@@ -198,7 +203,7 @@ class UserInfoActivity : BaseActivity() {
                     startLCIM(objectId)
                 } else {
                     ToastUtils.showSafeToast(this@UserInfoActivity, "登录过期请重新登录")
-                    startActivity(LoginActivity::class.java)
+                    LoginActivity.start(this@UserInfoActivity,-1)
                 }
             }
 

@@ -129,7 +129,7 @@ class NoticeDetailActivity : BaseActivity() {
                     startLCIM(objectId)
                 }else{
                     ToastUtils.showSafeToast(this@NoticeDetailActivity,"登录过期请重新登录")
-                    startActivity(LoginActivity::class.java)
+                    LoginActivity.start(this@NoticeDetailActivity,-1)
                 }
             }
 

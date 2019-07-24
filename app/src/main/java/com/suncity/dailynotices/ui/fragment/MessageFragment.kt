@@ -17,6 +17,7 @@ import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.callback.SimpleGlobalObservable
 import com.suncity.dailynotices.ui.BaseFragment
+import com.suncity.dailynotices.ui.activity.HomeActivity
 import com.suncity.dailynotices.ui.activity.LoginActivity
 import com.suncity.dailynotices.ui.adapter.MessageAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar
@@ -61,7 +62,7 @@ class MessageFragment : BaseFragment() {
                 .statusBarDarkFont(true, 0f)
                 .init()
             if (!isLogined()) {
-                startActivity(LoginActivity::class.java, false)
+                LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
             } else {
                 updateConversationList()
             }
@@ -164,7 +165,7 @@ class MessageFragment : BaseFragment() {
         })
         smartRefreshLayout?.setOnRefreshListener {
             if (!isLogined()) {
-                startActivity(LoginActivity::class.java, false)
+                LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
             } else {
                 updateConversationList(it)
             }
@@ -172,7 +173,7 @@ class MessageFragment : BaseFragment() {
 
         smartRefreshLayout?.setOnLoadMoreListener {
             if (!isLogined()) {
-                startActivity(LoginActivity::class.java, false)
+                LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
             } else {
                 updateConversationList()
             }
@@ -194,7 +195,7 @@ class MessageFragment : BaseFragment() {
                     startLCIM(item)
                 }else{
                     ToastUtils.showSafeToast(requireContext(),"登录过期请重新登录")
-                    startActivity(LoginActivity::class.java)
+                    LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
                 }
             }
 

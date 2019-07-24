@@ -1,12 +1,12 @@
 package com.suncity.dailynotices.ui.activity
 
+import android.content.Context
 import android.content.Intent
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextUtils
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -18,7 +18,6 @@ import com.suncity.dailynotices.callback.TextWatcherHelper
 import com.suncity.dailynotices.dialog.OnDismissListener
 import com.suncity.dailynotices.dialog.TipDialog
 import com.suncity.dailynotices.ui.BaseActivity
-import com.suncity.dailynotices.ui.activity.HomeActivity.Companion.POS_MINE
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.utils.*
 import kotlinx.android.synthetic.main.ac_login.*
@@ -30,7 +29,6 @@ import com.suncity.dailynotices.TableConstants
 import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.lcoperation.Increase
 import com.suncity.dailynotices.lcoperation.Modify
-import com.suncity.dailynotices.ui.activity.HomeActivity.Companion.POS_HOME
 import com.suncity.dailynotices.ui.dialog.NormalDialogUtils
 
 
@@ -47,6 +45,18 @@ class LoginActivity : BaseActivity() {
     private val loginSuccessText = Config.getString(R.string.str_login_success)
     private val loginErrorText = Config.getString(R.string.str_login_error)
     private var avUser: AVUser? = null
+    private var bundlePos = -1
+
+    companion object {
+        private const val BUNDLE_FROM_POS = "bundle_from_pos"
+
+        fun start(context: Context,fromPos: Int? = -1) {
+            val intent = Intent()
+            intent.setClass(context,LoginActivity::class.java)
+            intent.putExtra(BUNDLE_FROM_POS,fromPos)
+            context.startActivity(intent)
+        }
+    }
 
     override fun setScreenManager() {
 
@@ -62,6 +72,7 @@ class LoginActivity : BaseActivity() {
     }
 
     override fun initData() {
+        bundlePos = intent?.getIntExtra(BUNDLE_FROM_POS,-1) ?: -1
         //设置使用协议的字体大小和颜色
         val dealSize = DisplayUtils.sp2px(14f).toInt()
         val dealColor = Config.getColor(R.color.color_black)
@@ -333,7 +344,7 @@ class LoginActivity : BaseActivity() {
                 )
                 tipDialog.setOnDismissListener(object : OnDismissListener {
                     override fun onDismiss() {
-                        returnHomeActivity(POS_MINE)
+                        returnHomeActivity()
                     }
                 })
             }
@@ -355,17 +366,21 @@ class LoginActivity : BaseActivity() {
 
     }
 
-    private fun returnHomeActivity(pos: Int) {
-        val intent = Intent()
-        intent.setClass(this, HomeActivity::class.java)
-        intent.putExtra(HomeActivity.EXTRA_POS, pos)
-        startActivity(intent)
-        finish()
+    private fun returnHomeActivity() {
+        if(bundlePos == -1){
+            finish()
+        }else{
+            val intent = Intent()
+            intent.setClass(this, HomeActivity::class.java)
+            intent.putExtra(HomeActivity.EXTRA_POS, bundlePos)
+            startActivity(intent)
+            finish()
+        }
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        returnHomeActivity(POS_HOME)
+        returnHomeActivity()
     }
 
 }

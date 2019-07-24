@@ -142,7 +142,7 @@ class HomeDynamicFragment : BaseFragment() {
 
         override fun onMoreClick(position: Int) {
             if (!isLogined()) {
-                startActivity(LoginActivity::class.java)
+                LoginActivity.start(requireContext(),HomeActivity.POS_HOME)
                 return
             }
             val item = dynamicAdapter?.getItem(position)

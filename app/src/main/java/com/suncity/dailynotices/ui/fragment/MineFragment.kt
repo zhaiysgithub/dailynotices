@@ -148,7 +148,7 @@ class MineFragment : BaseFragment() {
 
     override fun initListener() {
         layout_unlogin?.setOnClickListener {
-            startActivity(LoginActivity::class.java)
+            LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
         }
         layout_login?.setOnClickListener {
             //进入个人主页
@@ -165,7 +165,7 @@ class MineFragment : BaseFragment() {
                 //进入推荐我的页面
                 startActivity(MineRecommentActivity::class.java)
             } else {
-                startActivity(LoginActivity::class.java)
+                LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
             }
         }
         layout_login_fans?.setOnClickListener {
@@ -173,7 +173,7 @@ class MineFragment : BaseFragment() {
                 //进入我查看的页面
                 startActivity(MineFocusActivity::class.java)
             } else {
-                startActivity(LoginActivity::class.java)
+                LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
             }
         }
         layout_login_guest?.setOnClickListener {
@@ -181,7 +181,7 @@ class MineFragment : BaseFragment() {
                 //进入查看我的页面
                 startActivity(MineFansActivity::class.java)
             } else {
-                startActivity(LoginActivity::class.java)
+                LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
             }
         }
 
@@ -194,7 +194,7 @@ class MineFragment : BaseFragment() {
                 0 -> {
                     // 沟通过的通告
                     if (!isLogined()) {
-                        startActivity(LoginActivity::class.java)
+                        LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
                     } else {
                         startActivity(CommuncatedNoticeActivity::class.java)
                     }
@@ -202,7 +202,7 @@ class MineFragment : BaseFragment() {
                 1 -> {
                     // 我发布的
                     if (!isLogined()) {
-                        startActivity(LoginActivity::class.java)
+                        LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
                     } else {
                         val userObjectId = PreferenceStorage.userObjectId
                         if (StringUtils.isEmpty(userObjectId)) return
@@ -212,7 +212,7 @@ class MineFragment : BaseFragment() {
                 2 -> {
                     // 屏蔽过的人
                     if (!isLogined()) {
-                        startActivity(LoginActivity::class.java)
+                        LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
                     }else{
                         startActivity(ShieldingActivity::class.java)
                     }
