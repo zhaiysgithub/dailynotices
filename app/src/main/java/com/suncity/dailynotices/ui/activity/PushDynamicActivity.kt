@@ -18,6 +18,7 @@ import com.suncity.dailynotices.lcoperation.Increase
 import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.adapter.PushDynamicImgAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar
+import com.suncity.dailynotices.ui.dialog.NormalDialogUtils
 import com.suncity.dailynotices.utils.*
 import kotlinx.android.synthetic.main.ac_push_dynamic.*
 import java.lang.StringBuilder
@@ -148,7 +149,7 @@ class PushDynamicActivity : BaseActivity() {
      * 保存数据到数据库
      */
     private fun saveDynamicData(desc: String?, skillContent: String?, styleContent: String?) {
-        ProgressUtil.showProgress(this, "请稍等", "正在上传中...")
+        NormalDialogUtils.showTextDialog(this,"正在上传中...")
         val paths = mAdapter?.getAllData()
         var newPaths: ArrayList<String> = arrayListOf()
         if (paths != null) {
@@ -163,7 +164,7 @@ class PushDynamicActivity : BaseActivity() {
         Increase.uploadAVFile(newPaths) { isComplete, fileUrls ->
             if (isComplete) {
                 Increase.uploadDynamicData(fileUrls, desc, skillContent, styleContent) {
-                    ProgressUtil.hideProgress()
+                    NormalDialogUtils.dismissNormalDialog()
                     if (it == null) {
                         GlobalObserverHelper.uploadDynamicSuccess()
                         TipDialog.show(

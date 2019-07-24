@@ -28,6 +28,7 @@ import com.suncity.dailynotices.TableConstants
 import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.lcoperation.Increase
 import com.suncity.dailynotices.lcoperation.Modify
+import com.suncity.dailynotices.ui.dialog.NormalDialogUtils
 
 
 /**
@@ -133,7 +134,8 @@ class LoginActivity : BaseActivity() {
             if (TextUtils.isEmpty(pwd) || pwd.length < 6) {
                 ToastUtils.showToast("请重新输入密码,且密码大于等于 6 位数")
             } else {
-                ProgressUtil.showProgress(this)
+//                ProgressUtil.showProgress(this)
+                NormalDialogUtils.showNormalDialog(this)
                 requestLoginWithLeancloud(phoneNumber, pwd)
             }
         }
@@ -205,7 +207,8 @@ class LoginActivity : BaseActivity() {
             override fun done(userInfo: AVObject?, e: AVException?) {
                 if (userInfo == null) {
                     Increase.createUserInfoToBack(objectId) { userinfoId, exception ->
-                        ProgressUtil.hideProgress()
+//                        ProgressUtil.hideProgress()
+                        NormalDialogUtils.dismissNormalDialog()
                         if (userinfoId == null) {
                             TipDialog.show(
                                 this@LoginActivity, exception?.message ?: loginErrorText
@@ -226,7 +229,8 @@ class LoginActivity : BaseActivity() {
 
                     }
                 } else {
-                    ProgressUtil.hideProgress()
+//                    ProgressUtil.hideProgress()
+                    NormalDialogUtils.dismissNormalDialog()
                     PreferenceStorage.isAutonym = userInfo.getInt("autonym")
                     saveUser()
                 }
@@ -247,7 +251,8 @@ class LoginActivity : BaseActivity() {
                     PreferenceStorage.userObjectId = objectId
                     queryUserInfo(objectId)
                 } else {
-                    ProgressUtil.hideProgress()
+//                    ProgressUtil.hideProgress()
+                    NormalDialogUtils.dismissNormalDialog()
                     if (e != null) {
                         val errorMsg: String?
                         val errorCode = e.code

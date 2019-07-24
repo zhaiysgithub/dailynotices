@@ -23,6 +23,7 @@ import com.suncity.dailynotices.ui.activity.UpdateRecordActivity
 import com.suncity.dailynotices.ui.activity.UserInfoActivity
 import com.suncity.dailynotices.ui.adapter.DynamicAdapter
 import com.suncity.dailynotices.ui.adapter.RecordAdapter
+import com.suncity.dailynotices.ui.dialog.NormalDialogUtils
 import com.suncity.dailynotices.ui.views.flowlayout.FlowLayout
 import com.suncity.dailynotices.ui.views.flowlayout.TagAdapter
 import com.suncity.dailynotices.ui.views.flowlayout.TagFlowLayout
@@ -80,11 +81,11 @@ class UserInfoHomeFragment : BaseFragment() {
         val currentObjectId = PreferenceStorage.userObjectId
         val isMine = (userObjcetId == currentObjectId)
         if (activity is UserInfoActivity && activity != null && activity?.isFinishing == false) {
-            ProgressUtil.showProgress(activity!!, "", "请稍等")
+            NormalDialogUtils.showTextDialog(requireContext(),"请稍等")
         }
         //查询动态
         Query.queryUserDynamicById(userObjcetId) { dynamicList, _ ->
-            ProgressUtil.hideProgress()
+            NormalDialogUtils.dismissNormalDialog()
             //标签,演绎动态内容
             if (dynamicList != null && dynamicList.size > 0) {
                 val tags = arrayListOf<String>()

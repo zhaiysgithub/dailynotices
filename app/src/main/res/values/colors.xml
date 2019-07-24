@@ -43,4 +43,6 @@
     <color name="color_a000">#AA000000</color>
     <color name="color_f7f7f7">#F7F7F7</color>
     <color name="color_fbbb">#FFBBBBBB</color>
+    <color name="color_0000">#00000000</color>
+    <color name="color_b2000">#B2000000</color>
 </resources>
