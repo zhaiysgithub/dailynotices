@@ -26,9 +26,15 @@ android {
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a'
     }
 
+    signingConfigs {
+        release {
+
+        }
+    }
+
     // 看看 signing.properties 文件是否存在，如果存在就读取其中的内容作为打包时的签名配置
     // 如果不存在就设置打包时不使用签名配置
-   /* File propFile = file('noticesigning.properties')
+    File propFile = file('noticesigning.properties')
     if (propFile.exists()) {
         Properties props = new Properties()
         props.load(new FileInputStream(propFile))
@@ -43,12 +49,16 @@ android {
         }
     } else {
         android.buildTypes.release.signingConfig = null
-    }*/
+    }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
         }
     }
 
@@ -74,13 +84,13 @@ android {
                 outputFileName = "${variant.productFlavors[0].name.toUpperCase()}_" +
                         "${variant.buildType.name.toUpperCase()}_v${variant.versionName}_${time}.apk"
             }
-            /*variant.assembleProvider.doLast { assemble ->
+            variant.assemble.doLast { assemble ->
                 copy {
                     from variant.outputs*.outputFile
                     into "apks"
                 }
                 delete variant.outputs*.outputFile
-            }*/
+            }
         }
     }
 
