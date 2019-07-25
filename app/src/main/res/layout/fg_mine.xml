@@ -244,6 +244,8 @@
             android:id="@+id/recyclerView_login"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:scrollbars="none"
             android:layout_below="@id/iv_mine_login_bg"/>
 
 </RelativeLayout>

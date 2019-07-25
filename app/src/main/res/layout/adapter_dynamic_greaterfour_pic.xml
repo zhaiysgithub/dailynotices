@@ -93,6 +93,7 @@
                 android:layout_below="@id/tv_content_greaterfour"
                 android:layout_marginStart="@dimen/dp_18"
                 android:scrollbars="none"
+                android:overScrollMode="never"
         />
         <!--footer-->
         <com.suncity.dailynotices.ui.views.flowlayout.TagFlowLayout

@@ -11,6 +11,8 @@
             android:id="@+id/recyclerView_userinfo_pic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:scrollbars="none"
             android:background="@color/color_white"
             android:paddingLeft="@dimen/dp_20"
             android:paddingRight="@dimen/dp_20"/>

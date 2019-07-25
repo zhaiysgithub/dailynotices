@@ -97,6 +97,8 @@
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/dp_20"
             android:paddingEnd="@dimen/dp_20"
+            android:scrollbars="none"
+            android:overScrollMode="never"
             android:layout_marginTop="@dimen/dp_10"/>
     <LinearLayout
             android:id="@+id/layout_associated_skill"

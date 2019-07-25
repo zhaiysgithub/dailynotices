@@ -102,6 +102,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="@dimen/dp_20"
+                android:overScrollMode="never"
+                android:scrollbars="none"
                 android:layout_marginTop="@dimen/dp_20"
                 android:layout_marginBottom="@dimen/dp_20"/>
 
@@ -233,6 +235,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingBottom="@dimen/dp_20"
+                android:overScrollMode="never"
+                android:scrollbars="none"
         />
 
     </LinearLayout>

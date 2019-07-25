@@ -15,6 +15,8 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/contact_fragment_rv_list"
+                android:overScrollMode="never"
+                android:scrollbars="none"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
         </android.support.v4.widget.SwipeRefreshLayout>
