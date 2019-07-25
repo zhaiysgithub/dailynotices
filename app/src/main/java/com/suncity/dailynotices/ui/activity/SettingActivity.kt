@@ -93,15 +93,17 @@ class SettingActivity : BaseActivity() {
                             startActivity(SettingEditActivity::class.java)
                         }
                         1 -> {
-//                            val value = dataList[1].value_set
-//                            if (StringUtils.isNotEmptyAndNull(value)){
-//
-//                            }
+                            val item = adapter?.getItem(position)
+                            val value = item?.value_set ?: ""
+                            if (StringUtils.isEmptyOrNull(value) || value == "0") return
                             AlertDialog(this@SettingActivity).builder().setTitle(STR_TIP)
                                 .setMsg(msg)
                                 .setCancelable(false)
                                 .setPositiveButton(STR_POSITIVE, View.OnClickListener {
-                                    ToastUtils.showSafeToast(this@SettingActivity, msg)
+                                    val imagePipeline = Fresco.getImagePipeline()
+                                    imagePipeline.clearCaches()
+                                    item?.value_set = ""
+                                    adapter?.notifyItemChanged(position)
                                 }).setNegativeButton(STR_CANCEL, View.OnClickListener {}).show()
                         }
                     }
