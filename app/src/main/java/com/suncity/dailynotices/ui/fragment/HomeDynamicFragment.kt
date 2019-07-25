@@ -67,6 +67,7 @@ class HomeDynamicFragment : BaseFragment() {
         dynamicAdapter = DynamicAdapter(requireContext())
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView?.setItemViewCacheSize(20)
         recyclerView?.addItemDecoration(DividerDecoration(dividerColor, dividerHeight, dividerMargin, dividerMargin))
         recyclerView?.adapter = dynamicAdapter
 

@@ -42,11 +42,10 @@ class RecommentAdapter(context: Context) : RecyclerArrayAdapter<Fire>(context) {
 
         @SuppressLint("SetTextI18n")
         override fun setData(data: Fire) {
-            val avatarUrl = PreferenceStorage.userAvatar
-            avatar?.setImageURI(avatarUrl)
+            avatar?.setImageURI(data.userAvatar)
             title?.text = data.reason ?: ""
             val updatedAt = data.updatedAt
-            if (updatedAt != null){
+            if (updatedAt != null) {
                 updateDate?.text = DateUtils.formatDateToM(updatedAt)
             }
             count?.text = "+ ${(data.fire ?: 0)}"

@@ -102,7 +102,7 @@ class MineFansActivity : BaseActivity() {
 
         override fun onItemClick(position: Int, view: View) {
             val item = focusAdapter?.getItem(position) ?: return
-            val userInfoObjectId = item.userInfoObjcetId ?: return
+            val userInfoObjectId = item.userObjcetId ?: return
             if (PreventRepeatedUtils.isFastDoubleClick()) return
             UserInfoActivity.start(this@MineFansActivity,userInfoObjectId)
         }

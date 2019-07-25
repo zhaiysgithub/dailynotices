@@ -53,6 +53,9 @@ class UserInfoActivity : BaseActivity() {
         private const val OBJECTID = "objectId"
         private const val IMGBG = "imgbg"
         private var mImgBg: String = ""
+        /**
+         * 此objectId是user对应的objectId
+         */
         fun start(context: Context, objectId: String, imgBg: String? = null) {
             val intent = Intent()
             intent.setClass(context, UserInfoActivity::class.java)

@@ -2,11 +2,15 @@ package com.suncity.dailynotices.ui.activity
 
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import com.avos.avoscloud.AVException
+import com.avos.avoscloud.AVQuery
 import com.avos.avoscloud.AVUser
+import com.avos.avoscloud.GetCallback
 import com.google.gson.Gson
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.TableConstants
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.model.Fire
 import com.suncity.dailynotices.ui.BaseActivity
@@ -27,7 +31,6 @@ import kotlinx.android.synthetic.main.view_title.*
 
 class MineRecommentActivity : BaseActivity() {
 
-    private val fireList = arrayListOf<Fire>()
     private var recommentAdapter: RecommentAdapter? = null
 
     companion object {
@@ -69,39 +72,22 @@ class MineRecommentActivity : BaseActivity() {
     }
 
 
-
     private fun queryFireList(it: RefreshLayout) {
         val objectId = PreferenceStorage.userObjectId
-        Query.queryFireList(objectId) { avObjects, avException ->
+        Query.queryFireList(objectId) { firelist, avException ->
             it.finishRefresh()
-            if (avObjects != null && avObjects.size > 0 && avException == null) {
-                fireList.clear()
-                avObjects.forEach {
-                    val fire = Fire()
-                    val fireCount = it.getInt("fire")
-                    val toUser: AVUser = it.getAVUser("toUser")
-                    val user: AVUser = it.getAVUser("user")
-                    val reason = it.getString("reason")
-                    val createData = it.getDate("createdAt")
-                    val updateAt = it.getDate("updatedAt")
-                    fire.fire = fireCount
-                    fire.reason = reason
-                    fire.createdAt = createData
-                    fire.updatedAt = updateAt
-                    fireList.add(fire)
-                }
+            if (firelist != null && firelist.size > 0 && avException == null) {
                 recommentAdapter?.clear()
-                recommentAdapter?.addAll(fireList)
-
+                recommentAdapter?.addAll(firelist)
             } else {
-                if(avException != null){
+                if (avException != null) {
                     ToastUtils.showSafeToast(this@MineRecommentActivity, errorServer)
                 }
             }
 
-            if(recommentAdapter?.itemCount == 0){
+            if (recommentAdapter?.itemCount == 0) {
                 layout_empty?.visibility = View.VISIBLE
-            }else{
+            } else {
                 layout_empty?.visibility = View.GONE
             }
         }

@@ -28,7 +28,6 @@ import java.util.*
  */
 class MineFocusActivity : BaseActivity() {
 
-    private val focusModelList = arrayListOf<MineFocusModel>()
     private var focusAdapter: RecentVisitAdapter? = null
 
     companion object {
@@ -104,7 +103,7 @@ class MineFocusActivity : BaseActivity() {
 
         override fun onItemClick(position: Int, view: View) {
             val item = focusAdapter?.getItem(position) ?: return
-            val userInfoObjectId = item.userInfoObjcetId ?: return
+            val userInfoObjectId = item.userObjcetId ?: return
             if (PreventRepeatedUtils.isFastDoubleClick()) return
             UserInfoActivity.start(this@MineFocusActivity,userInfoObjectId)
         }

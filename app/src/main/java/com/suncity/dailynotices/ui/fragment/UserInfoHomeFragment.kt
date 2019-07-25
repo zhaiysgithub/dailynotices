@@ -315,10 +315,9 @@ class UserInfoHomeFragment : BaseFragment() {
     }
 
     private fun interestVisiable(isVisible: Boolean) {
-//        layout_interest?.visibility = if (isVisible) View.VISIBLE else View.GONE
-        tv_interest_num?.visibility = if (isVisible) View.VISIBLE else View.GONE
+        layout_interest?.visibility = if (isVisible) View.VISIBLE else View.GONE
         tagFlowLayout_interest?.visibility = if (isVisible) View.VISIBLE else View.GONE
-//        view_line_interest?.visibility = if (isVisible) View.VISIBLE else View.GONE
+        view_line_interest?.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
     private fun dynamicVisiable(isVisible: Boolean) {

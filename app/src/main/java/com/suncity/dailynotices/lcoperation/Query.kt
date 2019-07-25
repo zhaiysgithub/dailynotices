@@ -29,12 +29,12 @@ object Query {
     /**
      * 通过user的objectId，查询userinfo的objectId
      */
-    fun queryUserInfoObjectId(userObjectId: String,callback: (AVObject?, AVException?) -> Unit){
+    fun queryUserInfoObjectId(userObjectId: String, callback: (AVObject?, AVException?) -> Unit) {
         val query = AVQuery<AVObject>(TableConstants.TABLE_USERINFO)
-        query.whereEqualTo("user",userObjectId)
-        query.getFirstInBackground(object : GetCallback<AVObject>(){
+        query.whereEqualTo("user", userObjectId)
+        query.getFirstInBackground(object : GetCallback<AVObject>() {
             override fun done(userInfo: AVObject?, e: AVException?) {
-                callback(userInfo,e)
+                callback(userInfo, e)
             }
 
         })
@@ -69,16 +69,16 @@ object Query {
     /**
      * 查询是否认证成功
      */
-    fun queryAutonym(userObjectId: String,callback: (Boolean, AVException?) -> Unit){
+    fun queryAutonym(userObjectId: String, callback: (Boolean, AVException?) -> Unit) {
         val query = AVQuery<AVObject>(TableConstants.TABLE_USERINFO)
-        query.whereEqualTo("user",userObjectId)
-        query.getFirstInBackground(object : GetCallback<AVObject>(){
+        query.whereEqualTo("user", userObjectId)
+        query.getFirstInBackground(object : GetCallback<AVObject>() {
             override fun done(userInfo: AVObject?, e: AVException?) {
-                if(e == null && userInfo != null){
+                if (e == null && userInfo != null) {
                     val autonym = userInfo.getInt("autonym")
-                    callback(autonym == 1,null)
-                }else{
-                    callback(false,e)
+                    callback(autonym == 1, null)
+                } else {
+                    callback(false, e)
                 }
 
             }
@@ -89,14 +89,73 @@ object Query {
     /**
      * 查询 匹配的fire 数据的集合
      */
-    fun queryFireList(userObjectId: String, callback: ((MutableList<AVObject>?, AVException?) -> Unit)) {
+    fun queryFireList(userObjectId: String, callback: ((MutableList<Fire>?, AVException?) -> Unit)) {
         val query = AVQuery<AVObject>(TableConstants.TABLE_FIRE)
         query.whereEqualTo(TableConstants.TOUSER, AVObject.createWithoutData(TableConstants.TABLE_USER, userObjectId))
         query.findInBackground(object : FindCallback<AVObject>() {
 
             override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
-                callback(avObjects, avException)
+//                callback(avObjects, avException)
+                if (avObjects != null && avObjects.size > 0 && avException == null) {
+                    val fireList = arrayListOf<Fire>()
+                    val userQueryList = arrayListOf<AVQuery<AVUser>>()
+                    avObjects.forEach {
+                        val fire = Fire()
+                        val fireCount = it.getInt("fire")
+                        val toUser: AVUser = it.getAVUser("toUser")
+                        val user: AVUser = it.getAVUser("user")
+                        val reason = it.getString("reason")
+                        val createData = it.getDate("createdAt")
+                        val updateAt = it.getDate("updatedAt")
+                        fire.fire = fireCount
+                        fire.reason = reason
+                        fire.createdAt = createData
+                        fire.updatedAt = updateAt
+                        fire.userObjectId = user.objectId
+                        fireList.add(fire)
+                        // or 组合查询
+                        val userQuery = AVQuery<AVUser>(TableConstants.TABLE_USER)
+                        userQuery.whereEqualTo(TableConstants.OBJECTID, user.objectId)
+                        userQueryList.add(userQuery)
+                    }
+                    val avQuery = AVQuery.or(userQueryList)
+                    queryUserByFireOrUserId(avQuery, fireList){list,e ->
+                        callback(list,e)
+                    }
+                } else {
+                    callback(null, avException)
+                }
             }
+
+        })
+    }
+
+    /**
+     * 通过fire表中的user字段组合查询所有的user对象中的信息
+     */
+    private fun queryUserByFireOrUserId(
+        query: AVQuery<AVUser>,
+        fireList: ArrayList<Fire>,
+        callback: ((ArrayList<Fire>?, AVException?) -> Unit)
+    ) {
+        query.findInBackground(object : FindCallback<AVUser>() {
+            override fun done(avObjects: MutableList<AVUser>?, avException: AVException?) {
+                if (avObjects == null || avObjects.size == 0) {
+                    callback(null, avException)
+                } else {
+                    avObjects.forEach { avUser ->
+                        fireList.forEach {
+                            if (it.userObjectId == avUser.objectId) {
+                                it.userName = avUser.username
+                                it.userAvatar = avUser.getAVFile<AVFile>("avatar")?.url ?: ""
+                                it.userInfoObjectId = avUser.getAVObject<AVObject>("info")?.objectId ?: ""
+                            }
+                        }
+                    }
+                     callback(fireList,avException)
+                }
+            }
+
 
         })
     }
@@ -1092,7 +1151,7 @@ object Query {
                     userinfo.user = userInfoObject.getString("user")
                     userinfo.height = userInfoObject.getString("height")
                     userinfo.nation = userInfoObject.getString("nation")
-                    callback(userinfo,e)
+                    callback(userinfo, e)
                 } else {
                     callback(null, e)
                 }

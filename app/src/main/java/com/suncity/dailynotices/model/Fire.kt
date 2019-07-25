@@ -14,9 +14,11 @@ class Fire : Serializable {
 
     var objectId: String? = null
     var fire: Int? = null
-    var toUser: User? = null
     var reason: String? = null
-    var user:User? = null
     var createdAt:Date? = null
     var updatedAt: Date? = null
+    var userName:String? = null
+    var userObjectId:String? = null
+    var userAvatar:String? = null
+    var userInfoObjectId:String? = null
 }
