@@ -34,4 +34,10 @@ interface GlobalObservable {
      * 实名认证成功
      */
     fun onUpdateAutonymSuccess()
+
+    /**
+     * 用户更新图片的监听
+     * @picLocalPaths 本地图片的集合
+     */
+    fun onUserPicUpdateListener(picLocalPaths:ArrayList<String>)
 }

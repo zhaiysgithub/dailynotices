@@ -57,4 +57,9 @@ object GlobalObserverHelper {
         }
     }
 
+    fun onUserPicUpdateListener(picLocalPaths:ArrayList<String>){
+        mObservers.forEach {
+            it.onUserPicUpdateListener(picLocalPaths)
+        }
+    }
 }

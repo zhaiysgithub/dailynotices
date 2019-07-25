@@ -9,15 +9,22 @@ import android.support.v7.widget.GridLayoutManager
 import android.util.Log
 import android.view.View
 import com.avos.avoscloud.AVObject
+import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.callback.GlobalObserverHelper
+import com.suncity.dailynotices.callback.SimpleGlobalObservable
+import com.suncity.dailynotices.lcoperation.Modify
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.ui.BaseFragment
 import com.suncity.dailynotices.ui.activity.ImageViewPagerActivity
 import com.suncity.dailynotices.ui.adapter.UserInfoPicAdapter
+import com.suncity.dailynotices.ui.dialog.NormalDialogUtils
 import com.suncity.dailynotices.ui.views.recyclerview.RecycleGridDivider
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.DisplayUtils
+import com.suncity.dailynotices.utils.PreferenceStorage
+import com.suncity.dailynotices.utils.ToastUtils
 import kotlinx.android.synthetic.main.fragment_userinfo_pic.*
 import kotlinx.android.synthetic.main.view_empty.*
 
@@ -40,7 +47,7 @@ class UserInfoPicFragment : BaseFragment() {
         private val IMAGETRANSITION = Config.getString(R.string.image_transition_name)
         fun getInstance(userInfo: AVObject?): UserInfoPicFragment {
             val userInfoPicFragment = UserInfoPicFragment()
-            if(userInfo != null){
+            if (userInfo != null) {
                 val bundle = Bundle()
                 bundle.putParcelable(ARGUMENT_TAG, userInfo)
                 userInfoPicFragment.arguments = bundle
@@ -54,10 +61,11 @@ class UserInfoPicFragment : BaseFragment() {
     }
 
     override fun initData() {
+        GlobalObserverHelper.addObserver(picObservable)
         mAdapter = UserInfoPicAdapter(requireContext())
         recyclerView_userinfo_pic?.setHasFixedSize(true)
         recyclerView_userinfo_pic?.layoutManager = GridLayoutManager(requireContext(), 2)
-        recyclerView_userinfo_pic?.addItemDecoration(RecycleGridDivider(space_dimen,space_color))
+        recyclerView_userinfo_pic?.addItemDecoration(RecycleGridDivider(space_dimen, space_color))
         recyclerView_userinfo_pic?.adapter = mAdapter
 
         tv_empty_desc?.text = Config.getString(R.string.str_userinfopic_empty)
@@ -68,13 +76,13 @@ class UserInfoPicFragment : BaseFragment() {
         Query.queryHomeImagesByUserid(userId) { imgList, _ ->
 
             if (imgList != null && imgList.size > 0) {
-                Log.e("@@@","imgList = $imgList")
+                Log.e("@@@", "imgList = $imgList")
                 imgs = imgList
                 mAdapter?.addAll(imgList)
                 recyclerView_userinfo_pic?.visibility = View.VISIBLE
                 layout_empty?.visibility = View.GONE
             } else {
-                if(mAdapter?.itemCount == 0){
+                if (mAdapter?.itemCount == 0) {
                     recyclerView_userinfo_pic?.visibility = View.GONE
                     layout_empty?.visibility = View.VISIBLE
                 }
@@ -108,5 +116,27 @@ class UserInfoPicFragment : BaseFragment() {
 
         })
 
+    }
+
+    private val picObservable = object : SimpleGlobalObservable() {
+
+        override fun onUserPicUpdateListener(picLocalPaths: ArrayList<String>) {
+            NormalDialogUtils.showTextDialog(requireContext(), "正在上传中...")
+            Modify.updateHomeImageList(PreferenceStorage.userObjectId, picLocalPaths) { urlList, e ->
+                NormalDialogUtils.dismissNormalDialog()
+                if (e == null) {
+                    ToastUtils.showSafeToast(requireContext(), "上传成功")
+                } else {
+                    ToastUtils.showSafeToast(requireContext(), Constants.ERROR_MSG)
+                }
+                mAdapter?.addAll(urlList)
+            }
+        }
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        GlobalObserverHelper.removeObserver(picObservable)
     }
 }

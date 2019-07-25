@@ -128,6 +128,19 @@ object Increase {
     }
 
     /**
+     * 上传单个图片返回avFile对象
+     */
+    fun  uploadLocalPicAVFile(localPath:String,callback: (AVFile?,AVException?) -> Unit){
+        if(StringUtils.isEmptyOrNull(localPath)) callback(null,null)
+        val avFile = AVFile.withAbsoluteLocalPath(StringUtils.getRandomPicName(10), localPath)
+        avFile.saveInBackground(object : SaveCallback(){
+            override fun done(e: AVException?) {
+                callback(avFile,e)
+            }
+
+        })
+    }
+    /**
      * 上传动态内容
      */
     fun uploadDynamicData(

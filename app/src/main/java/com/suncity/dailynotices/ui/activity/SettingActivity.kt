@@ -26,16 +26,13 @@ import kotlinx.android.synthetic.main.view_title.*
  */
 class SettingActivity : BaseActivity() {
 
-    companion object {
-
-        private val STR_ACCOUNTMANAGER = Config.getString(R.string.str_accountmanager)
-        private val STR_CACHECLEAR = Config.getString(R.string.str_cacheclear)
-        private val STR_LOGOUT = Config.getString(R.string.str_exit)
-        private val STR_TIP = Config.getString(R.string.str_tip)
-        private val STR_POSITIVE = Config.getString(R.string.str_positive)
-        private val STR_CANCEL = Config.getString(R.string.str_cancel)
-        private val msg = "确认清除缓存?"
-    }
+    private val STR_ACCOUNTMANAGER = Config.getString(R.string.str_accountmanager)
+    private val STR_CACHECLEAR = Config.getString(R.string.str_cacheclear)
+    private val STR_LOGOUT = Config.getString(R.string.str_exit)
+    private val STR_TIP = Config.getString(R.string.str_tip)
+    private val STR_POSITIVE = Config.getString(R.string.str_positive)
+    private val STR_CANCEL = Config.getString(R.string.str_cancel)
+    private val msg = "确认清除缓存?"
 
     private var adapter: SettingAdapter? = null
     private val dataList = arrayListOf<SettingModel>()

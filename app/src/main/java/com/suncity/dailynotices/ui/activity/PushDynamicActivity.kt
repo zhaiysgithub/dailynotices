@@ -7,6 +7,7 @@ import android.graphics.Rect
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.callback.TextWatcherHelper
@@ -43,8 +44,6 @@ class PushDynamicActivity : BaseActivity() {
             .statusBarDarkFont(true, 0f)
             .init()
     }
-
-    private val erroMsg = Config.getString(R.string.str_error_server)
 
     companion object {
         private val REQUEST_LIST_CODE = 0
@@ -176,7 +175,7 @@ class PushDynamicActivity : BaseActivity() {
                             }
                         })
                     } else {
-                        TipDialog.show(this, erroMsg, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR)
+                        TipDialog.show(this, Constants.ERROR_MSG, TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_ERROR)
                     }
                 }
             }

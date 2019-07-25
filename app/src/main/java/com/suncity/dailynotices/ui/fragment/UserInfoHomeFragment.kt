@@ -16,7 +16,9 @@ import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 import com.avos.avoscloud.AVObject
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.callback.OnDynamicItemMenuClick
+import com.suncity.dailynotices.callback.SimpleGlobalObservable
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.model.Dynamic
 import com.suncity.dailynotices.model.UserInfoRecord
@@ -52,6 +54,8 @@ class UserInfoHomeFragment : BaseFragment() {
     private val REQUEST_INTEREST_CODE = 10
     private val IMAGETRANSITION = Config.getString(R.string.image_transition_name)
 
+    private var dynamicAdapter: DynamicAdapter? = null
+
     companion object {
         val TYPE_INTEREST = "type_interest"
         private const val ARGUMENT_TAG = "argument_tag"
@@ -70,6 +74,62 @@ class UserInfoHomeFragment : BaseFragment() {
         return R.layout.fragment_userinfo
     }
 
+    private fun updateHomeDynamicUI(dynamicList: ArrayList<Dynamic>?) {
+        //标签,演绎动态内容
+        if (dynamicList != null && dynamicList.size > 0) {
+            val tags = arrayListOf<String>()
+            val stylesList = arrayListOf<String>()
+            dynamicList.forEach {
+                val skillTag = it.skill
+                if (StringUtils.isNotEmptyAndNull(skillTag) && !tags.contains(skillTag)) {
+                    tags.add(skillTag!!)
+                }
+                val styleTag = it.style
+                if (StringUtils.isNotEmptyAndNull(styleTag) && !tags.contains(styleTag)) {
+                    tags.add(styleTag!!)
+                }
+                if (StringUtils.isNotEmptyAndNull(styleTag) && !stylesList.contains(styleTag)) {
+                    stylesList.add(styleTag!!)
+                }
+            }
+            //设置 tag
+            val tagSize = tags.size
+            tagVisiable(tagSize > 0)
+            if (tagSize > 0) {
+                tv_tag_num?.text = "·$tagSize"
+                setTags(tagFlowLayout_tag, tags)
+            }
+            // 设置 style
+            val styleSize = stylesList.size
+            styleVisiable(styleSize > 0)
+            if (styleSize > 0) {
+                tv_style_num?.text = "·$styleSize"
+                setTags(tagFlowLayout_style, stylesList)
+            }
+            //设置动态
+            dynamicAdapter = DynamicAdapter(requireContext())
+            recyclerView_userinfo_dynamic?.setHasFixedSize(true)
+            recyclerView_userinfo_dynamic?.isNestedScrollingEnabled = false
+            recyclerView_userinfo_dynamic?.layoutManager = LinearLayoutManager(requireContext())
+            recyclerView_userinfo_dynamic?.adapter = dynamicAdapter
+            dynamicAdapter?.addAll(dynamicList)
+
+            dynamicAdapter?.setOnItemClickListener(object : RecyclerArrayAdapter.OnItemClickListener {
+                override fun onItemClick(position: Int, view: View) {
+                    val item = dynamicAdapter?.getItem(position) ?: return
+                    DynamicDetailActivity.start(requireContext(), item)
+                }
+
+            })
+            dynamicAdapter?.setOnDynamicItemMenuClick(mDynamicItemMenuClick)
+
+        } else {
+            tagVisiable(false)
+            styleVisiable(false)
+            dynamicVisiable(false)
+        }
+    }
+
     /**
      * <!--标签-->   dynamic
      * <!--个人档案--> userInfo
@@ -79,6 +139,7 @@ class UserInfoHomeFragment : BaseFragment() {
      */
     @SuppressLint("SetTextI18n")
     override fun initData() {
+        GlobalObserverHelper.addObserver(userHomeObservable)
         userInfo = arguments?.getParcelable(ARGUMENT_TAG)
         val userObjcetId = userInfo?.getString("user") ?: return
         val currentObjectId = PreferenceStorage.userObjectId
@@ -89,57 +150,7 @@ class UserInfoHomeFragment : BaseFragment() {
         //查询动态
         Query.queryUserDynamicById(userObjcetId) { dynamicList, _ ->
             NormalDialogUtils.dismissNormalDialog()
-            //标签,演绎动态内容
-            if (dynamicList != null && dynamicList.size > 0) {
-                val tags = arrayListOf<String>()
-                val stylesList = arrayListOf<String>()
-                dynamicList.forEach {
-                    val skillTag = it.skill
-                    if (StringUtils.isNotEmptyAndNull(skillTag) && !tags.contains(skillTag)) {
-                        tags.add(skillTag!!)
-                    }
-                    val styleTag = it.style
-                    if (StringUtils.isNotEmptyAndNull(styleTag) && !tags.contains(styleTag)) {
-                        tags.add(styleTag!!)
-                    }
-                    if (StringUtils.isNotEmptyAndNull(styleTag) && !stylesList.contains(styleTag)) {
-                        stylesList.add(styleTag!!)
-                    }
-                }
-                //设置 tag
-                val tagSize = tags.size
-                tagVisiable(tagSize > 0)
-                if (tagSize > 0) {
-                    tv_tag_num?.text = "·$tagSize"
-                    setTags(tagFlowLayout_tag, tags)
-                }
-                // 设置 style
-                val styleSize = stylesList.size
-                styleVisiable(styleSize > 0)
-                if (styleSize > 0) {
-                    tv_style_num?.text = "·$styleSize"
-                    setTags(tagFlowLayout_style, stylesList)
-                }
-                //设置动态
-                val dynamicAdapter = DynamicAdapter(requireContext())
-                recyclerView_userinfo_dynamic?.setHasFixedSize(true)
-                recyclerView_userinfo_dynamic?.isNestedScrollingEnabled = false
-                recyclerView_userinfo_dynamic?.layoutManager = LinearLayoutManager(requireContext())
-                recyclerView_userinfo_dynamic?.adapter = dynamicAdapter
-                dynamicAdapter.addAll(dynamicList)
-                dynamicAdapter.setOnItemClickListener(object : RecyclerArrayAdapter.OnItemClickListener {
-                    override fun onItemClick(position: Int, view: View) {
-                        val item = dynamicAdapter.getItem(position) ?: return
-                        DynamicDetailActivity.start(requireContext(), item)
-                    }
-
-                })
-                dynamicAdapter.setOnDynamicItemMenuClick(mDynamicItemMenuClick)
-            } else {
-                tagVisiable(false)
-                styleVisiable(false)
-                dynamicVisiable(false)
-            }
+            updateHomeDynamicUI(dynamicList)
         }
         //设置个人档案和兴趣特长
         iv_update_record?.visibility = if (isMine) View.VISIBLE else View.GONE
@@ -314,6 +325,7 @@ class UserInfoHomeFragment : BaseFragment() {
             intent.putStringArrayListExtra(SkillStyleActivity.BUNDLE_TAGS, bundleInterestList)
             startActivityForResult(intent, REQUEST_INTEREST_CODE)
         }
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -385,5 +397,22 @@ class UserInfoHomeFragment : BaseFragment() {
         }
     }
 
+    private val userHomeObservable = object : SimpleGlobalObservable() {
+
+        override fun onUploadDynamicSuccess() {
+            //更新演绎动态的内容
+            //查询动态
+            val userObjcetId = PreferenceStorage.userObjectId
+            Query.queryUserDynamicById(userObjcetId) { dynamicList, _ ->
+                NormalDialogUtils.dismissNormalDialog()
+                updateHomeDynamicUI(dynamicList)
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        GlobalObserverHelper.removeObserver(userHomeObservable)
+    }
 
 }

@@ -2,10 +2,12 @@ package com.suncity.dailynotices.ui.activity
 
 import android.animation.ArgbEvaluator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
@@ -21,10 +23,15 @@ import com.avos.avoscloud.AVObject
 import com.avos.avoscloud.im.v2.AVIMClient
 import com.avos.avoscloud.im.v2.AVIMException
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
+import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.AppBarStateChangeListener
 import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.callback.SimpleGlobalObservable
+import com.suncity.dailynotices.dialog.BottomDialogiOSItem
+import com.suncity.dailynotices.islib.config.ISListConfig
+import com.suncity.dailynotices.islib.ui.ISListActivity
+import com.suncity.dailynotices.lcoperation.Modify
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.bar.ImmersionBar
@@ -48,6 +55,11 @@ class UserInfoActivity : BaseActivity() {
     private var userInfoObject: AVObject? = null
     private var mAdapter: ViewPagerAdapter? = null
     private var autonym: Int = 0
+    private val REQUEST_SETCOVER_CODE = 0
+    private val REQUEST_SETAVATAR_CODE = 1
+    private val REQUEST_SETPIC_CODE = 2
+    private var isMine = false
+    private var currentTabPos = 0
 
     companion object {
         private const val OBJECTID = "objectId"
@@ -85,6 +97,7 @@ class UserInfoActivity : BaseActivity() {
     override fun initData() {
         objectId = intent.getStringExtra(OBJECTID)
         ivHeaderBg = intent.getStringExtra(IMGBG)
+        isMine = (PreferenceStorage.userObjectId == objectId)
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
@@ -120,6 +133,7 @@ class UserInfoActivity : BaseActivity() {
                 val username = avUser.username
                 val avatarFile: AVFile = avUser.getAVFile("avatar")
                 val avatarUrl = avatarFile.url
+                //TODO COVER 表的内容
                 if (ivHeaderBg.isEmpty()) {
                     imageView_header?.setImageURI(avatarUrl)
                 } else {
@@ -172,10 +186,25 @@ class UserInfoActivity : BaseActivity() {
         tv_direct_msg?.setOnClickListener {
             if (PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
             if (objectId == null) return@setOnClickListener
-            if(isLogined()){
-                startOpenLCIM(objectId!!)
-            }else{
-                LoginActivity.start(this@UserInfoActivity,-1)
+            if (isLogined()) {
+                if (!isMine) {
+                    startOpenLCIM(objectId!!)
+                } else {
+                    if (currentTabPos == 0) {
+                        startActivity(PushDynamicActivity::class.java)
+                    } else {
+                        //进入图片选择和拍照的界面
+                        val config = ISListConfig.Builder()
+                            .multiSelect(true)
+                            .rememberSelected(false)
+                            .needCrop(false)
+                            .build()
+
+                        ISListActivity.startForResult(this@UserInfoActivity, config, REQUEST_SETPIC_CODE)
+                    }
+                }
+            } else {
+                LoginActivity.start(this@UserInfoActivity, -1)
             }
 
         }
@@ -187,6 +216,62 @@ class UserInfoActivity : BaseActivity() {
             }
 
         }
+        //设置封面
+        if (isMine) {
+            imageView_header?.setOnClickListener {
+                createBottomDialog("设置封面", REQUEST_SETCOVER_CODE)
+            }
+            iv_userinfo_avatar?.setOnClickListener {
+                createBottomDialog("设置头像", REQUEST_SETAVATAR_CODE)
+            }
+        } else {
+            imageView_header?.setOnClickListener(null)
+            iv_userinfo_avatar?.setOnClickListener(null)
+        }
+
+        tabLayout?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                if (!isMine) return
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                if (!isMine) return
+            }
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (!isMine || tab == null) return
+                currentTabPos = tab.position
+                if (currentTabPos == 0) {
+                    tv_direct_msg.text = " + 演绎动态"
+                } else {
+                    tv_direct_msg.text = " + 展示图片"
+                }
+            }
+
+        })
+
+    }
+
+
+    private fun createBottomDialog(itemText: String, requestCode: Int) {
+        val bottomDialog = BottomDialogiOSItem(itemText, this@UserInfoActivity)
+        bottomDialog.show()
+        bottomDialog.setClickCallback(object : BottomDialogiOSItem.ClickCallback {
+            override fun doItemClick() {
+                //进入图片选择和拍照的界面
+                val config = ISListConfig.Builder()
+                    .multiSelect(false)
+                    .rememberSelected(false)
+                    .needCrop(false)
+                    .build()
+
+                ISListActivity.startForResult(this@UserInfoActivity, config, requestCode)
+            }
+
+            override fun doItemCancel() {
+            }
+        })
     }
 
     private fun startOpenLCIM(objectId: String) {
@@ -206,7 +291,7 @@ class UserInfoActivity : BaseActivity() {
                     startLCIM(objectId)
                 } else {
                     ToastUtils.showSafeToast(this@UserInfoActivity, "登录过期请重新登录")
-                    LoginActivity.start(this@UserInfoActivity,-1)
+                    LoginActivity.start(this@UserInfoActivity, -1)
                 }
             }
 
@@ -280,6 +365,46 @@ class UserInfoActivity : BaseActivity() {
             }
         }
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            when (requestCode) {
+                REQUEST_SETCOVER_CODE -> {
+                    val pathList = data.getStringArrayListExtra("result")
+                    if (pathList != null && pathList.size > 0) {
+                        val coverPath = pathList[0]
+                        if (StringUtils.isNotEmptyAndNull(coverPath)) {
+                            imageView_header?.setImageURI("file://$coverPath")
+                            Modify.updateCoverFile(PreferenceStorage.userObjectId, coverPath) { _, e ->
+                                ToastUtils.showSafeToast(this@UserInfoActivity, if (e == null) "上传成功" else Constants.ERROR_MSG)
+                            }
+                        }
+                    }
+                }
+
+                REQUEST_SETAVATAR_CODE -> {
+                    val pathList = data.getStringArrayListExtra("result")
+                    if (pathList != null && pathList.size > 0) {
+                        val avatarPath = pathList[0]
+                        if (StringUtils.isNotEmptyAndNull(avatarPath)) {
+                            iv_userinfo_avatar?.setImageURI("file://$avatarPath")
+                            Modify.updateAvatarFile(PreferenceStorage.userObjectId, avatarPath) { _, e ->
+                                ToastUtils.showSafeToast(this@UserInfoActivity, if (e == null) "上传成功" else Constants.ERROR_MSG)
+                            }
+                        }
+                    }
+                }
+
+                REQUEST_SETPIC_CODE -> {
+                    val pathList = data.getStringArrayListExtra("result")
+                    if (pathList != null && pathList.size > 0) {
+                        GlobalObserverHelper.onUserPicUpdateListener(pathList)
+                    }
+                }
+            }
+        }
     }
 
 

@@ -89,6 +89,15 @@ object StringUtils{
         return randomString.toString()
     }
 
+    fun getRandomPicName(length: Int):String{
+        val letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        val randomString = StringBuilder(length)
+        for (i in 0 until length) {
+            randomString.append(letters[Random().nextInt(letters.length)])
+        }
+        return "$randomString.jpg"
+    }
+
 
     /**
      * 判断输入的内容是否是英文

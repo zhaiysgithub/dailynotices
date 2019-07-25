@@ -1,5 +1,7 @@
 package com.suncity.dailynotices
 
+import com.suncity.dailynotices.utils.Config
+
 
 /**
  * @ProjectName:    dailynotices
@@ -27,6 +29,9 @@ class Constants{
         const val USERAUTHNAME = "userauthname"
         const val USERAUTHCERTFICATENUM = "userauthcertficatenum"
         const val USERAUTHCERTFICATEPIC = "userauthcertficatepic"
+
+
+        val ERROR_MSG = Config.getString(R.string.str_error_server)
 
 
         val needClearTableValue = arrayOf(SP_KEY_USER,SP_KEY_USERINFO,SP_KEY_FIRE)

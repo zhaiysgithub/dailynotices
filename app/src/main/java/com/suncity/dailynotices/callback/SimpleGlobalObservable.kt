@@ -23,4 +23,10 @@ open class SimpleGlobalObservable : GlobalObservable{
 
     override fun onUpdateAutonymSuccess() {
     }
+
+    override fun onUserPicUpdateListener(picLocalPaths:ArrayList<String>){
+
+    }
+
+
 }
