@@ -92,6 +92,12 @@ class PushDynamicActivity : BaseActivity() {
             val desc = content_push_dynamic?.text?.toString()?.trim()
             val skillContent = content_skill?.text?.toString()?.trim()
             val styleContent = content_style?.text?.toString()?.trim()
+            val itemCount = mAdapter?.itemCount ?: 0
+            if(StringUtils.isEmptyOrNull(desc) && StringUtils.isEmptyOrNull(skillContent)
+                && StringUtils.isEmptyOrNull(styleContent) && itemCount <= 1) {
+                ToastUtils.showSafeToast(this@PushDynamicActivity,"请选择感兴趣的内容再提交 ^v^")
+                return@setOnClickListener
+            }
             saveDynamicData(desc, skillContent, styleContent)
 
         }
