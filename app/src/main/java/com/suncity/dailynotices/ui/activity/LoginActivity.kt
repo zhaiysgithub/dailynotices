@@ -50,10 +50,10 @@ class LoginActivity : BaseActivity() {
     companion object {
         private const val BUNDLE_FROM_POS = "bundle_from_pos"
 
-        fun start(context: Context,fromPos: Int? = -1) {
+        fun start(context: Context, fromPos: Int? = -1) {
             val intent = Intent()
-            intent.setClass(context,LoginActivity::class.java)
-            intent.putExtra(BUNDLE_FROM_POS,fromPos)
+            intent.setClass(context, LoginActivity::class.java)
+            intent.putExtra(BUNDLE_FROM_POS, fromPos)
             context.startActivity(intent)
         }
     }
@@ -61,7 +61,6 @@ class LoginActivity : BaseActivity() {
     override fun setScreenManager() {
 
         ImmersionBar.with(this)
-            .titleBar(R.id.fl_login_del, false)
             .statusBarDarkFont(true, 0f)
             .transparentBar()
             .init()
@@ -72,7 +71,7 @@ class LoginActivity : BaseActivity() {
     }
 
     override fun initData() {
-        bundlePos = intent?.getIntExtra(BUNDLE_FROM_POS,-1) ?: -1
+        bundlePos = intent?.getIntExtra(BUNDLE_FROM_POS, -1) ?: -1
         //设置使用协议的字体大小和颜色
         val dealSize = DisplayUtils.sp2px(14f).toInt()
         val dealColor = Config.getColor(R.color.color_black)
@@ -130,6 +129,10 @@ class LoginActivity : BaseActivity() {
         }
         iv_del_pwd?.setOnClickListener {
             et_pwd?.setText("")
+        }
+
+        fl_title_back?.setOnClickListener {
+            returnHomeActivity()
         }
     }
 
@@ -367,9 +370,9 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun returnHomeActivity() {
-        if(bundlePos == -1){
+        if (bundlePos == -1) {
             finish()
-        }else{
+        } else {
             val intent = Intent()
             intent.setClass(this, HomeActivity::class.java)
             intent.putExtra(HomeActivity.EXTRA_POS, bundlePos)
