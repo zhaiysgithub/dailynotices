@@ -861,4 +861,6 @@ class SlidingTabLayout @JvmOverloads constructor(
         private const val TEXT_BOLD_WHEN_SELECT = 1
         private const val TEXT_BOLD_BOTH = 2
     }
+
+
 }

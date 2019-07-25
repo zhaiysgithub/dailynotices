@@ -6,7 +6,6 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.View
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.suncity.dailynotices.R
@@ -27,7 +26,6 @@ import com.suncity.dailynotices.ui.views.recyclerview.DividerDecoration
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.*
 import kotlinx.android.synthetic.main.ac_mine_focus.*
-import kotlinx.android.synthetic.main.dialog_tip.*
 import kotlinx.android.synthetic.main.view_empty.*
 
 /**
@@ -45,14 +43,14 @@ class HomeDynamicFragment : BaseFragment() {
         GlobalObserverHelper.addObserver(globalObservable)
     }
 
-    companion object {
+    private val errorServer = Config.getString(R.string.str_error_server)
+    private val shieldSuccessTip = Config.getString(R.string.str_shield_success_tips)
+    private val dividerMargin = DisplayUtils.dip2px(20f)
+    private val dividerColor = Config.getColor(R.color.color_f3f3f3)
+    private val dividerHeight = Config.getDimension(R.dimen.dp_1).toInt()
+    private val IMAGETRANSITION = Config.getString(R.string.image_transition_name)
 
-        private val errorServer = Config.getString(R.string.str_error_server)
-        private val shieldSuccessTip = Config.getString(R.string.str_shield_success_tips)
-        private val dividerMargin = DisplayUtils.dip2px(20f)
-        private val dividerColor = Config.getColor(R.color.color_f3f3f3)
-        private val dividerHeight = Config.getDimension(R.dimen.dp_1).toInt()
-        private val IMAGETRANSITION = Config.getString(R.string.image_transition_name)
+    companion object {
         fun getInstance(): HomeDynamicFragment {
             return HomeDynamicFragment()
         }

@@ -11,16 +11,14 @@ import android.widget.FrameLayout
  */
 class DefaultEventDelegate<T>(adapter: RecyclerArrayAdapter<T>) : EventDelegate {
 
-    companion object {
-        private const val STATUS_INITIAL = 291//初始状态
-        private const val STATUS_MORE = 260//加载更多状态
-        private const val STATUS_NOMORE = 408//无更多状态
-        private const val STATUS_ERROR = 732//错误状态
-        private const val Hide = 0
-        private const val ShowMore = 1
-        private const val ShowError = 2
-        private const val ShowNoMore = 3
-    }
+    private val STATUS_INITIAL = 291//初始状态
+    private val STATUS_MORE = 260//加载更多状态
+    private val STATUS_NOMORE = 408//无更多状态
+    private val STATUS_ERROR = 732//错误状态
+    private val Hide = 0
+    private val ShowMore = 1
+    private val ShowError = 2
+    private val ShowNoMore = 3
 
     private var mAdapter: RecyclerArrayAdapter<T>? = adapter
     private var footer: EventFooter? = null

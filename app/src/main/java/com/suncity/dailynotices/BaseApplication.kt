@@ -2,7 +2,6 @@ package com.suncity.dailynotices
 
 import android.app.Application
 import android.content.Context
-import android.os.Environment
 import cn.leancloud.chatkit.LCChatKit
 import com.avos.avoscloud.*
 import com.avos.avoscloud.im.v2.AVIMClient
@@ -20,7 +19,6 @@ import com.suncity.dailynotices.ui.chat.CustomUserProvider
 import com.suncity.dailynotices.utils.AppUtils
 import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.LogUtils
-import java.io.File
 
 /**
  * @ProjectName:    dailynotices
@@ -54,11 +52,9 @@ class BaseApplication : Application() {
         })
     }
 
-    companion object {
-        private val MAX_HEAP_SIZE = Runtime.getRuntime().maxMemory().toInt()
-        private val MAX_MEMORY_CACHE_SIZE = MAX_HEAP_SIZE / 4
-        private const val MAX_DISK_CACHE_SIZE = 20L * ByteConstants.MB
-    }
+    private val MAX_HEAP_SIZE = Runtime.getRuntime().maxMemory().toInt()
+    private val MAX_MEMORY_CACHE_SIZE = MAX_HEAP_SIZE / 4
+    private val MAX_DISK_CACHE_SIZE = 20L * ByteConstants.MB
 
     override fun onCreate() {
         super.onCreate()

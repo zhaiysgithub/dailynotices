@@ -2,7 +2,10 @@ package com.suncity.dailynotices.ui.fragment
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
+import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
@@ -13,14 +16,13 @@ import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 import com.avos.avoscloud.AVObject
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.callback.OnDynamicItemMenuClick
 import com.suncity.dailynotices.lcoperation.Query
+import com.suncity.dailynotices.model.Dynamic
 import com.suncity.dailynotices.model.UserInfoRecord
 import com.suncity.dailynotices.ui.BaseFragment
-import com.suncity.dailynotices.ui.activity.DynamicDetailActivity
+import com.suncity.dailynotices.ui.activity.*
 import com.suncity.dailynotices.ui.activity.PushDynamicActivity.Companion.TYPE_ACTING
-import com.suncity.dailynotices.ui.activity.SkillStyleActivity
-import com.suncity.dailynotices.ui.activity.UpdateRecordActivity
-import com.suncity.dailynotices.ui.activity.UserInfoActivity
 import com.suncity.dailynotices.ui.adapter.DynamicAdapter
 import com.suncity.dailynotices.ui.adapter.RecordAdapter
 import com.suncity.dailynotices.ui.dialog.NormalDialogUtils
@@ -28,8 +30,8 @@ import com.suncity.dailynotices.ui.views.flowlayout.FlowLayout
 import com.suncity.dailynotices.ui.views.flowlayout.TagAdapter
 import com.suncity.dailynotices.ui.views.flowlayout.TagFlowLayout
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
+import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.PreferenceStorage
-import com.suncity.dailynotices.utils.ProgressUtil
 import com.suncity.dailynotices.utils.StringUtils
 import kotlinx.android.synthetic.main.fragment_userinfo.*
 import java.lang.Exception
@@ -45,9 +47,10 @@ import java.lang.Exception
 class UserInfoHomeFragment : BaseFragment() {
 
     private val recordSecret = "保密"
-    private var userInfo:AVObject? = null
+    private var userInfo: AVObject? = null
 
     private val REQUEST_INTEREST_CODE = 10
+    private val IMAGETRANSITION = Config.getString(R.string.image_transition_name)
 
     companion object {
         val TYPE_INTEREST = "type_interest"
@@ -81,7 +84,7 @@ class UserInfoHomeFragment : BaseFragment() {
         val currentObjectId = PreferenceStorage.userObjectId
         val isMine = (userObjcetId == currentObjectId)
         if (activity is UserInfoActivity && activity != null && activity?.isFinishing == false) {
-            NormalDialogUtils.showTextDialog(requireContext(),"请稍等")
+            NormalDialogUtils.showTextDialog(requireContext(), "请稍等")
         }
         //查询动态
         Query.queryUserDynamicById(userObjcetId) { dynamicList, _ ->
@@ -124,13 +127,14 @@ class UserInfoHomeFragment : BaseFragment() {
                 recyclerView_userinfo_dynamic?.layoutManager = LinearLayoutManager(requireContext())
                 recyclerView_userinfo_dynamic?.adapter = dynamicAdapter
                 dynamicAdapter.addAll(dynamicList)
-                dynamicAdapter?.setOnItemClickListener(object : RecyclerArrayAdapter.OnItemClickListener {
+                dynamicAdapter.setOnItemClickListener(object : RecyclerArrayAdapter.OnItemClickListener {
                     override fun onItemClick(position: Int, view: View) {
-                        val item = dynamicAdapter?.getItem(position) ?: return
+                        val item = dynamicAdapter.getItem(position) ?: return
                         DynamicDetailActivity.start(requireContext(), item)
                     }
 
                 })
+                dynamicAdapter.setOnDynamicItemMenuClick(mDynamicItemMenuClick)
             } else {
                 tagVisiable(false)
                 styleVisiable(false)
@@ -181,6 +185,39 @@ class UserInfoHomeFragment : BaseFragment() {
     private var preInterestList = arrayListOf<String>()
     private var bundleInterestList = arrayListOf<String>()
 
+
+    private val mDynamicItemMenuClick = object : OnDynamicItemMenuClick {
+        override fun onMoreClick(position: Int) {
+        }
+
+        override fun onImageClick(view: View, position: Int, url: String, data: Dynamic) {
+            val images = data.images
+            if (images == null || images.size == 0) return
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val option = ActivityOptions.makeSceneTransitionAnimation(activity, view, IMAGETRANSITION)
+                val intent = Intent(requireContext(), ImageViewPagerActivity::class.java)
+                ImageViewPagerActivity.currentPos = position
+                ImageViewPagerActivity.urls = images
+                startActivity(intent, option.toBundle())
+            } else {
+                val intent = Intent(requireContext(), ImageViewPagerActivity::class.java)
+                val rect = Rect()
+                view.getLocalVisibleRect(rect)
+                intent.sourceBounds = rect
+                ImageViewPagerActivity.currentPos = position
+                ImageViewPagerActivity.urls = images
+                startActivity(intent)
+                activity?.overridePendingTransition(0, 0)
+            }
+        }
+
+        override fun onSelectLikeClick(position: Int, data: Dynamic) {
+        }
+
+        override fun onTagFlowClick(position: Int, tagPos: Int, tagString: String) {
+        }
+
+    }
 
     /**
      * 设置个人档案数据
@@ -274,15 +311,16 @@ class UserInfoHomeFragment : BaseFragment() {
             val intent = Intent()
             intent.setClass(requireContext(), SkillStyleActivity::class.java)
             intent.putExtra(TYPE_ACTING, TYPE_INTEREST)
-            intent.putStringArrayListExtra(SkillStyleActivity.BUNDLE_TAGS,bundleInterestList)
+            intent.putStringArrayListExtra(SkillStyleActivity.BUNDLE_TAGS, bundleInterestList)
             startActivityForResult(intent, REQUEST_INTEREST_CODE)
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && data != null){
-            when(requestCode){
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            when (requestCode) {
                 REQUEST_INTEREST_CODE -> {
                     val selectedInterestList = data.getStringArrayListExtra(SkillStyleActivity.BUNDLE_TAGS)
                     val size = selectedInterestList.size

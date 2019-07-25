@@ -23,12 +23,9 @@ import kotlinx.android.synthetic.main.ac_edit_pwd.*
  */
 class EditPwdActivity : BaseActivity() {
 
-    companion object {
-        private val phoneNumEmpty = Config.getString(R.string.str_phonenum_empty)
-        private val phoneNumError = Config.getString(R.string.str_phonenum_error)
-        private val smscodeSuccess = Config.getString(R.string.str_send_smscode_success)
-    }
-
+    private val phoneNumEmpty = Config.getString(R.string.str_phonenum_empty)
+    private val phoneNumError = Config.getString(R.string.str_phonenum_error)
+    private val smscodeSuccess = Config.getString(R.string.str_send_smscode_success)
     override fun setScreenManager() {
         ImmersionBar.with(this)
             .titleBar(R.id.fl_editpwd_del, false)
