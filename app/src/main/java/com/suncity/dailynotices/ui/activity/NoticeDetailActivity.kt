@@ -40,7 +40,7 @@ class NoticeDetailActivity : BaseActivity() {
 
     override fun setScreenManager() {
         ImmersionBar.with(this)
-            .statusBarDarkFont(true,0f)
+            .statusBarDarkFont(true, 0f)
             .fitsSystemWindows(true)
             .statusBarColor(R.color.color_white)
             .init()
@@ -62,35 +62,40 @@ class NoticeDetailActivity : BaseActivity() {
         workaddress_notice_detail?.text = notice?.workPlace
         tv_notice_detail?.text = notice?.contents
         val image = notice?.image
-        if(StringUtils.isNotEmptyAndNull(image)){
+        if (StringUtils.isNotEmptyAndNull(image)) {
             draweeView_discovery_big?.setImageURI(image)
-        }else{
+        } else {
             draweeView_discovery_big?.visibility = View.GONE
         }
         val avatarUrl = notice?.userAvatar
-        if(StringUtils.isNotEmptyAndNull(avatarUrl)){
+        if (StringUtils.isNotEmptyAndNull(avatarUrl)) {
             draweeView_notice_detail?.setImageURI(avatarUrl)
-        }else{
+        } else {
             draweeView_notice_detail?.visibility = View.GONE
         }
         username_notice_detail?.text = notice?.userName
         val userCreateAt = notice?.userCreateAt
-        if(userCreateAt != null){
+        if (userCreateAt != null) {
             userdate_notice_detail?.text = DateUtils.formatDateToM(userCreateAt)
-        }else{
+        } else {
             userdate_notice_detail?.visibility = View.GONE
         }
         val endTime = notice?.endTime
-        if(endTime != null){
+        if (endTime != null) {
             val isPast = DateUtils.compareDate(endTime)
-            if(isPast){
+            if (isPast) {
                 commun_notice_detail?.text = "已过期"
                 commun_notice_detail?.setTextColor(Config.getColor(R.color.color_888))
                 commun_notice_detail?.setBackgroundResource(R.drawable.shape_mark_past_notice_detail)
-            }else{
+                commun_notice_detail?.setOnClickListener(null)
+            } else {
                 commun_notice_detail?.text = "立即沟通"
                 commun_notice_detail?.setTextColor(Config.getColor(R.color.color_222))
                 commun_notice_detail?.setBackgroundResource(R.drawable.shape_submit_checked_bg)
+                commun_notice_detail?.setOnClickListener {
+                    val userId = notice?.userId ?: return@setOnClickListener
+                    startOpenLCIM(userId)
+                }
             }
         }
 
@@ -103,42 +108,39 @@ class NoticeDetailActivity : BaseActivity() {
         }
         layout_user_notice_detail?.setOnClickListener {
             val userId = notice?.userId ?: return@setOnClickListener
-            UserInfoActivity.start(this@NoticeDetailActivity,userId)
+            UserInfoActivity.start(this@NoticeDetailActivity, userId)
         }
 
-        commun_notice_detail?.setOnClickListener {
-            val userId = notice?.userId ?: return@setOnClickListener
-            startOpenLCIM(userId)
-        }
+
     }
 
-    private fun startOpenLCIM(objectId: String){
-        if (null == LCChatKit.getInstance().client){
+    private fun startOpenLCIM(objectId: String) {
+        if (null == LCChatKit.getInstance().client) {
             startLoginChatKit(objectId)
-        }else{
+        } else {
             startLCIM(objectId)
         }
     }
 
-    private fun startLoginChatKit(objectId: String){
+    private fun startLoginChatKit(objectId: String) {
         LCChatKit.getInstance().open(objectId, object : AVIMClientCallback() {
 
             override fun done(client: AVIMClient?, e: AVIMException?) {
                 LogUtils.e("LCChatKit.getInstance().open -> $e")
-                if(e == null){
+                if (e == null) {
                     startLCIM(objectId)
-                }else{
-                    ToastUtils.showSafeToast(this@NoticeDetailActivity,"登录过期请重新登录")
-                    LoginActivity.start(this@NoticeDetailActivity,-1)
+                } else {
+                    ToastUtils.showSafeToast(this@NoticeDetailActivity, "登录过期请重新登录")
+                    LoginActivity.start(this@NoticeDetailActivity, -1)
                 }
             }
 
         })
     }
 
-    private fun startLCIM(bjectId: String){
+    private fun startLCIM(bjectId: String) {
         val intent = Intent(this, LCIMConversationActivity::class.java)
-        intent.putExtra(LCIMConstants.PEER_ID,bjectId)
+        intent.putExtra(LCIMConstants.PEER_ID, bjectId)
         startActivity(intent)
     }
 }
