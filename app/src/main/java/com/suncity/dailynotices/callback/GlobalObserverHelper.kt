@@ -62,4 +62,10 @@ object GlobalObserverHelper {
             it.onUserPicUpdateListener(picLocalPaths)
         }
     }
+
+    fun onNotifyRecentVisitUser(){
+        mObservers.forEach {
+            it.onNotifyRecentVisitUser()
+        }
+    }
 }

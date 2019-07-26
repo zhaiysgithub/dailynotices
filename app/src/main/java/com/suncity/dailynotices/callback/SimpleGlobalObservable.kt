@@ -9,6 +9,7 @@ package com.suncity.dailynotices.callback
 
 open class SimpleGlobalObservable : GlobalObservable{
 
+
     override fun onUpdateUserinfoSuccess() {
     }
 
@@ -26,6 +27,9 @@ open class SimpleGlobalObservable : GlobalObservable{
 
     override fun onUserPicUpdateListener(picLocalPaths:ArrayList<String>){
 
+    }
+
+    override fun onNotifyRecentVisitUser() {
     }
 
 

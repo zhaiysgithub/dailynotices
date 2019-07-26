@@ -2,6 +2,7 @@ package com.suncity.dailynotices.lcoperation
 
 import com.avos.avoscloud.*
 import com.suncity.dailynotices.TableConstants
+import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.utils.LogUtils
 import com.suncity.dailynotices.utils.PreferenceStorage
 import com.suncity.dailynotices.utils.StringUtils
@@ -99,8 +100,8 @@ object Increase {
         val filterResult = filelocalPaths.filter {
             StringUtils.isNotEmptyAndNull(it)
         }
-        if (filterResult.isEmpty()){
-            callback(true,avFileUrls)
+        if (filterResult.isEmpty()) {
+            callback(true, avFileUrls)
             return
         }
         val valueSize = filterResult.size
@@ -113,13 +114,18 @@ object Increase {
                         avFileUrls.add(avFile.url)
                     }
                     LogUtils.e("index = $index,size = ${filterResult.size}")
-                    checkUploadFinished(index,valueSize,avFileUrls,callback)
+                    checkUploadFinished(index, valueSize, avFileUrls, callback)
                 }
             })
         }
     }
 
-    fun checkUploadFinished(index:Int,arraySize:Int,urls:ArrayList<String>,callback: (Boolean, ArrayList<String>) -> Unit){
+    fun checkUploadFinished(
+        index: Int,
+        arraySize: Int,
+        urls: ArrayList<String>,
+        callback: (Boolean, ArrayList<String>) -> Unit
+    ) {
         if (index == arraySize) {
             callback(true, urls)
         } else {
@@ -130,16 +136,17 @@ object Increase {
     /**
      * 上传单个图片返回avFile对象
      */
-    fun  uploadLocalPicAVFile(localPath:String,callback: (AVFile?,AVException?) -> Unit){
-        if(StringUtils.isEmptyOrNull(localPath)) callback(null,null)
+    fun uploadLocalPicAVFile(localPath: String, callback: (AVFile?, AVException?) -> Unit) {
+        if (StringUtils.isEmptyOrNull(localPath)) callback(null, null)
         val avFile = AVFile.withAbsoluteLocalPath(StringUtils.getRandomPicName(10), localPath)
-        avFile.saveInBackground(object : SaveCallback(){
+        avFile.saveInBackground(object : SaveCallback() {
             override fun done(e: AVException?) {
-                callback(avFile,e)
+                callback(avFile, e)
             }
 
         })
     }
+
     /**
      * 上传动态内容
      */
@@ -159,6 +166,26 @@ object Increase {
         dynamicObject.saveInBackground(object : SaveCallback() {
             override fun done(e: AVException?) {
                 callback(e)
+            }
+        })
+    }
+
+    /**
+     * 被访问者的id
+     * 我查看的
+     * 我的id -> user
+     * 对方的id -> visiter
+     */
+    fun createRecentVister(vistedObjectId: String) {
+        val userId = PreferenceStorage.userObjectId
+        val recentVisitObject = AVObject(TableConstants.TABLE_RECENTVISIT)
+        recentVisitObject.put("user", AVUser.createWithoutData(TableConstants.TABLE_USER, userId))
+        recentVisitObject.put("visiter", AVUser.createWithoutData(TableConstants.TABLE_USER, vistedObjectId))
+        recentVisitObject.saveInBackground(object : SaveCallback() {
+            override fun done(e: AVException?) {
+                if (e == null) {
+                    GlobalObserverHelper.onNotifyRecentVisitUser()
+                }
             }
         })
     }

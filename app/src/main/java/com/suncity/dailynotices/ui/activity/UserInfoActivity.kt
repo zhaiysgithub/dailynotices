@@ -31,6 +31,7 @@ import com.suncity.dailynotices.callback.SimpleGlobalObservable
 import com.suncity.dailynotices.dialog.BottomDialogiOSItem
 import com.suncity.dailynotices.islib.config.ISListConfig
 import com.suncity.dailynotices.islib.ui.ISListActivity
+import com.suncity.dailynotices.lcoperation.Increase
 import com.suncity.dailynotices.lcoperation.Modify
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.ui.BaseActivity
@@ -112,7 +113,18 @@ class UserInfoActivity : BaseActivity() {
         tabLayout?.setupWithViewPager(viewPager)
 
         queryData()
+        if (StringUtils.isNotEmptyAndNull(objectId)) {
+            saveRecentVister(objectId!!)
+        }
+    }
 
+    /**
+     * 保存查看和被查看的记录
+     */
+    private fun saveRecentVister(visterObjectId: String) {
+        if(!isMine){
+            Increase.createRecentVister(visterObjectId)
+        }
     }
 
     private fun actionBarResponsive() {
@@ -378,7 +390,10 @@ class UserInfoActivity : BaseActivity() {
                         if (StringUtils.isNotEmptyAndNull(coverPath)) {
                             imageView_header?.setImageURI("file://$coverPath")
                             Modify.updateCoverFile(PreferenceStorage.userObjectId, coverPath) { _, e ->
-                                ToastUtils.showSafeToast(this@UserInfoActivity, if (e == null) "上传成功" else Constants.ERROR_MSG)
+                                ToastUtils.showSafeToast(
+                                    this@UserInfoActivity,
+                                    if (e == null) "上传成功" else Constants.ERROR_MSG
+                                )
                             }
                         }
                     }
@@ -391,7 +406,10 @@ class UserInfoActivity : BaseActivity() {
                         if (StringUtils.isNotEmptyAndNull(avatarPath)) {
                             iv_userinfo_avatar?.setImageURI("file://$avatarPath")
                             Modify.updateAvatarFile(PreferenceStorage.userObjectId, avatarPath) { _, e ->
-                                ToastUtils.showSafeToast(this@UserInfoActivity, if (e == null) "上传成功" else Constants.ERROR_MSG)
+                                ToastUtils.showSafeToast(
+                                    this@UserInfoActivity,
+                                    if (e == null) "上传成功" else Constants.ERROR_MSG
+                                )
                             }
                         }
                     }

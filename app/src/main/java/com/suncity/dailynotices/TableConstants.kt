@@ -38,6 +38,5 @@ class TableConstants {
         const val TABLE_RECENTNOTICE = "RecentNotice"
         const val TABLE_RECENTVISIT = "RecentVisit"
         const val TABLE_SHIELD = "Shield"
-        const val TABLE_TESTOBJECT = "TestObject"
     }
 }

@@ -40,4 +40,9 @@ interface GlobalObservable {
      * @picLocalPaths 本地图片的集合
      */
     fun onUserPicUpdateListener(picLocalPaths:ArrayList<String>)
+
+    /**
+     * 更新我查看的数据
+     */
+    fun onNotifyRecentVisitUser()
 }

@@ -102,38 +102,59 @@ class MineFragment : BaseFragment() {
             val userObjectId = PreferenceStorage.userObjectId
             tv_login_user_name?.text = PreferenceStorage.userName
             iv_mine_login_avatar?.setImageURI(PreferenceStorage.userAvatar)
-            Query.queryAutonym(userObjectId){isAutonym,e ->
-                if(isAutonym){
+            Query.queryAutonym(userObjectId) { isAutonym, e ->
+                if (isAutonym) {
                     tv_unreal_name_auth.text = CERTIFIED
                     iv_unreal_name_auth.setImageResource(authResourceId)
-                }else{
+                } else {
                     tv_unreal_name_auth.text = NO_CERTIFIED
                     iv_unreal_name_auth.setImageResource(unAuthResourceId)
                 }
             }
             //设置推荐我的，我查看的，查看我的，RecentVisit这个表中是查看我和我查看的，
             // 推荐我的在Fire中
-            Query.queryFire(userObjectId) { fire, e ->
-                if (e == null) {
-                    val count = fire?.fire ?: 0
-                    tv_login_focus_count?.text = formartCount(count) //推荐我的
-                }
-            }
+            notifyFire(userObjectId)
             //我查看的
-            Query.queryRecentVisitUser(userObjectId) { count, e ->
-                if (e == null) {
-
-                    tv_login_fans_count?.text = formartCount(count) //我查看的
-                }
-            }
+            notifyRencentVisitUser(userObjectId)
             //查看我的
-            Query.queryRecentVisitVisit(userObjectId) { count, e ->
-                if (e == null) {
-                    tv_login_guest_count?.text = formartCount(count) //查看我的
-                }
-            }
+            notifyRecentVisitVisit(userObjectId)
         } catch (e: Exception) {
             LogUtils.e("notifyUI -> exception = $e")
+        }
+    }
+
+    /**
+     * 更新fire数据
+     */
+    private fun notifyFire(objectid: String) {
+        Query.queryFire(objectid) { fire, e ->
+            if (e == null) {
+                val count = fire?.fire ?: 0
+                tv_login_focus_count?.text = formartCount(count) //推荐我的
+            }
+        }
+    }
+
+    /**
+     * 更新我查看的
+     */
+    private fun notifyRencentVisitUser(objectid: String) {
+        Query.queryRecentVisitUser(objectid) { count, e ->
+            if (e == null) {
+
+                tv_login_fans_count?.text = formartCount(count) //我查看的
+            }
+        }
+    }
+
+    /**
+     * 更新查看我的
+     */
+    private fun notifyRecentVisitVisit(objectid: String) {
+        Query.queryRecentVisitVisit(objectid) { count, e ->
+            if (e == null) {
+                tv_login_guest_count?.text = formartCount(count) //查看我的
+            }
         }
     }
 
@@ -148,13 +169,13 @@ class MineFragment : BaseFragment() {
 
     override fun initListener() {
         layout_unlogin?.setOnClickListener {
-            LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
+            LoginActivity.start(requireContext(), HomeActivity.POS_MINE)
         }
         layout_login?.setOnClickListener {
             //进入个人主页
             val userObjectId = PreferenceStorage.userObjectId
             if (StringUtils.isEmpty(userObjectId)) return@setOnClickListener
-            UserInfoActivity.start(requireContext(),userObjectId)
+            UserInfoActivity.start(requireContext(), userObjectId)
         }
         iv_mine_tool?.setOnClickListener {
             //进入账号管理页面
@@ -165,7 +186,7 @@ class MineFragment : BaseFragment() {
                 //进入推荐我的页面
                 startActivity(MineRecommentActivity::class.java)
             } else {
-                LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
+                LoginActivity.start(requireContext(), HomeActivity.POS_MINE)
             }
         }
         layout_login_fans?.setOnClickListener {
@@ -173,7 +194,7 @@ class MineFragment : BaseFragment() {
                 //进入我查看的页面
                 startActivity(MineFocusActivity::class.java)
             } else {
-                LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
+                LoginActivity.start(requireContext(), HomeActivity.POS_MINE)
             }
         }
         layout_login_guest?.setOnClickListener {
@@ -181,7 +202,7 @@ class MineFragment : BaseFragment() {
                 //进入查看我的页面
                 startActivity(MineFansActivity::class.java)
             } else {
-                LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
+                LoginActivity.start(requireContext(), HomeActivity.POS_MINE)
             }
         }
 
@@ -194,7 +215,7 @@ class MineFragment : BaseFragment() {
                 0 -> {
                     // 沟通过的通告
                     if (!isLogined()) {
-                        LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
+                        LoginActivity.start(requireContext(), HomeActivity.POS_MINE)
                     } else {
                         startActivity(CommuncatedNoticeActivity::class.java)
                     }
@@ -202,24 +223,24 @@ class MineFragment : BaseFragment() {
                 1 -> {
                     // 我发布的
                     if (!isLogined()) {
-                        LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
+                        LoginActivity.start(requireContext(), HomeActivity.POS_MINE)
                     } else {
                         val userObjectId = PreferenceStorage.userObjectId
                         if (StringUtils.isEmpty(userObjectId)) return
-                        UserInfoActivity.start(requireContext(),userObjectId)
+                        UserInfoActivity.start(requireContext(), userObjectId)
                     }
                 }
                 2 -> {
                     // 屏蔽过的人
                     if (!isLogined()) {
-                        LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
-                    }else{
+                        LoginActivity.start(requireContext(), HomeActivity.POS_MINE)
+                    } else {
                         startActivity(ShieldingActivity::class.java)
                     }
                 }
                 3 -> {
                     //联系客服
-                    ContactServiceActivity.start(requireContext(),ContactServiceActivity.TYPE_CONTACTSERVICE)
+                    ContactServiceActivity.start(requireContext(), ContactServiceActivity.TYPE_CONTACTSERVICE)
                 }
                 4 -> {
                     //关于我们
@@ -261,6 +282,10 @@ class MineFragment : BaseFragment() {
             initUIData()
         }
 
+        override fun onNotifyRecentVisitUser() {
+            val myid = PreferenceStorage.userObjectId
+            notifyRencentVisitUser(myid)
+        }
     }
 
     override fun onDestroy() {
