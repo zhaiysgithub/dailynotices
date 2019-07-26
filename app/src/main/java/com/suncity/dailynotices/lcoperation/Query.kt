@@ -119,8 +119,8 @@ object Query {
                         userQueryList.add(userQuery)
                     }
                     val avQuery = AVQuery.or(userQueryList)
-                    queryUserByFireOrUserId(avQuery, fireList){list,e ->
-                        callback(list,e)
+                    queryUserByFireOrUserId(avQuery, fireList) { list, e ->
+                        callback(list, e)
                     }
                 } else {
                     callback(null, avException)
@@ -152,7 +152,7 @@ object Query {
                             }
                         }
                     }
-                     callback(fireList,avException)
+                    callback(fireList, avException)
                 }
             }
 
@@ -170,6 +170,19 @@ object Query {
             override fun done(count: Int, e: AVException?) {
                 callback(count, e)
             }
+        })
+    }
+    /**
+     * 查询 RecentVisit 的信息
+     */
+    fun queryRecentVisitUser(userObjectId: String, callback: (MutableList<AVObject>?) -> Unit) {
+        val query = AVQuery<AVObject>(TableConstants.TABLE_RECENTVISIT)
+        query.whereEqualTo(TableConstants.USER, AVObject.createWithoutData(TableConstants.TABLE_USER, userObjectId))
+        query.findInBackground(object : FindCallback<AVObject>() {
+            override fun done(avObjects: MutableList<AVObject>?, avException: AVException?) {
+                callback(avObjects)
+            }
+
         })
     }
 

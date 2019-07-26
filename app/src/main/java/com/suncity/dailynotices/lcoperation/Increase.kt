@@ -178,16 +178,29 @@ object Increase {
      */
     fun createRecentVister(vistedObjectId: String) {
         val userId = PreferenceStorage.userObjectId
-        val recentVisitObject = AVObject(TableConstants.TABLE_RECENTVISIT)
-        recentVisitObject.put("user", AVUser.createWithoutData(TableConstants.TABLE_USER, userId))
-        recentVisitObject.put("visiter", AVUser.createWithoutData(TableConstants.TABLE_USER, vistedObjectId))
-        recentVisitObject.saveInBackground(object : SaveCallback() {
-            override fun done(e: AVException?) {
-                if (e == null) {
-                    GlobalObserverHelper.onNotifyRecentVisitUser()
+        Query.queryRecentVisitUser(userId) { avObjects ->
+            val containsIdList = mutableListOf<String>()
+            if (avObjects != null && avObjects.size > 0) {
+                avObjects.forEach {
+                    val visiterId = it.getAVUser<AVUser>("visiter")?.objectId ?: ""
+                    containsIdList.add(visiterId)
                 }
             }
-        })
+            if (!containsIdList.contains(vistedObjectId)) {
+                val recentVisitObject = AVObject(TableConstants.TABLE_RECENTVISIT)
+                recentVisitObject.put("user", AVUser.createWithoutData(TableConstants.TABLE_USER, userId))
+                recentVisitObject.put("visiter", AVUser.createWithoutData(TableConstants.TABLE_USER, vistedObjectId))
+                recentVisitObject.saveInBackground(object : SaveCallback() {
+                    override fun done(e: AVException?) {
+                        if (e == null) {
+                            GlobalObserverHelper.onNotifyRecentVisitUser()
+                        }
+                    }
+                })
+            }
+        }
+
+
     }
 
 }
