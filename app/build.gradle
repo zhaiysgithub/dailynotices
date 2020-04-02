@@ -150,38 +150,51 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-
+    implementation 'junit:junit:4.12'
     //    testImplementation 'junit:junit:4.12'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-//    implementation "com.android.support:appcompat-v7:$android_support_version"
-//    implementation "com.android.support:recyclerview-v7:$android_support_version"
-//    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
+    //    implementation "com.android.support:appcompat-v7:$android_support_version"
+
+    //    implementation "com.android.support:recyclerview-v7:$android_support_version"
+
+    //    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 
     // Fresco 图片加载库
-//    implementation "com.facebook.fresco:fresco:$fresco_version"
-//    implementation "com.facebook.fresco:animated-gif:$frescogif_version"
-//    implementation "me.relex:photodraweeview:1.1.3"//大图预览
+
+    //    implementation "com.facebook.fresco:fresco:$fresco_version"
+
+    //    implementation "com.facebook.fresco:animated-gif:$frescogif_version"
+
+    //    implementation "me.relex:photodraweeview:1.1.3"//大图预览
 
     //leanCloud
-//    implementation "cn.leancloud.android:avoscloud-sdk:$avoscloud_version"
+
+    //    implementation "cn.leancloud.android:avoscloud-sdk:$avoscloud_version"
 
     // 推送与即时通讯需要的包
-//    implementation("cn.leancloud.android:avoscloud-push:$avoscloud_mix_version") {
-//        transitive = true
-//    }
+
+    //    implementation("cn.leancloud.android:avoscloud-push:$avoscloud_mix_version") {
+
+    //        transitive = true
+
+    //    }
 
     // LeanCloud 应用内搜索包
     implementation "cn.leancloud.android:avoscloud-search:$avoscloud_mix_version"
 
     //权限管理
-//    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+
+    //    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
     implementation 'com.android.support:design:28.0.0'
 
     //添加自定义刷新，自定义header使用
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-31'
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-31'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation project(":leancloudchatkit")
+    implementation project(':leancloudchatkit')
+
     //兼容图片选择库的适配器
     implementation 'com.yuyh.easyadapter:library:1.1.0'
+
 }
