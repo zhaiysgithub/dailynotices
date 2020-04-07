@@ -2,9 +2,9 @@ package com.suncity.dailynotices.ui.activity
 
 import android.graphics.drawable.Animatable
 import android.net.Uri
-import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
+import androidx.viewpager.widget.PagerAdapter
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.controller.BaseControllerListener
 import com.facebook.imagepipeline.image.ImageInfo

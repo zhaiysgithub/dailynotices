@@ -2,9 +2,9 @@ package com.suncity.dailynotices.ui.views
 
 import android.app.Activity
 import android.app.Dialog
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.Fragment
 import android.view.View
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 
 

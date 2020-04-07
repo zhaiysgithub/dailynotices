@@ -1,18 +1,10 @@
 package com.suncity.dailynotices.ui.activity
 
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.avos.avoscloud.AVException
-import com.avos.avoscloud.AVQuery
-import com.avos.avoscloud.AVUser
-import com.avos.avoscloud.GetCallback
-import com.google.gson.Gson
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.scwang.smartrefresh.layout.api.RefreshLayout
-import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.R
-import com.suncity.dailynotices.TableConstants
 import com.suncity.dailynotices.lcoperation.Query
-import com.suncity.dailynotices.model.Fire
 import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.ui.adapter.RecommentAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar

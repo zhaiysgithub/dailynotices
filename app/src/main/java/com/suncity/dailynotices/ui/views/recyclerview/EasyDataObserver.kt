@@ -1,6 +1,6 @@
 package com.suncity.dailynotices.ui.views.recyclerview
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 
 class EasyDataObserver(private val recyclerView: HeadAndFooterRecyclerView) : RecyclerView.AdapterDataObserver() {

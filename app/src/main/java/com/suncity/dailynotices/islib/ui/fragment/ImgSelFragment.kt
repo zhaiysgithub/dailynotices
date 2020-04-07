@@ -6,29 +6,23 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.support.v4.app.LoaderManager
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.CursorLoader
-import android.support.v4.content.FileProvider
-import android.support.v4.content.Loader
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.ListPopupWindow
-import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.*
+import androidx.appcompat.widget.ListPopupWindow
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.islib.adapter.FolderListAdapter
 import com.suncity.dailynotices.islib.adapter.ImageListAdapter
 import com.suncity.dailynotices.islib.adapter.PreviewAdapter
-import com.suncity.dailynotices.islib.bean.Image
 import com.suncity.dailynotices.islib.common.Callback
 import com.suncity.dailynotices.islib.common.Constant
 import com.suncity.dailynotices.islib.common.OnFolderChangeListener
@@ -38,7 +32,6 @@ import com.suncity.dailynotices.islib.ui.ISListActivity
 import com.suncity.dailynotices.ui.BaseFragment
 import kotlinx.android.synthetic.main.is_fragment_img_sel.*
 import java.io.File
-import java.lang.Exception
 import com.suncity.dailynotices.islib.MediaLoaderInterface
 import com.suncity.dailynotices.islib.MediaLoaderTask
 import com.suncity.dailynotices.islib.bean.LocalMedia
@@ -583,8 +576,8 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
         if (cameraIntent.resolveActivity(requireActivity().packageManager) != null) {
             tempFile = File(FileUtils.createRootPath(requireContext()) + "/" + System.currentTimeMillis() + ".jpg")
             LogUtils.e(tempFile?.absolutePath ?: "")
-            if (tempFile != null) {
-                FileUtils.createFile(tempFile!!)
+            tempFile?.let {
+                FileUtils.createFile(it)
             }
 
             val uri = FileProvider.getUriForFile(

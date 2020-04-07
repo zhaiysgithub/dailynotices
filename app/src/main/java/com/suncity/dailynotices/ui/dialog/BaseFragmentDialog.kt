@@ -1,12 +1,12 @@
 package com.suncity.dailynotices.ui.dialog
 
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentActivity
-import android.support.v4.app.FragmentManager
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.util.Log
 import android.view.*
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import com.suncity.dailynotices.R
 
 /**
@@ -19,22 +19,22 @@ abstract class BaseFragmentDialog : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         //Window相关
-        if (dialog.window != null) {
-            dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-            dialog.window?.setBackgroundDrawable(ContextCompat.getDrawable(context!!, android.R.color.transparent))
+        if (dialog?.window != null) {
+            dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+            dialog?.window?.setBackgroundDrawable(ContextCompat.getDrawable(context!!, android.R.color.transparent))
             //动画
             val animations = initAnimations()
             if (animations != 0) {
-                dialog.window?.setWindowAnimations(animations)
+                dialog?.window?.setWindowAnimations(animations)
             }
         }
-        setStyle(R.style.MNCustomDialog, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+        setStyle(DialogFragment.STYLE_NO_TITLE,R.style.MNCustomDialog)
         //隐藏title
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
         //点击外部不可取消
-        dialog.setCanceledOnTouchOutside(false)
+        dialog?.setCanceledOnTouchOutside(false)
         //拦截外部返回
-        dialog.setOnKeyListener { _, keyCode, _ ->
+        dialog?.setOnKeyListener { _, keyCode, _ ->
             keyCode == KeyEvent.KEYCODE_BACK
         }
         //初始化其他可以覆盖上面
@@ -82,18 +82,19 @@ abstract class BaseFragmentDialog : DialogFragment() {
 
     }
 
-    override fun show(manager: FragmentManager, tag: String) {
+    override fun show(manager: FragmentManager, tag: String?) {
         isShowing = true
         super.show(manager, tag)
     }
 
+
     fun isShowing(): Boolean {
-        return isShowing || dialog != null && dialog.isShowing
+        return isShowing || dialog != null && dialog?.isShowing == true
     }
 
     override fun onStart() {
         super.onStart()
-        val window = dialog.window
+        val window = dialog?.window
         if (window != null) {
             val windowParams = window.attributes
             windowParams.dimAmount = initBackgroundAlpha()

@@ -1,8 +1,8 @@
 package cn.leancloud.chatkit.adapter;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import androidx.recyclerview.widget.RecyclerView;
 import com.avos.avoscloud.im.v2.AVIMMessage;
 import com.avos.avoscloud.im.v2.AVIMReservedMessageType;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;

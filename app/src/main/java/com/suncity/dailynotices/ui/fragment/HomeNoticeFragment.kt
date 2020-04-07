@@ -1,7 +1,7 @@
 package com.suncity.dailynotices.ui.fragment
 
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.lcoperation.Query
@@ -12,11 +12,9 @@ import com.suncity.dailynotices.ui.adapter.CommuncatedAdapter
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.DateUtils
-import com.suncity.dailynotices.utils.LogUtils
 import com.suncity.dailynotices.utils.ToastUtils
 import kotlinx.android.synthetic.main.ac_mine_focus.*
 import kotlinx.android.synthetic.main.view_empty.*
-import kotlinx.android.synthetic.main.view_title.*
 
 /**
  * @ProjectName:    dailynotices

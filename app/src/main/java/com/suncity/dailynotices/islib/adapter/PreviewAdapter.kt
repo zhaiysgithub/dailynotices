@@ -1,10 +1,10 @@
 package com.suncity.dailynotices.islib.adapter
 
 import android.app.Activity
-import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.viewpager.widget.PagerAdapter
 import com.facebook.drawee.view.SimpleDraweeView
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.islib.ISNav

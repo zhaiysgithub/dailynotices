@@ -1,7 +1,7 @@
 package com.suncity.dailynotices.ui.fragment
 
-import android.support.v7.widget.GridLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.GridLayoutManager
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.lcoperation.Query
@@ -11,7 +11,6 @@ import com.suncity.dailynotices.ui.activity.UserInfoActivity
 import com.suncity.dailynotices.ui.adapter.RedsAdapter
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.Config
-import com.suncity.dailynotices.utils.LogUtils
 import com.suncity.dailynotices.utils.PreventRepeatedUtils
 import com.suncity.dailynotices.utils.ToastUtils
 import kotlinx.android.synthetic.main.ac_mine_focus.*

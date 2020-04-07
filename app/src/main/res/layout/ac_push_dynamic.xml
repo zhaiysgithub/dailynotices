@@ -61,7 +61,7 @@
                 android:layout_alignParentBottom="true"/>
     </RelativeLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="never">
@@ -87,7 +87,7 @@
                     android:textColorHint="@color/color_999"
                     android:textSize="@dimen/sp_16"
                     android:hint="优质内容有机会获得编辑推荐,被更多人看"
-            />
+                    tools:ignore="TextFields"/>
 
             <TextView
                     android:id="@+id/count_push_dynamic"
@@ -99,7 +99,7 @@
             />
 
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView_selected_pic"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -269,7 +269,7 @@
 
 
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 
 </LinearLayout>

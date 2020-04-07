@@ -1,7 +1,7 @@
 package com.suncity.dailynotices.ui.dialog
 
 import android.graphics.Color
-import android.support.annotation.StyleRes
+import androidx.annotation.StyleRes
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.utils.Config
 

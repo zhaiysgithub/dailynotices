@@ -5,7 +5,7 @@
                 android:layout_width="match_parent" android:layout_height="match_parent">
     <include layout="@layout/view_title"/>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="none"
@@ -81,7 +81,7 @@
                         android:background="@android:color/transparent"
                         android:textColor="@color/color_222"
                         android:gravity="center_vertical|end"
-                        tools:ignore="HardcodedText"/>
+                        tools:ignore="HardcodedText,TextFields"/>
             </LinearLayout>
 
             <View
@@ -116,7 +116,7 @@
                         android:maxLength="20"
                         android:textColor="@color/color_222"
                         android:gravity="center_vertical|end"
-                        tools:ignore="HardcodedText"/>
+                        tools:ignore="HardcodedText,TextFields"/>
             </LinearLayout>
 
             <View
@@ -154,7 +154,7 @@
                         android:src="@mipmap/ico_personal_certificate"
                         android:scaleType="centerInside"
                         android:background="@drawable/shape_round_4"
-                />
+                        tools:ignore="ContentDescription"/>
             </FrameLayout>
 
             <TextView
@@ -167,7 +167,7 @@
                     android:textColor="@color/color_666"
             />
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <!--提交审核-->
 

@@ -3,8 +3,8 @@ package com.suncity.dailynotices.ui.activity
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
-import android.support.v4.app.Fragment
 import android.view.View
+import androidx.fragment.app.Fragment
 import cn.leancloud.chatkit.LCChatKit
 import com.avos.avoscloud.AVException
 import com.avos.avoscloud.AVObject

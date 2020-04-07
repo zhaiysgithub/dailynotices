@@ -1,6 +1,6 @@
 package com.suncity.dailynotices.callback
 
-import android.support.design.widget.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout
 
 abstract class AppBarStateChangeListener : AppBarLayout.OnOffsetChangedListener {
 

@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
 >
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
@@ -61,7 +61,8 @@
                         android:singleLine="true"
                         android:textColor="@color/color_black"
                         android:textColorHint="@color/color_bbb"
-                        android:textSize="@dimen/sp_16"/>
+                        android:textSize="@dimen/sp_16"
+                        tools:ignore="Autofill"/>
 
                 <ImageView
                         android:id="@+id/iv_del_phone"
@@ -104,7 +105,8 @@
                         android:maxLength="26"
                         android:textColor="@color/color_black"
                         android:textColorHint="@color/color_bbb"
-                        android:textSize="@dimen/sp_16"/>
+                        android:textSize="@dimen/sp_16"
+                        tools:ignore="Autofill"/>
 
                 <View
                         android:id="@+id/line_authcode"
@@ -184,7 +186,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="@dimen/dp_10"/>
         </RelativeLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 
     <FrameLayout

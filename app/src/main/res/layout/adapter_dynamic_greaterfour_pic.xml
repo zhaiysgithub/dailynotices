@@ -86,7 +86,7 @@
                 android:maxLines="3"
                 android:ellipsize="end"/>
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/pic_recyclerView_greaterfour"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

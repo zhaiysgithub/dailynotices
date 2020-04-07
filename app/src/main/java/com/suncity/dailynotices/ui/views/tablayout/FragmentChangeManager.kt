@@ -1,7 +1,7 @@
 package com.suncity.dailynotices.ui.views.tablayout
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 
 /**
  * @ProjectName:    dailynotices

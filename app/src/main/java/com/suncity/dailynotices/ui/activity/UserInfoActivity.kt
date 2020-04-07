@@ -6,15 +6,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import cn.leancloud.chatkit.LCChatKit
 import cn.leancloud.chatkit.activity.LCIMConversationActivity
 import cn.leancloud.chatkit.utils.LCIMConstants
@@ -23,6 +21,8 @@ import com.avos.avoscloud.AVObject
 import com.avos.avoscloud.im.v2.AVIMClient
 import com.avos.avoscloud.im.v2.AVIMException
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.tabs.TabLayout
 import com.suncity.dailynotices.Constants
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.AppBarStateChangeListener
@@ -444,7 +444,7 @@ class UserInfoActivity : BaseActivity() {
 
     private inner class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
 
-        override fun getItem(position: Int): Fragment? {
+        override fun getItem(position: Int): Fragment {
             return when (position) {
                 0 -> {
                     UserInfoHomeFragment.getInstance(userInfoObject)
@@ -453,7 +453,7 @@ class UserInfoActivity : BaseActivity() {
                     UserInfoPicFragment.getInstance(userInfoObject)
                 }
                 else -> {
-                    null
+                    UserInfoHomeFragment.getInstance(userInfoObject)
                 }
             }
         }

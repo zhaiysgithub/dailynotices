@@ -1,8 +1,7 @@
 package com.suncity.dailynotices.ui.fragment
 
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.google.gson.internal.bind.ObjectTypeAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.ui.BaseFragment

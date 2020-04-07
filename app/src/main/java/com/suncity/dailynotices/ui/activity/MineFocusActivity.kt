@@ -1,7 +1,7 @@
 package com.suncity.dailynotices.ui.activity
 
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.lcoperation.Query

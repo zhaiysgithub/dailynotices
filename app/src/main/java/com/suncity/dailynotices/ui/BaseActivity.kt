@@ -4,8 +4,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.suncity.dailynotices.callback.NetworkMonitor
 import com.suncity.dailynotices.manager.ScreenManager
 import com.suncity.dailynotices.receive.NetworkChangedReceiver

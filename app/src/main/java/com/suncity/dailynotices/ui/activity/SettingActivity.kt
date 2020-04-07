@@ -1,7 +1,7 @@
 package com.suncity.dailynotices.ui.activity
 
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.avos.avoscloud.AVUser
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.suncity.dailynotices.R

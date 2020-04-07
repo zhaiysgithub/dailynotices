@@ -8,7 +8,7 @@
 
     <include layout="@layout/view_title"/>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true"
@@ -76,7 +76,7 @@
                         android:textColor="@color/color_222"
                         android:gravity="center_vertical|right"
                         android:background="@android:color/transparent"
-                        tools:ignore="RtlHardcoded"/>
+                        tools:ignore="LabelFor,RtlHardcoded"/>
             </LinearLayout>
             <View
                     android:layout_width="match_parent"
@@ -284,6 +284,6 @@
             />
         </LinearLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>
 

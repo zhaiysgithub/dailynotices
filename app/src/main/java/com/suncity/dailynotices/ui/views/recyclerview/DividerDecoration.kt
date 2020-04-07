@@ -3,8 +3,8 @@ package com.suncity.dailynotices.ui.views.recyclerview
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
-import android.support.v7.widget.*
 import android.view.View
+import androidx.recyclerview.widget.*
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 
 class DividerDecoration : RecyclerView.ItemDecoration {

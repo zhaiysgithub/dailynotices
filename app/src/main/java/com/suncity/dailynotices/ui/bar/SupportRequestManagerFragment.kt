@@ -4,7 +4,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.res.Configuration
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 
 class SupportRequestManagerFragment : Fragment() {
 
@@ -46,7 +46,7 @@ class SupportRequestManagerFragment : Fragment() {
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         if (mDelegate != null) {
             mDelegate!!.onConfigurationChanged(newConfig)

@@ -1,10 +1,8 @@
 package com.suncity.dailynotices.ui.adapter
 
 import android.content.Context
-import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import com.facebook.drawee.view.SimpleDraweeView
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.HAFViewHolder

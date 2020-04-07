@@ -1,19 +1,13 @@
 package com.suncity.dailynotices.ui.fragment
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
-import com.avos.avoscloud.AVException
-import com.avos.avoscloud.AVUser
-import com.avos.avoscloud.GetCallback
-import com.google.gson.Gson
-import com.suncity.dailynotices.Constants
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.callback.SimpleGlobalObservable
 import com.suncity.dailynotices.lcoperation.Query
-import com.suncity.dailynotices.model.UserInfo
 import com.suncity.dailynotices.ui.BaseFragment
 import com.suncity.dailynotices.ui.activity.*
 import com.suncity.dailynotices.ui.adapter.MineAdapter

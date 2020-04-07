@@ -3,9 +3,8 @@ package com.suncity.dailynotices.dialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 
 
 class DialogHelper : DialogFragment() {
@@ -23,12 +22,12 @@ class DialogHelper : DialogFragment() {
         return this
     }
 
-    override fun onDismiss(dialog: DialogInterface?) {
+    override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         if (onDismissListener != null) onDismissListener!!.onDismiss()
     }
 
-    override fun show(manager: FragmentManager, tag: String) {
+    /*override fun show(manager: FragmentManager, tag: String) {
         try {
             val ft = manager.beginTransaction()
             ft.add(this, tag)
@@ -37,7 +36,7 @@ class DialogHelper : DialogFragment() {
             e.printStackTrace()
         }
 
-    }
+    }*/
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         if (dialog == null) {

@@ -3,7 +3,7 @@ package com.suncity.dailynotices.islib
 import android.app.Activity
 import android.content.Context
 import android.net.Uri
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import com.facebook.drawee.view.SimpleDraweeView
 import com.suncity.dailynotices.islib.config.ISCameraConfig
 import com.suncity.dailynotices.islib.config.ISListConfig

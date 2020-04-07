@@ -1,8 +1,8 @@
 package com.suncity.dailynotices.ui.fragment
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.ui.BaseFragment
 import com.suncity.dailynotices.ui.bar.ImmersionBar

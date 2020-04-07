@@ -5,8 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +18,8 @@ import com.suncity.dailynotices.dialog.DialogSettings.Companion.tipTextInfo
 import com.suncity.dailynotices.dialog.DialogSettings.Companion.tip_theme
 import com.suncity.dailynotices.utils.Config
 import java.util.*
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 
 /**
  * @ProjectName:    dailynotices
@@ -83,6 +83,7 @@ class TipDialog private constructor() : BaseDialog() {
             tipDialog.showDialog()
             return tipDialog
         }
+
         fun build(context: Context, tip: String, howLong: Int, type: Int): TipDialog {
             synchronized(TipDialog::class.java) {
                 val tipDialog = TipDialog()
@@ -143,7 +144,7 @@ class TipDialog private constructor() : BaseDialog() {
         }
 
         val builder: AlertDialog.Builder
-        if (tipDialog != null){
+        if (tipDialog != null) {
             dialogList.add(tipDialog!!)
         }
 
@@ -168,9 +169,9 @@ class TipDialog private constructor() : BaseDialog() {
         if (isCanCancel) alertDialog?.setCanceledOnTouchOutside(true)
 
         val fragmentManager = (context as AppCompatActivity).supportFragmentManager
-        dialogHelper = DialogHelper().setAlertDialog(alertDialog!!, object : OnDismissListener{
+        dialogHelper = DialogHelper().setAlertDialog(alertDialog!!, object : OnDismissListener {
             override fun onDismiss() {
-                if (tipDialog != null && dialogList.contains(tipDialog!!)){
+                if (tipDialog != null && dialogList.contains(tipDialog!!)) {
                     dialogList.remove(tipDialog!!)
                 }
                 if (boxBkg != null) boxBkg?.removeAllViews()
@@ -230,7 +231,10 @@ class TipDialog private constructor() : BaseDialog() {
         if (gravity != -1) {
             txtInfo?.gravity = gravity
         }
-        val font = Typeface.create(Typeface.SANS_SERIF, if (customTextInfo?.isBold() == true) Typeface.BOLD else Typeface.NORMAL)
+        val font = Typeface.create(
+            Typeface.SANS_SERIF,
+            if (customTextInfo?.isBold() == true) Typeface.BOLD else Typeface.NORMAL
+        )
         txtInfo?.typeface = font
 
         getDialogLifeCycleListener().onShow(alertDialog!!)

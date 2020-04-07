@@ -2,8 +2,8 @@ package com.suncity.dailynotices.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import cn.leancloud.chatkit.LCChatKit
 import cn.leancloud.chatkit.activity.LCIMConversationActivity
 import cn.leancloud.chatkit.cache.LCIMConversationItemCache
@@ -62,7 +62,7 @@ class MessageFragment : BaseFragment() {
                 .statusBarDarkFont(true, 0f)
                 .init()
             if (!isLogined()) {
-                LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
+                LoginActivity.start(requireContext(),HomeActivity.POS_MSG)
             } else {
                 updateConversationList()
             }
@@ -165,7 +165,7 @@ class MessageFragment : BaseFragment() {
         })
         smartRefreshLayout?.setOnRefreshListener {
             if (!isLogined()) {
-                LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
+                LoginActivity.start(requireContext(),HomeActivity.POS_MSG)
             } else {
                 updateConversationList(it)
             }
@@ -173,7 +173,7 @@ class MessageFragment : BaseFragment() {
 
         smartRefreshLayout?.setOnLoadMoreListener {
             if (!isLogined()) {
-                LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
+                LoginActivity.start(requireContext(),HomeActivity.POS_MSG)
             } else {
                 updateConversationList()
             }
@@ -195,7 +195,7 @@ class MessageFragment : BaseFragment() {
                     startLCIM(item)
                 }else{
                     ToastUtils.showSafeToast(requireContext(),"登录过期请重新登录")
-                    LoginActivity.start(requireContext(),HomeActivity.POS_MINE)
+                    LoginActivity.start(requireContext(),HomeActivity.POS_MSG)
                 }
             }
 

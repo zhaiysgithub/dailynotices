@@ -1,10 +1,10 @@
 package com.suncity.dailynotices.ui.bar;
 
 import android.graphics.Color;
-import android.support.annotation.ColorInt;
-import android.support.annotation.FloatRange;
 import android.view.View;
 import android.view.WindowManager;
+import androidx.annotation.ColorInt;
+import androidx.annotation.FloatRange;
 
 import java.util.HashMap;
 import java.util.Map;

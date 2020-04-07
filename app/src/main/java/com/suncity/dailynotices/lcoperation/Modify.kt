@@ -1,9 +1,7 @@
 package com.suncity.dailynotices.lcoperation
 
-import android.support.v7.app.ActionBar
 import com.avos.avoscloud.*
 import com.suncity.dailynotices.TableConstants
-import com.suncity.dailynotices.model.Autonym
 import com.suncity.dailynotices.utils.PreferenceStorage
 import com.suncity.dailynotices.utils.StringUtils
 

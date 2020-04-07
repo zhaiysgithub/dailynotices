@@ -7,12 +7,12 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 import com.avos.avoscloud.AVObject
@@ -21,9 +21,7 @@ import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.callback.OnDynamicItemMenuClick
 import com.suncity.dailynotices.callback.SimpleGlobalObservable
 import com.suncity.dailynotices.dialog.BottomDialogiOSDynamic
-import com.suncity.dailynotices.dialog.TipDialog
 import com.suncity.dailynotices.lcoperation.Delete
-import com.suncity.dailynotices.lcoperation.Increase
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.model.Dynamic
 import com.suncity.dailynotices.model.UserInfoRecord

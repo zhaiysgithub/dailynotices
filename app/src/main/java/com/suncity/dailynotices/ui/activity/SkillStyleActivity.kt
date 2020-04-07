@@ -2,8 +2,8 @@ package com.suncity.dailynotices.ui.activity
 
 import android.app.Activity
 import android.content.Intent
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.dialog.OnDismissListener

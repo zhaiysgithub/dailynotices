@@ -1,12 +1,12 @@
 package cn.leancloud.chatkit.adapter;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
 import cn.leancloud.chatkit.utils.LCIMLogUtils;
 import cn.leancloud.chatkit.viewholder.LCIMCommonViewHolder;
 
