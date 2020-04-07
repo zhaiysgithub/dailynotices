@@ -153,7 +153,6 @@ class ISListActivity : BaseActivity(), Callback {
 
     @SuppressLint("SetTextI18n")
     override fun onPreviewChanged(select: Int, sum: Int, visible: Boolean) {
-        Log.e("@@@", "onPreviewChanged -> $visible,$select,$sum")
         if (visible) {
             tvTitle?.text = "$select/$sum"
         } else {

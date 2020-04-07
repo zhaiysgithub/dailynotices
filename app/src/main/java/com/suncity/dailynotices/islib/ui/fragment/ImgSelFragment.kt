@@ -22,6 +22,7 @@ import android.support.v4.view.ViewPager
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.ListPopupWindow
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.*
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.islib.adapter.FolderListAdapter
@@ -43,6 +44,7 @@ import com.suncity.dailynotices.islib.MediaLoaderTask
 import com.suncity.dailynotices.islib.bean.LocalMedia
 import com.suncity.dailynotices.islib.bean.MediaLocalInfo
 import com.suncity.dailynotices.islib.config.PublishDynamicConfig
+import com.suncity.dailynotices.islib.ui.SimplePlayerActivity
 import com.suncity.dailynotices.utils.*
 import kotlin.collections.ArrayList
 
@@ -167,24 +169,24 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
     /**
      * 异步加载图片
      */
-    private fun loadVideos(isRestart: Boolean) {
+    /*private fun loadVideos(isRestart: Boolean) {
         if (isRestart) {
             activity?.supportLoaderManager?.restartLoader(LOADER_ALL, null, mVideoLoaderCallback)
         } else {
             activity?.supportLoaderManager?.initLoader(LOADER_ALL, null, mVideoLoaderCallback)
         }
-    }
+    }*/
 
     /**
      * 异步加载图片
      */
-    private fun loadPhotos(isRestart: Boolean) {
+    /*private fun loadPhotos(isRestart: Boolean) {
         if (isRestart) {
             activity?.supportLoaderManager?.restartLoader(LOADER_ALL, null, mImgLoaderCallback)
         } else {
             activity?.supportLoaderManager?.initLoader(LOADER_ALL, null, mImgLoaderCallback)
         }
-    }
+    }*/
 
     @Suppress("DEPRECATION")
     override fun initListener() {
@@ -273,157 +275,164 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
 
             override fun onVideoClick(position: Int, video: LocalMedia) {
                 // 視頻播放
+                val videoPath = video.path
+                val videoName = video.name
+                if (videoPath.isEmpty()) {
+                    ToastUtils.showSafeToast(requireActivity(), Config.getString(R.string.str_not_found_video_resource))
+                    return
+                }
+                SimplePlayerActivity.start(requireContext(), videoPath, videoName)
             }
 
         })
     }
 
-    private val mVideoLoaderCallback = object : LoaderManager.LoaderCallbacks<Cursor> {
+    /* private val mVideoLoaderCallback = object : LoaderManager.LoaderCallbacks<Cursor> {
 
-        private val MEDIA_PROJECT = arrayOf(
-            MediaStore.Video.Media._ID
-            , MediaStore.Video.Media.DATA
-            , MediaStore.Video.Media.DISPLAY_NAME
-            , MediaStore.Video.Media.DURATION
-            , MediaStore.MediaColumns.SIZE
-            , MediaStore.Video.Media.DATE_MODIFIED
-        )
+         private val MEDIA_PROJECT = arrayOf(
+             MediaStore.Video.Media._ID
+             , MediaStore.Video.Media.DATA
+             , MediaStore.Video.Media.DISPLAY_NAME
+             , MediaStore.Video.Media.DURATION
+             , MediaStore.MediaColumns.SIZE
+             , MediaStore.Video.Media.DATE_MODIFIED
+         )
 
-        private val MEDIA_THUMB_PROJECT = arrayOf(
-            MediaStore.Video.Thumbnails._ID
-            , MediaStore.Video.Thumbnails.DATA
-        )
+         private val MEDIA_THUMB_PROJECT = arrayOf(
+             MediaStore.Video.Thumbnails._ID
+             , MediaStore.Video.Thumbnails.DATA
+         )
 
-        override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
-            return when (id) {
-                LOADER_ALL -> {
-                    CursorLoader(
-                        requireContext(), MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MEDIA_PROJECT,
-                        null, arrayOf("video/mp4"), MediaStore.Video.Media.DATE_MODIFIED + " DESC"
-                    )
-                }
-                LOADER_CATEGORY -> {
-                    CursorLoader(
-                        requireContext(), MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MEDIA_PROJECT
-                        , MEDIA_PROJECT[0], arrayOf("video/mp4"), MediaStore.Video.Media.DATE_MODIFIED + " DESC"
-                    )
+         override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
+             return when (id) {
+                 LOADER_ALL -> {
+                     CursorLoader(
+                         requireContext(), MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MEDIA_PROJECT,
+                         null, arrayOf("video/mp4"), MediaStore.Video.Media.DATE_MODIFIED + " DESC"
+                     )
+                 }
+                 LOADER_CATEGORY -> {
+                     CursorLoader(
+                         requireContext(), MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MEDIA_PROJECT
+                         , MEDIA_PROJECT[0], arrayOf("video/mp4"), MediaStore.Video.Media.DATE_MODIFIED + " DESC"
+                     )
 
-                }
-                else -> {
-                    CursorLoader(
-                        requireContext(), MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MEDIA_PROJECT,
-                        null, arrayOf("video/mp4"), MediaStore.Video.Media.DATE_MODIFIED + " DESC"
-                    )
+                 }
+                 else -> {
+                     CursorLoader(
+                         requireContext(), MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MEDIA_PROJECT,
+                         null, arrayOf("video/mp4"), MediaStore.Video.Media.DATE_MODIFIED + " DESC"
+                     )
 
-                }
-            }
-        }
+                 }
+             }
+         }
 
-        override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
-            try {
-                data?.let {
-                    val count = it.count
-                    if (count > 0) {
-                        val tempImageList = ArrayList<Image>()
-                        data.moveToFirst()
-                        do {
-                            val videoId = data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media._ID))
-                            val path = data.getString(data.getColumnIndexOrThrow(MediaStore.Video.Media.DATA))
-                            val displayName =
-                                data.getString(data.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME))
-                            val duration = data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))
-                            var size =
-                                data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)) / 1024  //单位kb
-                            if (size < 0) {
-                                size = File(path).length() / 1024
-                            }
-                            val modifyTime =
-                                data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_MODIFIED))
+         override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
+             try {
+                 data?.let {
+                     val count = it.count
+                     if (count > 0) {
+                         val tempImageList = ArrayList<Image>()
+                         data.moveToFirst()
+                         do {
+                             val videoId = data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media._ID))
+                             val path = data.getString(data.getColumnIndexOrThrow(MediaStore.Video.Media.DATA))
+                             val displayName =
+                                 data.getString(data.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME))
+                             val duration = data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))
+                             var size =
+                                 data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)) / 1024  //单位kb
+                             if (size < 0) {
+                                 size = File(path).length() / 1024
+                             }
+                             val modifyTime =
+                                 data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_MODIFIED))
 
-                            //缩略图
-                            MediaStore.Video.Thumbnails.getThumbnail(
-                                requireActivity().contentResolver,
-                                videoId,
-                                MediaStore.Video.Thumbnails.MICRO_KIND,
-                                null
-                            )
+                             //缩略图
+                             MediaStore.Video.Thumbnails.getThumbnail(
+                                 requireActivity().contentResolver,
+                                 videoId,
+                                 MediaStore.Video.Thumbnails.MICRO_KIND,
+                                 null
+                             )
 
-                            val thumbCursor = requireActivity().contentResolver.query(
-                                MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI
-                                , MEDIA_THUMB_PROJECT
-                                , MediaStore.Video.Thumbnails.VIDEO_ID + "=?"
-                                , arrayOf("$videoId"), null
-                            )
-                            var thumbPath = ""
-                            thumbCursor?.let { cursor ->
-                                while (cursor.moveToNext()) {
-                                    thumbPath =
-                                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Thumbnails.DATA))
-                                }
-                            }
-                            thumbCursor?.close()
+                             val thumbCursor = requireActivity().contentResolver.query(
+                                 MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI
+                                 , MEDIA_THUMB_PROJECT
+                                 , MediaStore.Video.Thumbnails.VIDEO_ID + "=?"
+                                 , arrayOf("$videoId"), null
+                             )
+                             var thumbPath = ""
+                             thumbCursor?.let { cursor ->
+                                 while (cursor.moveToNext()) {
+                                     thumbPath =
+                                         cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Thumbnails.DATA))
+                                 }
+                             }
+                             thumbCursor?.close()
 
-                        } while (data.moveToNext())
-                    }
-                }
-            } catch (e: Exception) {
-                LogUtils.e("LoaderManager.LoaderVideoCallbacks：onLoadFinishedError:$e")
-            }
+                         } while (data.moveToNext())
+                     }
+                 }
+             } catch (e: Exception) {
+                 LogUtils.e("LoaderManager.LoaderVideoCallbacks：onLoadFinishedError:$e")
+             }
 
-        }
+         }
 
-        override fun onLoaderReset(loader: Loader<Cursor>) {
+         override fun onLoaderReset(loader: Loader<Cursor>) {
 
-        }
+         }
 
-    }
+     }
 
-    private val mImgLoaderCallback = object : LoaderManager.LoaderCallbacks<Cursor> {
+     private val mImgLoaderCallback = object : LoaderManager.LoaderCallbacks<Cursor> {
 
-        //本地图片查询条件
-        private val IMAGE_PROJECTION =
-            arrayOf(
-                MediaStore.Images.Media._ID
-                , MediaStore.Images.Media.DATA
-                , MediaStore.Images.Media.DISPLAY_NAME
-                , MediaStore.Images.Media.DISPLAY_NAME
-                , MediaStore.Images.Media.SIZE
-                , MediaStore.Images.Media.DATE_MODIFIED
-            )
+         //本地图片查询条件
+         private val IMAGE_PROJECTION =
+             arrayOf(
+                 MediaStore.Images.Media._ID
+                 , MediaStore.Images.Media.DATA
+                 , MediaStore.Images.Media.DISPLAY_NAME
+                 , MediaStore.Images.Media.DISPLAY_NAME
+                 , MediaStore.Images.Media.SIZE
+                 , MediaStore.Images.Media.DATE_MODIFIED
+             )
 
 
-        override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
-            return when (id) {
-                LOADER_ALL -> {
-                    CursorLoader(
-                        requireContext(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
-                        null, null, MediaStore.Images.Media.DATE_MODIFIED + " DESC"
-                    )
-                }
-                LOADER_CATEGORY -> {
-                    CursorLoader(
-                        requireContext(),
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        IMAGE_PROJECTION
-                        ,
-                        IMAGE_PROJECTION[1] + " not like '%.gif%'",
-                        null,
-                        MediaStore.Images.Media.DATE_MODIFIED + " DESC"
-                    )
+         override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
+             return when (id) {
+                 LOADER_ALL -> {
+                     CursorLoader(
+                         requireContext(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
+                         null, null, MediaStore.Images.Media.DATE_MODIFIED + " DESC"
+                     )
+                 }
+                 LOADER_CATEGORY -> {
+                     CursorLoader(
+                         requireContext(),
+                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                         IMAGE_PROJECTION
+                         ,
+                         IMAGE_PROJECTION[1] + " not like '%.gif%'",
+                         null,
+                         MediaStore.Images.Media.DATE_MODIFIED + " DESC"
+                     )
 
-                }
-                else -> {
-                    CursorLoader(
-                        requireContext(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
-                        null, null, MediaStore.Images.Media.DATE_MODIFIED + " DESC"
-                    )
+                 }
+                 else -> {
+                     CursorLoader(
+                         requireContext(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
+                         null, null, MediaStore.Images.Media.DATE_MODIFIED + " DESC"
+                     )
 
-                }
-            }
-        }
+                 }
+             }
+         }
 
-        override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
-            /*try {
+         override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
+             *//*try {
                 if (data != null) {
                     val count = data.count
                     if (count > 0) {
@@ -479,7 +488,7 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
                 }
             } catch (e: Exception) {
                 LogUtils.e("LoaderManager.LoaderCallbacks：onLoadFinishedError:$e")
-            }*/
+            }*//*
 
         }
 
@@ -487,7 +496,7 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
 
         }
     }
-
+*/
 
     private fun checkedImage(position: Int, image: LocalMedia?): Int {
         if (image != null) {

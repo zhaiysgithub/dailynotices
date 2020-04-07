@@ -151,4 +151,5 @@
     <string name="str_submit_for_audit">提交审核</string>
     <string name="str_all">全部</string>
     <string name="str_album_failed_to_read">相册读取失败</string>
+    <string name="str_not_found_video_resource">获取视频资源失败,请稍后再试</string>
 </resources>

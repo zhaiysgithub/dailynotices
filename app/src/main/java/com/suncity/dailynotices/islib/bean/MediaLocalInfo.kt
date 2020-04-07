@@ -26,17 +26,15 @@ class MediaLocalInfo : Serializable {
 class LocalMedia : Serializable {
 
     var path: String = ""
-    var isSelector: Boolean = false
-    var index: Int = 0
+    var name: String = ""
     var mime: String = ""
     var duration: Long = 0L
 
     constructor()
 
-    constructor(uri: String, isSelector: Boolean, index: Int, mime: String, duration: Long) {
+    constructor(uri: String, name: String, mime: String, duration: Long) {
         this.path = uri
-        this.isSelector = isSelector
-        this.index = index
+        this.name = name
         this.mime = mime
         this.duration = duration
     }
@@ -54,7 +52,7 @@ class LocalMedia : Serializable {
     }
 
     override fun toString(): String {
-        return "LocalMedia(uri='$path', isSelector=$isSelector, index=$index, mime='$mime', duration=$duration)"
+        return "LocalMedia(uri='$path', name=$name, mime='$mime', duration=$duration)"
     }
 
 
@@ -65,6 +63,7 @@ class LocalMedia : Serializable {
             val localMedia = LocalMedia()
             localMedia.path = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA))
             localMedia.mime = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE))
+            localMedia.name = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME))
             if (localMedia.isVideo()) {
                 localMedia.duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION))
             }
