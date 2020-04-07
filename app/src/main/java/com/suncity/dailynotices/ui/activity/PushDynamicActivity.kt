@@ -14,6 +14,7 @@ import com.suncity.dailynotices.callback.TextWatcherHelper
 import com.suncity.dailynotices.dialog.OnDismissListener
 import com.suncity.dailynotices.dialog.TipDialog
 import com.suncity.dailynotices.islib.config.ISListConfig
+import com.suncity.dailynotices.islib.config.PublishDynamicConfig
 import com.suncity.dailynotices.islib.ui.ISListActivity
 import com.suncity.dailynotices.lcoperation.Increase
 import com.suncity.dailynotices.ui.BaseActivity
@@ -46,14 +47,14 @@ class PushDynamicActivity : BaseActivity() {
     }
 
     companion object {
-        private val REQUEST_LIST_CODE = 0
-        private val REQUEST_CAMERA_CODE = 1
+        private const val REQUEST_LIST_CODE = 0
+        private const val REQUEST_CAMERA_CODE = 1
         const val TAG_ADD = "addTag"
-        val REQUEST_SKILL_CODE = 2
-        val REQUEST_STYLE_CODE = 3
-        val TYPE_SKILL = "type_skill"
-        val TYPE_STYLE = "type_style"
-        val TYPE_ACTING = "type_acting"
+        const val REQUEST_SKILL_CODE = 2
+        const val REQUEST_STYLE_CODE = 3
+        const val TYPE_SKILL = "type_skill"
+        const val TYPE_STYLE = "type_style"
+        const val TYPE_ACTING = "type_acting"
     }
 
     override fun getActivityLayoutId(): Int {
@@ -62,7 +63,6 @@ class PushDynamicActivity : BaseActivity() {
 
     override fun initData() {
         mAdapter = PushDynamicImgAdapter(this)
-        recyclerView_selected_pic?.setHasFixedSize(true)
         recyclerView_selected_pic?.layoutManager = GridLayoutManager(this, 3)
         recyclerView_selected_pic?.addItemDecoration(itemDecoration)
         recyclerView_selected_pic?.adapter = mAdapter
@@ -93,9 +93,10 @@ class PushDynamicActivity : BaseActivity() {
             val skillContent = content_skill?.text?.toString()?.trim()
             val styleContent = content_style?.text?.toString()?.trim()
             val itemCount = mAdapter?.itemCount ?: 0
-            if(StringUtils.isEmptyOrNull(desc) && StringUtils.isEmptyOrNull(skillContent)
-                && StringUtils.isEmptyOrNull(styleContent) && itemCount <= 1) {
-                ToastUtils.showSafeToast(this@PushDynamicActivity,"请选择感兴趣的内容再提交 ^v^")
+            if (StringUtils.isEmptyOrNull(desc) && StringUtils.isEmptyOrNull(skillContent)
+                && StringUtils.isEmptyOrNull(styleContent) && itemCount <= 1
+            ) {
+                ToastUtils.showSafeToast(this@PushDynamicActivity, "请选择感兴趣的内容再提交 ^v^")
                 return@setOnClickListener
             }
             saveDynamicData(desc, skillContent, styleContent)
@@ -139,10 +140,15 @@ class PushDynamicActivity : BaseActivity() {
             }
 
             override fun onSelItemClick(url: String) {
+
             }
 
             override fun onDeleteItem(position: Int) {
-                mAdapter?.remove(position)
+                val allDatas = mAdapter?.getAllData()
+                val dataSize = allDatas?.size ?: return
+                if (position in 0 until dataSize) {
+                    mAdapter?.remove(position)
+                }
             }
 
         })
@@ -154,7 +160,7 @@ class PushDynamicActivity : BaseActivity() {
      * 保存数据到数据库
      */
     private fun saveDynamicData(desc: String?, skillContent: String?, styleContent: String?) {
-        NormalDialogUtils.showTextDialog(this,"正在上传中...")
+        NormalDialogUtils.showTextDialog(this, "正在上传中...")
         val paths = mAdapter?.getAllData()
         var newPaths: ArrayList<String> = arrayListOf()
         if (paths != null) {
@@ -205,13 +211,14 @@ class PushDynamicActivity : BaseActivity() {
             when (requestCode) {
                 REQUEST_LIST_CODE -> {
                     val pathList = data.getStringArrayListExtra("result")
-
-                    pathList.add(TAG_ADD)
-
-                    if (pathList != null && pathList.size > 0) {
-                        mAdapter?.clear()
-                        mAdapter?.addAll(pathList)
+                    val pathListSize = pathList?.size ?: return
+                    val allSize = PublishDynamicConfig.imageMaxSize + PublishDynamicConfig.videoMaxSize
+                    if (pathListSize < allSize) {
+                        pathList.add(TAG_ADD)
                     }
+                    mAdapter?.clear()
+                    mAdapter?.addAll(pathList)
+
                 }
                 REQUEST_CAMERA_CODE -> {
                     val path = data.getStringExtra("result")

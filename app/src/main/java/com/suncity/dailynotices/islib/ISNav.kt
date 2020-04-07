@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.support.v4.app.Fragment
-import android.widget.ImageView
 import com.facebook.drawee.view.SimpleDraweeView
 import com.suncity.dailynotices.islib.config.ISCameraConfig
 import com.suncity.dailynotices.islib.config.ISListConfig
@@ -23,7 +22,6 @@ class ISNav {
      * TODO 需要调试
      */
     fun displayImage(context: Context, path: String, imageView: SimpleDraweeView) {
-        LogUtils.e("path =file://$path")
         imageView.setImageURI(Uri.parse("file://$path"))
     }
 

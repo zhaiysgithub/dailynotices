@@ -13,6 +13,7 @@ import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.util.Log
 import android.view.View
 import android.widget.*
 import com.suncity.dailynotices.R
@@ -81,12 +82,20 @@ class ISListActivity : BaseActivity(), Callback {
     }
 
     private fun checkStoragePermission(): Boolean {
-        if (ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),STORAGE_REQUEST_CODE)
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                STORAGE_REQUEST_CODE
+            )
         } else {
             fragment = ImgSelFragment.instance()
-            if (fragment != null) {
-                supportFragmentManager.beginTransaction().add(R.id.fmImageList, fragment!!, null).commit()
+            fragment?.let {
+                supportFragmentManager.beginTransaction().add(R.id.fmImageList, it, null).commit()
             }
         }
         return true
@@ -104,6 +113,7 @@ class ISListActivity : BaseActivity(), Callback {
             onBackPressed()
         }
     }
+
     override fun onSingleImageSelected(path: String) {
         if (config?.needCrop == true) {
             crop(path)
@@ -121,7 +131,7 @@ class ISListActivity : BaseActivity(), Callback {
         formartConfirm()
     }
 
-    private fun formartConfirm(){
+    private fun formartConfirm() {
         tvConfirm?.text = String.format(
             getString(R.string.str_confirm_format),
             STR_CONFIRM,
@@ -143,8 +153,11 @@ class ISListActivity : BaseActivity(), Callback {
 
     @SuppressLint("SetTextI18n")
     override fun onPreviewChanged(select: Int, sum: Int, visible: Boolean) {
+        Log.e("@@@", "onPreviewChanged -> $visible,$select,$sum")
         if (visible) {
             tvTitle?.text = "$select/$sum"
+        } else {
+            tvTitle?.text = Config.getString(R.string.app_name)
         }
     }
 
@@ -200,8 +213,8 @@ class ISListActivity : BaseActivity(), Callback {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == IMAGE_CROP_CODE && resultCode == Activity.RESULT_OK) {
-            if(cropImagePath != null){
-                Constant.imageList.add(cropImagePath!!)
+            cropImagePath?.let {
+                Constant.imageList.add(it)
             }
             config?.multiSelect = false // 多选点击拍照，强制更改为单选
             exit()

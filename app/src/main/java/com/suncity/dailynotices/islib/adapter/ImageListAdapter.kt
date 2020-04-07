@@ -7,22 +7,23 @@ import android.widget.ImageView
 import com.facebook.drawee.view.SimpleDraweeView
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.islib.ISNav
-import com.suncity.dailynotices.islib.bean.Image
+import com.suncity.dailynotices.islib.bean.LocalMedia
 import com.suncity.dailynotices.islib.common.Constant
 import com.suncity.dailynotices.islib.common.OnImgItemClickListener
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.HAFViewHolder
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 
 
-class ImageListAdapter(context: Context) : RecyclerArrayAdapter<Image>(context) {
+class ImageListAdapter(context: Context) : RecyclerArrayAdapter<LocalMedia>(context) {
 
 
     private var showCamera: Boolean = false
     private var mutiSelect: Boolean = false
     private var listener: OnImgItemClickListener? = null
     private var mContext: Context = context
-    private val TYPECAMERA = 1
-    private val TYPEPIC = 0
+    private val typeCamera = 1
+    private val typePic = 0
+    private val typeVideo = 2
 
     init {
         setHasStableIds(true)
@@ -34,36 +35,46 @@ class ImageListAdapter(context: Context) : RecyclerArrayAdapter<Image>(context) 
 
     override fun getViewType(position: Int): Int {
         return if (position == 0 && showCamera) {
-            TYPECAMERA
+            typeCamera
         } else {
-            TYPEPIC
+            val itemData = getItem(position)
+            if (itemData?.isVideo() == true) {
+                typeVideo
+            } else {
+                typePic
+            }
+
         }
     }
 
-    override fun OnCreateViewHolder(parent: ViewGroup, viewType: Int): HAFViewHolder<Image> {
-        return when(viewType){
-            TYPECAMERA -> {
-                CameraViewHolder(parent,R.layout.is_item_img_sel_take_photo)
+    override fun OnCreateViewHolder(parent: ViewGroup, viewType: Int): HAFViewHolder<LocalMedia> {
+        return when (viewType) {
+            typeCamera -> {
+                CameraViewHolder(parent, R.layout.is_item_img_sel_take_photo)
             }
-            TYPEPIC -> {
-                PicViewHolder(parent,R.layout.is_item_img_sel)
+            typePic -> {
+                PicViewHolder(parent, R.layout.is_item_img_sel)
+            }
+            typeVideo -> {
+                VideoViewHolder(parent, R.layout.is_item_video_sel)
             }
             else -> {
-                PicViewHolder(parent,R.layout.is_item_img_sel)
+                PicViewHolder(parent, R.layout.is_item_img_sel)
             }
         }
 
     }
 
 
-    inner class CameraViewHolder(parent: ViewGroup,resLayoutId:Int):HAFViewHolder<Image>(parent,resLayoutId){
+    inner class CameraViewHolder(parent: ViewGroup, resLayoutId: Int) : HAFViewHolder<LocalMedia>(parent, resLayoutId) {
 
-        private var imageView:SimpleDraweeView? = null
+        private var imageView: SimpleDraweeView? = null
+
         init {
             imageView = itemView.findViewById(R.id.ivTakePhoto)
         }
 
-        override fun setData(data: Image) {
+        override fun setData(data: LocalMedia) {
             imageView?.setBackgroundResource(R.drawable.ic_take_photo)
             imageView?.setOnClickListener {
                 if (listener != null)
@@ -72,41 +83,67 @@ class ImageListAdapter(context: Context) : RecyclerArrayAdapter<Image>(context) 
         }
     }
 
-    inner class PicViewHolder(parent: ViewGroup,resLayoutId:Int):HAFViewHolder<Image>(parent,resLayoutId){
+    inner class PicViewHolder(parent: ViewGroup, resLayoutId: Int) : HAFViewHolder<LocalMedia>(parent, resLayoutId) {
 
-        private var imageView:ImageView? = null
-        private var draweeView:SimpleDraweeView? = null
+        private var ivCheckedStatus: ImageView? = null
+        private var draweeView: SimpleDraweeView? = null
+
         init {
-            imageView = itemView.findViewById(R.id.ivPhotoCheaked)
+            ivCheckedStatus = itemView.findViewById(R.id.ivPhotoCheaked)
             draweeView = itemView.findViewById(R.id.ivImage)
         }
-        override fun setData(data: Image) {
-            if (mutiSelect){
-                imageView?.visibility = View.VISIBLE
-                imageView?.setOnClickListener {
+
+        override fun setData(data: LocalMedia) {
+            val filePath = data.path
+            if (mutiSelect) {
+                ivCheckedStatus?.visibility = View.VISIBLE
+                var isContains = Constant.imageList.contains(filePath)
+                setCheckedStatus(isContains, ivCheckedStatus)
+
+                ivCheckedStatus?.setOnClickListener {
                     if (listener != null) {
                         val ret = listener?.onCheckedClick(adapterPosition, data)
                         if (ret == 1) { // 局部刷新
-                            if (Constant.imageList.contains(data.path)) {
-                                imageView?.setImageResource(R.drawable.ic_checked)
-                            } else {
-                                imageView?.setImageResource(R.drawable.ic_uncheck)
-                            }
+                            isContains = Constant.imageList.contains(filePath)
+                            setCheckedStatus(isContains, ivCheckedStatus)
                         }
                     }
                 }
-            }else{
-                imageView?.visibility = View.GONE
+            } else {
+                ivCheckedStatus?.visibility = View.GONE
             }
             itemView.setOnClickListener {
-                if (listener != null)
-                    listener?.onImageClick(adapterPosition, data)
+                listener?.onImageClick(adapterPosition, data)
             }
-            if (draweeView != null){
-                ISNav.getInstance().displayImage(mContext, data.path, draweeView!!)
+            draweeView?.let {
+                ISNav.getInstance().displayImage(mContext, filePath, it)
             }
 
+        }
 
+        private fun setCheckedStatus(isContains: Boolean, ivChecked: ImageView?) {
+            ivChecked?.setImageResource(if (isContains) R.drawable.ic_checked else R.drawable.ic_uncheck)
+        }
+    }
+
+    inner class VideoViewHolder(parent: ViewGroup, resLayoutId: Int) : HAFViewHolder<LocalMedia>(parent, resLayoutId) {
+
+        private var draweeView: SimpleDraweeView? = null
+
+        init {
+            draweeView = itemView.findViewById(R.id.ivVideoImage)
+        }
+
+        override fun setData(data: LocalMedia) {
+            val filePath = data.path
+
+            draweeView?.let {
+                ISNav.getInstance().displayImage(mContext, filePath, it)
+            }
+
+            itemView.setOnClickListener {
+                listener?.onVideoClick(adapterPosition, data)
+            }
         }
     }
 

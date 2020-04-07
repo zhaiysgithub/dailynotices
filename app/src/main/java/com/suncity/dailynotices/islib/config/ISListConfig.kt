@@ -26,7 +26,7 @@ class ISListConfig(builder: Builder) : Serializable {
     /**
      * 最多选择图片数
      */
-    var maxNum = 9
+    var maxNum = PublishDynamicConfig.imageMaxSize
 
     /**
      * 第一个item是否显示相机
@@ -67,7 +67,7 @@ class ISListConfig(builder: Builder) : Serializable {
         var needCrop = false
         var multiSelect = true
         var rememberSelected = true
-        var maxNum = 9
+        var maxNum = PublishDynamicConfig.imageMaxSize
         var needCamera = true
         var allImagesText: String? = null
         var filePath: String? = null

@@ -148,4 +148,6 @@
     <string name="str_upload_certificate_pic">上传持证照</string>
     <string name="str_upload_certificate_note">证件上传要求如下： \n1、持证正面照需本人手持证件,免冠未妆能辨识 \n2、证件上信息/号码/住址需清晰可见 \n3、照片大小5M以内</string>
     <string name="str_submit_for_audit">提交审核</string>
+    <string name="str_all">全部</string>
+    <string name="str_album_failed_to_read">相册读取失败</string>
 </resources>

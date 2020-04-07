@@ -2,14 +2,13 @@ package com.suncity.dailynotices.islib.adapter
 
 import android.app.Activity
 import android.support.v4.view.PagerAdapter
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.facebook.drawee.view.SimpleDraweeView
 import com.suncity.dailynotices.R
-import com.suncity.dailynotices.islib.bean.Image
 import com.suncity.dailynotices.islib.ISNav
+import com.suncity.dailynotices.islib.bean.LocalMedia
 import com.suncity.dailynotices.islib.common.Constant
 import com.suncity.dailynotices.islib.common.OnImgItemClickListener
 import com.suncity.dailynotices.islib.config.ISListConfig
@@ -17,7 +16,7 @@ import com.suncity.dailynotices.utils.LogUtils
 
 class PreviewAdapter(
     private val activity: Activity,
-    private val images: List<Image>,
+    private val images: List<LocalMedia>,
     private val config: ISListConfig
 ) : PagerAdapter() {
     private var listenerImg: OnImgItemClickListener? = null

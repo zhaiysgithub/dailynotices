@@ -22,13 +22,11 @@ import android.support.v4.view.ViewPager
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.ListPopupWindow
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.*
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.islib.adapter.FolderListAdapter
 import com.suncity.dailynotices.islib.adapter.ImageListAdapter
 import com.suncity.dailynotices.islib.adapter.PreviewAdapter
-import com.suncity.dailynotices.islib.bean.Folder
 import com.suncity.dailynotices.islib.bean.Image
 import com.suncity.dailynotices.islib.common.Callback
 import com.suncity.dailynotices.islib.common.Constant
@@ -37,14 +35,16 @@ import com.suncity.dailynotices.islib.common.OnImgItemClickListener
 import com.suncity.dailynotices.islib.config.ISListConfig
 import com.suncity.dailynotices.islib.ui.ISListActivity
 import com.suncity.dailynotices.ui.BaseFragment
-import com.suncity.dailynotices.utils.FileUtils
-import com.suncity.dailynotices.utils.DisplayUtils
-import com.suncity.dailynotices.utils.LogUtils
-import com.suncity.dailynotices.utils.ToastUtils
 import kotlinx.android.synthetic.main.is_fragment_img_sel.*
-
 import java.io.File
-import java.util.ArrayList
+import java.lang.Exception
+import com.suncity.dailynotices.islib.MediaLoaderInterface
+import com.suncity.dailynotices.islib.MediaLoaderTask
+import com.suncity.dailynotices.islib.bean.LocalMedia
+import com.suncity.dailynotices.islib.bean.MediaLocalInfo
+import com.suncity.dailynotices.islib.config.PublishDynamicConfig
+import com.suncity.dailynotices.utils.*
+import kotlin.collections.ArrayList
 
 
 @Suppress("DEPRECATION")
@@ -52,17 +52,20 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
 
     private var config: ISListConfig? = null
     private var callback: Callback? = null
-    private val folderList = ArrayList<Folder>()
-    private val imageList = ArrayList<Image>()
+    //包含搜索出媒体的文件集合
+    private val folderList = ArrayList<MediaLocalInfo>()
+    //所有媒体的数据集合
+    private val mediaList = ArrayList<LocalMedia>()
 
     private var folderPopupWindow: ListPopupWindow? = null
     private var imageListAdapter: ImageListAdapter? = null
     private var folderListAdapter: FolderListAdapter? = null
     private var previewAdapter: PreviewAdapter? = null
 
-    private var hasFolderGened = false
-
     private var tempFile: File? = null
+
+    private var mediaType = PublishDynamicConfig.IMAGES_AND_VIDEOS
+    private var mediaLoaderTask: MediaLoaderTask? = null
 
     override fun setContentView(): Int {
         return R.layout.is_fragment_img_sel
@@ -98,7 +101,7 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
         })
 
         if (config?.needCamera == true) {
-            imageList.add(Image())
+            mediaList.add(LocalMedia())
         }
 
         imageListAdapter = ImageListAdapter(requireContext())
@@ -107,9 +110,80 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
         rvImageList?.setHasFixedSize(true)
         rvImageList?.itemAnimator?.changeDuration = 0
         rvImageList?.adapter = imageListAdapter
-        imageListAdapter?.addAll(imageList)
-        folderListAdapter = FolderListAdapter(requireContext(),folderList)
-        activity?.supportLoaderManager?.initLoader(LOADER_ALL, null, mLoaderCallback)
+        imageListAdapter?.addAll(mediaList)
+        folderListAdapter = FolderListAdapter(requireContext(), folderList)
+        loadContentResource()
+    }
+
+    /**
+     * 加载所需要的资源
+     */
+    private fun loadContentResource(folder: MediaLocalInfo? = null) {
+        if (folder != null) {
+            val filterMedias = folderList.find { it.parentPath == folder.parentPath }?.localMedias
+            if (filterMedias != null && filterMedias.size > 0) {
+                mediaList.clear()
+                if (config?.needCamera == true) {
+                    mediaList.add(LocalMedia())
+                }
+                mediaList.addAll(filterMedias)
+                imageListAdapter?.clear()
+                imageListAdapter?.addAll(mediaList)
+            }
+            return
+        }
+        mediaLoaderTask = MediaLoaderTask(true, mediaType, object : MediaLoaderInterface {
+            override fun onSuccess(localMedias: ArrayList<MediaLocalInfo>) {
+                if (localMedias.size == 0) {
+                    return
+                }
+                folderList.clear()
+                folderList.addAll(localMedias)
+                localMedias.forEach {
+                    val medias = it.localMedias
+                    if (medias.size > 0) {
+                        mediaList.addAll(medias)
+                    }
+                }
+                imageListAdapter?.clear()
+                imageListAdapter?.addAll(mediaList)
+                folderListAdapter?.notifyDataSetChanged()
+
+            }
+
+            override fun onFailure() {
+                ToastUtils.showSafeToast(requireActivity(), Config.getString(R.string.str_album_failed_to_read))
+            }
+
+        })
+
+        mediaLoaderTask?.execute(requireActivity())
+
+        //方案二
+//        loadPhotos(isRestart)
+//        loadVideos(isRestart)
+    }
+
+    /**
+     * 异步加载图片
+     */
+    private fun loadVideos(isRestart: Boolean) {
+        if (isRestart) {
+            activity?.supportLoaderManager?.restartLoader(LOADER_ALL, null, mVideoLoaderCallback)
+        } else {
+            activity?.supportLoaderManager?.initLoader(LOADER_ALL, null, mVideoLoaderCallback)
+        }
+    }
+
+    /**
+     * 异步加载图片
+     */
+    private fun loadPhotos(isRestart: Boolean) {
+        if (isRestart) {
+            activity?.supportLoaderManager?.restartLoader(LOADER_ALL, null, mImgLoaderCallback)
+        } else {
+            activity?.supportLoaderManager?.initLoader(LOADER_ALL, null, mImgLoaderCallback)
+        }
     }
 
     @Suppress("DEPRECATION")
@@ -152,35 +226,40 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
             }
         }
         imageListAdapter?.setOnImgItemClickListener(object : OnImgItemClickListener {
-            override fun onCheckedClick(position: Int, image: Image): Int {
+            override fun onCheckedClick(position: Int, image: LocalMedia): Int {
                 return checkedImage(position, image)
             }
 
-            override fun onImageClick(position: Int, image: Image) {
-                val needCamera = config?.needCamera ?: false
+            override fun onImageClick(position: Int, image: LocalMedia) {
+                val configTemp = config ?: return
+                val needCamera = configTemp.needCamera
                 if (needCamera && position == 0) {
                     showCameraAction()
                 } else {
-                    val needMultiSelect = config?.multiSelect ?: false
+                    val needMultiSelect = configTemp.multiSelect
                     if (needMultiSelect) {
 
-                        previewAdapter = PreviewAdapter(requireActivity(), imageList, config!!)
+                        previewAdapter = PreviewAdapter(requireActivity(), mediaList, configTemp)
 
                         viewPager?.adapter = previewAdapter
 
                         previewAdapter?.setListener(object : OnImgItemClickListener {
-                            override fun onCheckedClick(position: Int, image: Image): Int {
+                            override fun onCheckedClick(position: Int, image: LocalMedia): Int {
                                 return checkedImage(position, image)
                             }
 
-                            override fun onImageClick(position: Int, image: Image) {
+                            override fun onImageClick(position: Int, image: LocalMedia) {
                                 hidePreview()
+                            }
+
+                            override fun onVideoClick(position: Int, video: LocalMedia) {
+                                // 图片有预览，视频没有预览
                             }
                         })
                         if (needCamera) {
-                            callback?.onPreviewChanged(position, imageList.size - 1, true)
+                            callback?.onPreviewChanged(position, mediaList.size - 1, true)
                         } else {
-                            callback?.onPreviewChanged(position + 1, imageList.size, true)
+                            callback?.onPreviewChanged(position + 1, mediaList.size, true)
                         }
                         viewPager?.currentItem = if (needCamera) (position - 1) else position
                         viewPager?.visibility = View.VISIBLE
@@ -192,87 +271,216 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
                 }
             }
 
+            override fun onVideoClick(position: Int, video: LocalMedia) {
+                // 視頻播放
+            }
+
         })
     }
 
-    private val mLoaderCallback = object : LoaderManager.LoaderCallbacks<Cursor> {
+    private val mVideoLoaderCallback = object : LoaderManager.LoaderCallbacks<Cursor> {
 
+        private val MEDIA_PROJECT = arrayOf(
+            MediaStore.Video.Media._ID
+            , MediaStore.Video.Media.DATA
+            , MediaStore.Video.Media.DISPLAY_NAME
+            , MediaStore.Video.Media.DURATION
+            , MediaStore.MediaColumns.SIZE
+            , MediaStore.Video.Media.DATE_MODIFIED
+        )
+
+        private val MEDIA_THUMB_PROJECT = arrayOf(
+            MediaStore.Video.Thumbnails._ID
+            , MediaStore.Video.Thumbnails.DATA
+        )
+
+        override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
+            return when (id) {
+                LOADER_ALL -> {
+                    CursorLoader(
+                        requireContext(), MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MEDIA_PROJECT,
+                        null, arrayOf("video/mp4"), MediaStore.Video.Media.DATE_MODIFIED + " DESC"
+                    )
+                }
+                LOADER_CATEGORY -> {
+                    CursorLoader(
+                        requireContext(), MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MEDIA_PROJECT
+                        , MEDIA_PROJECT[0], arrayOf("video/mp4"), MediaStore.Video.Media.DATE_MODIFIED + " DESC"
+                    )
+
+                }
+                else -> {
+                    CursorLoader(
+                        requireContext(), MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MEDIA_PROJECT,
+                        null, arrayOf("video/mp4"), MediaStore.Video.Media.DATE_MODIFIED + " DESC"
+                    )
+
+                }
+            }
+        }
+
+        override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
+            try {
+                data?.let {
+                    val count = it.count
+                    if (count > 0) {
+                        val tempImageList = ArrayList<Image>()
+                        data.moveToFirst()
+                        do {
+                            val videoId = data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media._ID))
+                            val path = data.getString(data.getColumnIndexOrThrow(MediaStore.Video.Media.DATA))
+                            val displayName =
+                                data.getString(data.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME))
+                            val duration = data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))
+                            var size =
+                                data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)) / 1024  //单位kb
+                            if (size < 0) {
+                                size = File(path).length() / 1024
+                            }
+                            val modifyTime =
+                                data.getLong(data.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_MODIFIED))
+
+                            //缩略图
+                            MediaStore.Video.Thumbnails.getThumbnail(
+                                requireActivity().contentResolver,
+                                videoId,
+                                MediaStore.Video.Thumbnails.MICRO_KIND,
+                                null
+                            )
+
+                            val thumbCursor = requireActivity().contentResolver.query(
+                                MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI
+                                , MEDIA_THUMB_PROJECT
+                                , MediaStore.Video.Thumbnails.VIDEO_ID + "=?"
+                                , arrayOf("$videoId"), null
+                            )
+                            var thumbPath = ""
+                            thumbCursor?.let { cursor ->
+                                while (cursor.moveToNext()) {
+                                    thumbPath =
+                                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Thumbnails.DATA))
+                                }
+                            }
+                            thumbCursor?.close()
+
+                        } while (data.moveToNext())
+                    }
+                }
+            } catch (e: Exception) {
+                LogUtils.e("LoaderManager.LoaderVideoCallbacks：onLoadFinishedError:$e")
+            }
+
+        }
+
+        override fun onLoaderReset(loader: Loader<Cursor>) {
+
+        }
+
+    }
+
+    private val mImgLoaderCallback = object : LoaderManager.LoaderCallbacks<Cursor> {
+
+        //本地图片查询条件
         private val IMAGE_PROJECTION =
-            arrayOf(MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media._ID)
+            arrayOf(
+                MediaStore.Images.Media._ID
+                , MediaStore.Images.Media.DATA
+                , MediaStore.Images.Media.DISPLAY_NAME
+                , MediaStore.Images.Media.DISPLAY_NAME
+                , MediaStore.Images.Media.SIZE
+                , MediaStore.Images.Media.DATE_MODIFIED
+            )
+
 
         override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
             return when (id) {
                 LOADER_ALL -> {
                     CursorLoader(
                         requireContext(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
-                        null, null, MediaStore.Images.Media.DATE_ADDED + " DESC"
+                        null, null, MediaStore.Images.Media.DATE_MODIFIED + " DESC"
                     )
                 }
                 LOADER_CATEGORY -> {
                     CursorLoader(
-                        requireContext(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION
-                        , IMAGE_PROJECTION[0] + " not like '%.gif%'", null, MediaStore.Images.Media.DATE_ADDED + " DESC"
+                        requireContext(),
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        IMAGE_PROJECTION
+                        ,
+                        IMAGE_PROJECTION[1] + " not like '%.gif%'",
+                        null,
+                        MediaStore.Images.Media.DATE_MODIFIED + " DESC"
                     )
+
                 }
                 else -> {
                     CursorLoader(
                         requireContext(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
-                        null, null, MediaStore.Images.Media.DATE_ADDED + " DESC"
+                        null, null, MediaStore.Images.Media.DATE_MODIFIED + " DESC"
                     )
+
                 }
             }
         }
 
         override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
-            if (data != null) {
-                val count = data.count
-                if (count > 0) {
-                    val tempImageList = ArrayList<Image>()
-                    data.moveToFirst()
-                    do {
-                        val path = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[0]))
-                        val name = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[1]))
-                        val image = Image(path, name)
-                        tempImageList.add(image)
-                        if (!hasFolderGened) {
-                            val imageFile = File(path)
-                            val folderFile = imageFile.parentFile
-                            if (folderFile == null || !imageFile.exists() || imageFile.length() < 10) {
-                                continue
-                            }
-                            var parent: Folder? = null
-                            for (folder in folderList) {
-                                if (TextUtils.equals(folder.path, folderFile.absolutePath)) {
-                                    parent = folder
+            /*try {
+                if (data != null) {
+                    val count = data.count
+                    if (count > 0) {
+                        val tempImageList = ArrayList<Image>()
+                        data.moveToFirst()
+                        do {
+                            val imageId = data.getInt(data.getColumnIndexOrThrow(_ID))
+                            val size = data.getLong(data.getColumnIndexOrThrow(SIZE))
+                            val imagePath = data.getString(data.getColumnIndexOrThrow(DATA))
+                            val imageName = data.getString(data.getColumnIndexOrThrow(DISPLAY_NAME))
+                            val modify = data.getLong(data.getColumnIndexOrThrow(DATE_MODIFIED))
+
+                            val image = Image(imagePath, imageName)
+                            tempImageList.add(image)
+                            if (!hasFolderGened) {
+                                val imageFile = File(imagePath)
+                                val folderFile = imageFile.parentFile
+                                if (folderFile == null || !imageFile.exists() || imageFile.length() < 10) {
+                                    continue
+                                }
+                                var parent: MediaLocalInfo? = null
+                                for (folder in folderList) {
+                                    if (TextUtils.equals(folder.parentPath, folderFile.absolutePath)) {
+                                        parent = folder
+                                    }
+                                }
+                                if (parent != null) {
+                                    parent.localMedias.add(image)
+                                } else {
+                                    parent = Folder()
+                                    parent.name = folderFile.name
+                                    parent.path = folderFile.absolutePath
+                                    parent.cover = image
+
+                                    val imageList = ArrayList<Image>()
+                                    imageList.add(image)
+                                    parent.images = imageList
+                                    folderList.add(parent)
                                 }
                             }
-                            if (parent != null) {
-                                parent.images?.add(image)
-                            } else {
-                                parent = Folder()
-                                parent.name = folderFile.name
-                                parent.path = folderFile.absolutePath
-                                parent.cover = image
+                        } while (data.moveToNext())
 
-                                val imageList = ArrayList<Image>()
-                                imageList.add(image)
-                                parent.images = imageList
-                                folderList.add(parent)
-                            }
+                        mediaList.clear()
+                        if (config?.needCamera == true) {
+                            mediaList.add(LocalMedia())
                         }
-                    } while (data.moveToNext())
-
-                    imageList.clear()
-                    if (config?.needCamera == true) {
-                        imageList.add(Image())
+                        mediaList.addAll(tempImageList)
+                        imageListAdapter?.clear()
+                        imageListAdapter?.addAll(mediaList)
+                        folderListAdapter?.notifyDataSetChanged()
+                        hasFolderGened = true
                     }
-                    imageList.addAll(tempImageList)
-                    imageListAdapter?.clear()
-                    imageListAdapter?.addAll(imageList)
-                    folderListAdapter?.notifyDataSetChanged()
-                    hasFolderGened = true
                 }
-            }
+            } catch (e: Exception) {
+                LogUtils.e("LoaderManager.LoaderCallbacks：onLoadFinishedError:$e")
+            }*/
+
         }
 
         override fun onLoaderReset(loader: Loader<Cursor>) {
@@ -281,7 +489,7 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
     }
 
 
-    private fun checkedImage(position: Int, image: Image?): Int {
+    private fun checkedImage(position: Int, image: LocalMedia?): Int {
         if (image != null) {
             if (Constant.imageList.contains(image.path)) {
                 Constant.imageList.remove(image.path)
@@ -317,22 +525,21 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
         folderPopupWindow?.anchorView = rlBottom
         folderPopupWindow?.isModal = true
         folderListAdapter?.setOnFloderChangeListener(object : OnFolderChangeListener {
-            override fun onChange(position: Int, folder: Folder) {
+            override fun onChange(position: Int, folder: MediaLocalInfo) {
                 folderPopupWindow?.dismiss()
                 if (position == 0) {
-                    activity?.supportLoaderManager?.restartLoader(LOADER_ALL, null, mLoaderCallback)
+                    //TODO 更改数据
+                    loadContentResource(folder)
                     btnAlbumSelected?.text = config?.allImagesText
                 } else {
-                    imageList.clear()
+                    mediaList.clear()
                     if (config?.needCamera == true) {
-                        imageList.add(Image())
+                        mediaList.add(LocalMedia())
                     }
-                    if (folder.images != null) {
-                        imageList.addAll(folder.images!!)
-                    }
+                    mediaList.addAll(folder.localMedias)
                     imageListAdapter?.clear()
-                    imageListAdapter?.addAll(imageList)
-                    btnAlbumSelected?.text = folder.name
+                    imageListAdapter?.addAll(mediaList)
+                    btnAlbumSelected?.text = folder.parentPath
                 }
             }
         })
@@ -366,8 +573,8 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
 
         if (cameraIntent.resolveActivity(requireActivity().packageManager) != null) {
             tempFile = File(FileUtils.createRootPath(requireContext()) + "/" + System.currentTimeMillis() + ".jpg")
-            LogUtils.e(tempFile?.absolutePath?:"")
-            if(tempFile != null){
+            LogUtils.e(tempFile?.absolutePath ?: "")
+            if (tempFile != null) {
                 FileUtils.createFile(tempFile!!)
             }
 
@@ -390,17 +597,15 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri) //Uri.fromFile(tempFile)
             startActivityForResult(cameraIntent, REQUEST_CAMERA)
         } else {
-            ToastUtils.showSafeToast(requireContext(),getString(R.string.str_open_camera_failure))
+            ToastUtils.showSafeToast(requireContext(), getString(R.string.str_open_camera_failure))
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
-                if (tempFile != null) {
-                    if (callback != null) {
-                        callback?.onCameraShot(tempFile!!)
-                    }
+                tempFile?.let {
+                    callback?.onCameraShot(it)
                 }
             } else {
                 if (tempFile != null && (tempFile?.exists() == true)) {
@@ -417,7 +622,7 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
             CAMERA_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 showCameraAction()
             } else {
-                ToastUtils.showSafeToast(requireContext(),getString(R.string.str_permission_camera_denied))
+                ToastUtils.showSafeToast(requireContext(), getString(R.string.str_permission_camera_denied))
             }
             else -> {
             }
@@ -430,9 +635,9 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
 
     override fun onPageSelected(position: Int) {
         if (config?.needCamera == true) {
-            callback?.onPreviewChanged(position + 1, imageList.size - 1, true)
+            callback?.onPreviewChanged(position + 1, mediaList.size - 1, true)
         } else {
-            callback?.onPreviewChanged(position + 1, imageList.size, true)
+            callback?.onPreviewChanged(position + 1, mediaList.size, true)
         }
     }
 
@@ -441,7 +646,8 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
     }
 
     fun hidePreview(): Boolean {
-        return if (viewPager?.visibility == View.VISIBLE) {
+        val isVisiable = viewPager?.visibility == View.VISIBLE
+        return if (isVisiable) {
             viewPager?.visibility = View.GONE
             callback?.onPreviewChanged(0, 0, false)
             imageListAdapter?.notifyDataSetChanged()
@@ -449,6 +655,11 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
         } else {
             false
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        activity?.supportLoaderManager?.destroyLoader(LOADER_ALL)
     }
 
     companion object {

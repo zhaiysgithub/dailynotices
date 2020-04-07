@@ -6,22 +6,26 @@
         android:layout_height="@dimen/dp_109">
 
     <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/ivImage"
+            android:id="@+id/ivVideoImage"
             android:layout_width="@dimen/dp_109"
             android:layout_height="@dimen/dp_109"
             android:layout_centerInParent="true"
-            app:viewAspectRatio="1.0"
-    />
-    <!--app:placeholderImage="@mipmap/ico_empty_holder"
-    app:actualImageScaleType="centerCrop"-->
+            app:viewAspectRatio="1.0"/>
 
-    <ImageView
-            android:id="@+id/ivPhotoCheaked"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_alignParentTop="true"
+    <FrameLayout
+            android:layout_width="60dp"
+            android:layout_height="40dp"
             android:layout_alignParentEnd="true"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_uncheck"/>
+            android:layout_alignParentBottom="true"
+            android:background="#B3000000">
+
+        <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_video_mark"/>
+    </FrameLayout>
+
 
 </com.suncity.dailynotices.islib.widget.SquareRelativeLayout>

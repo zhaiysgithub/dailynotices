@@ -1,9 +1,9 @@
 package com.suncity.dailynotices.islib.common
 
 
-import com.suncity.dailynotices.islib.bean.Folder
+import com.suncity.dailynotices.islib.bean.MediaLocalInfo
 
 interface OnFolderChangeListener {
 
-    fun onChange(position: Int, folder: Folder)
+    fun onChange(position: Int, folder: MediaLocalInfo)
 }

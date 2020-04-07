@@ -4,7 +4,6 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.View
 import cn.leancloud.chatkit.LCChatKit
 import com.avos.avoscloud.AVException
@@ -73,7 +72,6 @@ class HomeActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         selectedPos = intent?.getIntExtra(EXTRA_POS,-1) ?: -1
-        Log.e("@@@","selectedPos = $selectedPos")
         val allCount = tablayout?.tabCount ?: 0
         if(selectedPos >= 0 && (selectedPos in 0 until allCount)){
             lastPos = selectedPos
@@ -84,7 +82,6 @@ class HomeActivity : BaseActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         selectedPos = intent?.getIntExtra(EXTRA_POS,-1) ?: -1
-        Log.e("@@@","onNewIntent = $selectedPos")
         val allCount = tablayout?.tabCount ?: 0
         if(selectedPos >= 0 && (selectedPos in 0 until allCount)){
             lastPos = selectedPos
