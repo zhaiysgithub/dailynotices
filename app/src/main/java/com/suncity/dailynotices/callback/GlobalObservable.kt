@@ -39,10 +39,15 @@ interface GlobalObservable {
      * 用户更新图片的监听
      * @picLocalPaths 本地图片的集合
      */
-    fun onUserPicUpdateListener(picLocalPaths:ArrayList<String>)
+    fun onUserPicUpdateListener(picLocalPaths: ArrayList<String>)
 
     /**
      * 更新我查看的数据
      */
     fun onNotifyRecentVisitUser()
+
+    /**
+     * 刪除帖子通知帖子數據
+     */
+    fun notifyDelPost(postId: String)
 }

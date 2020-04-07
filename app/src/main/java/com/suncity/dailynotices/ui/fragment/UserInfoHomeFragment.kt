@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
@@ -19,6 +20,10 @@ import com.suncity.dailynotices.R
 import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.callback.OnDynamicItemMenuClick
 import com.suncity.dailynotices.callback.SimpleGlobalObservable
+import com.suncity.dailynotices.dialog.BottomDialogiOSDynamic
+import com.suncity.dailynotices.dialog.TipDialog
+import com.suncity.dailynotices.lcoperation.Delete
+import com.suncity.dailynotices.lcoperation.Increase
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.model.Dynamic
 import com.suncity.dailynotices.model.UserInfoRecord
@@ -28,6 +33,7 @@ import com.suncity.dailynotices.ui.activity.PushDynamicActivity.Companion.TYPE_A
 import com.suncity.dailynotices.ui.adapter.DynamicAdapter
 import com.suncity.dailynotices.ui.adapter.RecordAdapter
 import com.suncity.dailynotices.ui.dialog.NormalDialogUtils
+import com.suncity.dailynotices.ui.loading.LoadingDialog
 import com.suncity.dailynotices.ui.views.flowlayout.FlowLayout
 import com.suncity.dailynotices.ui.views.flowlayout.TagAdapter
 import com.suncity.dailynotices.ui.views.flowlayout.TagFlowLayout
@@ -35,6 +41,7 @@ import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapt
 import com.suncity.dailynotices.utils.Config
 import com.suncity.dailynotices.utils.PreferenceStorage
 import com.suncity.dailynotices.utils.StringUtils
+import com.suncity.dailynotices.utils.ToastUtils
 import kotlinx.android.synthetic.main.fragment_userinfo.*
 import java.lang.Exception
 
@@ -74,6 +81,7 @@ class UserInfoHomeFragment : BaseFragment() {
         return R.layout.fragment_userinfo
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateHomeDynamicUI(dynamicList: ArrayList<Dynamic>?) {
         //标签,演绎动态内容
         if (dynamicList != null && dynamicList.size > 0) {
@@ -199,6 +207,41 @@ class UserInfoHomeFragment : BaseFragment() {
 
     private val mDynamicItemMenuClick = object : OnDynamicItemMenuClick {
         override fun onMoreClick(position: Int) {
+
+            val item = dynamicAdapter?.getItem(position) ?: return
+            val dynamicMoreDialog = BottomDialogiOSDynamic(requireContext(), true)
+            dynamicMoreDialog.show()
+            dynamicMoreDialog.setClickCallback(object : BottomDialogiOSDynamic.ClickCallback {
+
+                override fun doDelPost() {
+                    //刪除帖子操作
+                    val dynamic = item.objectId ?: return
+                    val loadingDialog = LoadingDialog(requireActivity())
+                    loadingDialog.setInterceptBack(false).setLoadStyle(LoadingDialog.STYLE_NO_TEXT)
+                    loadingDialog.show()
+                    Delete.delPostById(dynamic) {
+                        loadingDialog.close()
+                        if (it != null && !TextUtils.isEmpty(it.message)) {
+                            ToastUtils.showSafeToast(requireActivity(), it.message ?: "")
+                        } else {
+                            dynamicAdapter?.remove(position)
+                        }
+                    }
+                }
+                override fun doShieldUserclick() {
+                }
+
+                override fun doCancel() {
+                }
+
+                override fun doReport() {
+                }
+
+                override fun doComplaint() {
+                }
+
+            })
+
         }
 
         override fun onImageClick(view: View, position: Int, url: String, data: Dynamic) {
@@ -406,6 +449,14 @@ class UserInfoHomeFragment : BaseFragment() {
             Query.queryUserDynamicById(userObjcetId) { dynamicList, _ ->
                 NormalDialogUtils.dismissNormalDialog()
                 updateHomeDynamicUI(dynamicList)
+            }
+        }
+
+        override fun notifyDelPost(postId: String) {
+            val allDatas = dynamicAdapter?.getAllData() ?: return
+            val item = allDatas.find { it.objectId == postId }
+            item?.let {
+                dynamicAdapter?.remove(it)
             }
         }
     }

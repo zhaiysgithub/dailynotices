@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.text.TextUtils
 import android.view.View
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.suncity.dailynotices.R
@@ -14,6 +15,7 @@ import com.suncity.dailynotices.callback.OnDynamicItemMenuClick
 import com.suncity.dailynotices.callback.SimpleGlobalObservable
 import com.suncity.dailynotices.dialog.BottomDialogiOSDynamic
 import com.suncity.dailynotices.dialog.TipDialog
+import com.suncity.dailynotices.lcoperation.Delete
 import com.suncity.dailynotices.lcoperation.Increase
 import com.suncity.dailynotices.lcoperation.Modify
 import com.suncity.dailynotices.lcoperation.Query
@@ -22,6 +24,7 @@ import com.suncity.dailynotices.ui.BaseFragment
 import com.suncity.dailynotices.ui.activity.*
 import com.suncity.dailynotices.ui.adapter.DynamicAdapter
 import com.suncity.dailynotices.ui.bar.ImmersionBar
+import com.suncity.dailynotices.ui.loading.LoadingDialog
 import com.suncity.dailynotices.ui.views.recyclerview.DividerDecoration
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import com.suncity.dailynotices.utils.*
@@ -141,13 +144,32 @@ class HomeDynamicFragment : BaseFragment() {
 
         override fun onMoreClick(position: Int) {
             if (!isLogined()) {
-                LoginActivity.start(requireContext(),HomeActivity.POS_HOME)
+                LoginActivity.start(requireContext(), HomeActivity.POS_HOME)
                 return
             }
             val item = dynamicAdapter?.getItem(position)
-            val dynamicMoreDialog = BottomDialogiOSDynamic(requireContext())
+            val currentObjectId = PreferenceStorage.userObjectId
+            val isMine = (item?.idPointer == currentObjectId)
+            val dynamicMoreDialog = BottomDialogiOSDynamic(requireContext(), isMine)
             dynamicMoreDialog.show()
             dynamicMoreDialog.setClickCallback(object : BottomDialogiOSDynamic.ClickCallback {
+
+                override fun doDelPost() {
+                    //刪除帖子操作
+                    val dynamic = item?.objectId ?: return
+                    val loadingDialog = LoadingDialog(requireActivity())
+                    loadingDialog.setInterceptBack(false).setLoadStyle(LoadingDialog.STYLE_NO_TEXT)
+                    loadingDialog.show()
+                    Delete.delPostById(dynamic) {
+                        loadingDialog.close()
+                        if (it != null && !TextUtils.isEmpty(it.message)) {
+                            ToastUtils.showSafeToast(requireActivity(), it.message ?: "")
+                        } else {
+                            dynamicAdapter?.remove(position)
+                        }
+                    }
+                }
+
                 override fun doShieldUserclick() {
                     val idPointer = item?.idPointer ?: return
                     Query.queryShieldUser(idPointer) {
@@ -231,6 +253,14 @@ class HomeDynamicFragment : BaseFragment() {
 
         override fun onUploadDynamicSuccess() {
             queryDynamicData(null)
+        }
+
+        override fun notifyDelPost(postId: String) {
+            val allDatas = dynamicAdapter?.getAllData() ?: return
+            val delItem = allDatas.find { it.objectId == postId }
+            delItem?.let {
+                dynamicAdapter?.remove(delItem)
+            }
         }
     }
 

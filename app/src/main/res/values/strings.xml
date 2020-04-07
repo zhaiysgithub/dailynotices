@@ -85,6 +85,7 @@
     <!-- error 信息 -->
     <string name="str_error_server">"抱歉，服务器开小差"</string>
     <string name="str_shield_user">屏蔽此人</string>
+    <string name="str_del_post">刪除</string>
     <string name="str_report">举报</string>
     <string name="str_complain">投诉</string>
     <string name="str_report_success">举报成功，我们会在 24H 内核实处理</string>

@@ -9,6 +9,7 @@ import android.os.Build
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -17,8 +18,10 @@ import android.widget.TextView
 import com.facebook.drawee.generic.RoundingParams
 import com.facebook.drawee.view.SimpleDraweeView
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.dialog.BottomDialogiOSDynamic
 import com.suncity.dailynotices.dialog.TipDialog
+import com.suncity.dailynotices.lcoperation.Delete
 import com.suncity.dailynotices.lcoperation.Increase
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.model.Comments
@@ -80,7 +83,7 @@ class DynamicDetailActivity : BaseActivity() {
     private var layoutThreeImage = R.layout.adapter_dynamic_three_pic
     private var layoutFourImage = R.layout.adapter_dynamic_four_pic
     private var layoutGreaterfourImage = R.layout.adapter_dynamic_greaterfour_pic
-    private var firstImgUrl:String? = null
+    private var firstImgUrl: String? = null
 
     override fun setScreenManager() {
         mInflater = LayoutInflater.from(this)
@@ -278,7 +281,7 @@ class DynamicDetailActivity : BaseActivity() {
         if (userObjectId == null) return
         layout?.setOnClickListener {
             if (PreventRepeatedUtils.isFastDoubleClick()) return@setOnClickListener
-            UserInfoActivity.start(this@DynamicDetailActivity, userObjectId,firstImgUrl)
+            UserInfoActivity.start(this@DynamicDetailActivity, userObjectId, firstImgUrl)
         }
     }
 
@@ -293,7 +296,7 @@ class DynamicDetailActivity : BaseActivity() {
                 ToastUtils.showSafeToast(this@DynamicDetailActivity, "请您输入评论内容")
                 return@setOnClickListener
             }
-            Increase.createComment(dynamicId!!,commentContent!!) {
+            Increase.createComment(dynamicId!!, commentContent!!) {
                 if (it == null) {
                     TipDialog.show(this@DynamicDetailActivity, "评论成功", TipDialog.SHOW_TIME_SHORT, TipDialog.TYPE_FINISH)
                     et_comment_write?.setText("")
@@ -367,9 +370,12 @@ class DynamicDetailActivity : BaseActivity() {
             if (idPointer?.isEmpty() == true) return@setOnClickListener
             if (!isLogined()) {
                 LoginActivity.start(this)
-            }else{
+            } else {
                 if (!PreventRepeatedUtils.isFastDoubleClick()) {
-                    createBottomDialog(idPointer!!)
+                    idPointer?.let {
+                        createBottomDialog(it)
+                    }
+
                 }
             }
 
@@ -465,9 +471,26 @@ class DynamicDetailActivity : BaseActivity() {
     }
 
     private fun createBottomDialog(idPointer: String) {
-        val dynamicMoreDialog = BottomDialogiOSDynamic(this)
+        val currentObjectId = PreferenceStorage.userObjectId
+        val isMine = (idPointer == currentObjectId)
+        val dynamicMoreDialog = BottomDialogiOSDynamic(this, isMine)
         dynamicMoreDialog.show()
         dynamicMoreDialog.setClickCallback(object : BottomDialogiOSDynamic.ClickCallback {
+
+            override fun doDelPost() {
+                //TODO 刪除帖子
+                val postId = dynamicId ?: return
+                Delete.delPostById(postId) {
+                    if (it != null && !TextUtils.isEmpty(it.message)) {
+                        ToastUtils.showSafeToast(this@DynamicDetailActivity, it.message ?: "")
+                    } else {
+                        //刷新帖子操作
+                        GlobalObserverHelper.onDelPost(postId)
+                        this@DynamicDetailActivity.finish()
+                    }
+                }
+            }
+
             override fun doCancel() {
             }
 

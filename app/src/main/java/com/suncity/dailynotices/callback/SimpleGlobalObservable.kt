@@ -7,8 +7,7 @@ package com.suncity.dailynotices.callback
  * @Description:     作用描述
  */
 
-open class SimpleGlobalObservable : GlobalObservable{
-
+open class SimpleGlobalObservable : GlobalObservable {
 
     override fun onUpdateUserinfoSuccess() {
     }
@@ -25,11 +24,14 @@ open class SimpleGlobalObservable : GlobalObservable{
     override fun onUpdateAutonymSuccess() {
     }
 
-    override fun onUserPicUpdateListener(picLocalPaths:ArrayList<String>){
+    override fun onUserPicUpdateListener(picLocalPaths: ArrayList<String>) {
 
     }
 
     override fun onNotifyRecentVisitUser() {
+    }
+
+    override fun notifyDelPost(postId: String) {
     }
 
 

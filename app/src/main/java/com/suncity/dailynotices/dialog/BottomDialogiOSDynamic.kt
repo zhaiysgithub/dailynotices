@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import android.widget.TextView
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.utils.Config
 
 
 /**
@@ -12,7 +13,7 @@ import com.suncity.dailynotices.R
  * @ClassName:      BottomChioceDialogiOS
  * @Description:     作用描述
  */
-class BottomDialogiOSDynamic(context: Context) : BottomDialogiOS(context) {
+class BottomDialogiOSDynamic(context: Context, private val isMine: Boolean) : BottomDialogiOS(context) {
 
 
     private var clickCallback: ClickCallback? = null
@@ -26,37 +27,63 @@ class BottomDialogiOSDynamic(context: Context) : BottomDialogiOS(context) {
         fun doCancel()
         fun doReport()
         fun doComplaint()
+        fun doDelPost()
     }
 
     override fun onClick(v: View) {
         super.onClick(v)
         when (v.id) {
             R.id.tv_shield_user -> {
-                if (clickCallback != null)
+                if (isMine) {
+                    clickCallback?.doDelPost()
+                } else {
                     clickCallback?.doShieldUserclick()
+                }
             }
             R.id.tv_report -> {
-                if (clickCallback != null)
-                    clickCallback?.doReport()
+                clickCallback?.doReport()
             }
             R.id.tv_complain -> {
-                if (clickCallback != null)
-                    clickCallback?.doComplaint()
+                clickCallback?.doComplaint()
             }
 
             R.id.tv_cancel -> {
-                if (clickCallback != null)
-                    clickCallback?.doCancel()
+                clickCallback?.doCancel()
             }
         }
     }
 
+
+
+
+    private var tvShieldUser: TextView? = null
+    private var tvReport: TextView? = null
+    private var tvComplain: TextView? = null
+    private var tvCancel: TextView? = null
+
     init {
         dialog?.setContentView(R.layout.dialog_home_dynamic_chioce)
-        dialog?.findViewById<TextView>(R.id.tv_shield_user)?.setOnClickListener(this)
-        dialog?.findViewById<TextView>(R.id.tv_report)?.setOnClickListener(this)
-        dialog?.findViewById<TextView>(R.id.tv_complain)?.setOnClickListener(this)
-        dialog?.findViewById<TextView>(R.id.tv_cancel)?.setOnClickListener(this)
+
+        tvShieldUser = dialog?.findViewById(R.id.tv_shield_user)
+        tvReport = dialog?.findViewById(R.id.tv_report)
+        tvComplain = dialog?.findViewById(R.id.tv_complain)
+        tvCancel = dialog?.findViewById(R.id.tv_cancel)
+
+        if (isMine) {
+            tvShieldUser?.text = Config.getString(R.string.str_del_post)
+        } else {
+            tvShieldUser?.text = Config.getString(R.string.str_shield_user)
+        }
+
+        tvReport?.visibility = if (isMine) View.GONE else View.VISIBLE
+        tvComplain?.visibility = if (isMine) View.GONE else View.VISIBLE
+
+        tvShieldUser?.setOnClickListener(this)
+        tvReport?.setOnClickListener(this)
+        tvComplain?.setOnClickListener(this)
+        tvCancel?.setOnClickListener(this)
         setDialogLocation(context, dialog)
     }
+
+
 }

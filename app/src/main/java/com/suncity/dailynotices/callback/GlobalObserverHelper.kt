@@ -27,45 +27,51 @@ object GlobalObserverHelper {
         mObservers.removeObserver(observer)
     }
 
-    fun loginSuccess(){
+    fun loginSuccess() {
         mObservers.forEach {
             it.onLoginSuccess()
         }
     }
 
-    fun logoutSuccess(){
+    fun logoutSuccess() {
         mObservers.forEach {
             it.onLogoutSuccess()
         }
     }
 
-    fun updateUserInfo(){
+    fun updateUserInfo() {
         mObservers.forEach {
             it.onUpdateUserinfoSuccess()
         }
     }
 
-    fun uploadDynamicSuccess(){
+    fun uploadDynamicSuccess() {
         mObservers.forEach {
             it.onUploadDynamicSuccess()
         }
     }
 
-    fun updateAutonymSuccess(){
+    fun updateAutonymSuccess() {
         mObservers.forEach {
             it.onUpdateAutonymSuccess()
         }
     }
 
-    fun onUserPicUpdateListener(picLocalPaths:ArrayList<String>){
+    fun onUserPicUpdateListener(picLocalPaths: ArrayList<String>) {
         mObservers.forEach {
             it.onUserPicUpdateListener(picLocalPaths)
         }
     }
 
-    fun onNotifyRecentVisitUser(){
+    fun onNotifyRecentVisitUser() {
         mObservers.forEach {
             it.onNotifyRecentVisitUser()
+        }
+    }
+
+    fun onDelPost(postId: String) {
+        mObservers.forEach {
+            it.notifyDelPost(postId)
         }
     }
 }
