@@ -1,7 +1,6 @@
 package com.suncity.dailynotices.ui.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.suncity.dailynotices.R
@@ -62,7 +61,6 @@ class MineFragment : BaseFragment() {
     }
 
     private fun initUIData() {
-        Log.e("@@@", "initUIData = ${PreferenceStorage.userName}")
         val isLogin = isLogined()
         changeLoginFlagUi(isLogin)
         if (isLogin) {

@@ -11,23 +11,22 @@ import com.suncity.dailynotices.BuildConfig
  * @UpdateDate:     30/5/2019
  */
 
-object LogUtils{
+object LogUtils {
 
     private const val isShowLog = true
 
-//    private const val TAG = "DailyNotice"
-    private const val TAG = "@@@"
+    private const val TAG = "DailyNotice"
 //    private const val TAG = "AVOS"
 
-    fun e(tag:String, msg:String){
-        if (isShowLog && BuildConfig.DEBUG){
-            Log.e(tag,msg)
+    fun e(tag: String, msg: String) {
+        if (isShowLog && BuildConfig.DEBUG) {
+            Log.e(tag, msg)
         }
     }
 
-    fun e(msg:String){
-        if (isShowLog && BuildConfig.DEBUG){
-            Log.e(TAG,msg)
+    fun e(msg: String) {
+        if (isShowLog && BuildConfig.DEBUG) {
+            Log.e(TAG, msg)
         }
     }
 

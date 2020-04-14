@@ -94,14 +94,14 @@ object Increase {
     /**
      * 批量上传文件
      */
-    fun uploadAVFile(filelocalPaths: ArrayList<String>, callback: (Boolean, ArrayList<String>) -> Unit) {
+    fun uploadAVFile(filelocalPaths: ArrayList<String>, callback: (Boolean, ArrayList<String>, AVException?) -> Unit) {
         val avFileUrls = arrayListOf<String>()
         var index = 0
         val filterResult = filelocalPaths.filter {
             StringUtils.isNotEmptyAndNull(it)
         }
         if (filterResult.isEmpty()) {
-            callback(true, avFileUrls)
+            callback(true, avFileUrls, null)
             return
         }
         val valueSize = filterResult.size
@@ -112,24 +112,31 @@ object Increase {
                     index++
                     if (e == null) {
                         avFileUrls.add(avFile.url)
+                        if (index == valueSize) {
+                            checkUploadFinished(index, avFileUrls, callback)
+                        }
+                    } else {
+                        callback(false, arrayListOf(), e)
                     }
-                    LogUtils.e("index = $index,size = ${filterResult.size}")
-                    checkUploadFinished(index, valueSize, avFileUrls, callback)
+
                 }
             })
         }
+
     }
 
-    fun checkUploadFinished(
+    /**
+     * 检测是否上传完成
+     */
+    private fun checkUploadFinished(
         index: Int,
-        arraySize: Int,
         urls: ArrayList<String>,
-        callback: (Boolean, ArrayList<String>) -> Unit
+        callback: (Boolean, ArrayList<String>, AVException?) -> Unit
     ) {
-        if (index == arraySize) {
-            callback(true, urls)
+        if (index == urls.size) {
+            callback(true, urls, null)
         } else {
-            callback(false, urls)
+            callback(false, urls, null)
         }
     }
 
@@ -152,6 +159,7 @@ object Increase {
      */
     fun uploadDynamicData(
         avFileUrls: ArrayList<String>, desc: String?, skillContent: String?, styleContent: String?
+        , isVideo: Boolean, videoThumbnail: String?
         , callback: (AVException?) -> Unit
     ) {
         val userId = PreferenceStorage.userObjectId
@@ -162,6 +170,10 @@ object Increase {
         dynamicObject.put("likeNum", 0)
         dynamicObject.put("contents", desc)
         dynamicObject.put("able", 2)
+        dynamicObject.put("isVideo", if (isVideo) 1 else 0)
+        if (isVideo && videoThumbnail != null && videoThumbnail.isNotEmpty()) {
+            dynamicObject.put("videoImage", videoThumbnail)
+        }
         dynamicObject.put("user", AVObject.createWithoutData(TableConstants.TABLE_USER, userId))
         dynamicObject.saveInBackground(object : SaveCallback() {
             override fun done(e: AVException?) {

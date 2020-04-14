@@ -2,12 +2,12 @@ package com.suncity.dailynotices.ui.dialog
 
 import android.os.Bundle
 import androidx.core.content.ContextCompat
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.utils.LogUtils
 
 /**
  * 抽取公用的FragmentDialog
@@ -77,7 +77,7 @@ abstract class BaseFragmentDialog : DialogFragment() {
                 show(supportFragmentManager, mActivity.localClassName)
             }
         } catch (e: Exception) {
-            Log.e("-------", e.toString())
+            LogUtils.e(e.toString())
         }
 
     }

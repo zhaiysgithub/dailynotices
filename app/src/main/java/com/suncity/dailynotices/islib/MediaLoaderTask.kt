@@ -6,7 +6,7 @@ import android.os.AsyncTask
 import android.provider.MediaStore
 import com.suncity.dailynotices.islib.bean.LocalMedia
 import com.suncity.dailynotices.islib.bean.MediaLocalInfo
-import com.suncity.dailynotices.islib.config.PublishDynamicConfig
+import com.suncity.dailynotices.islib.common.PublishConstant
 import com.suncity.dailynotices.utils.LogUtils
 import java.io.File
 import java.util.HashMap
@@ -15,7 +15,11 @@ import java.util.HashMap
  * @ProjectName:    dailynotices
  * @ClassName:      MediaLoaderTask
  */
-class MediaLoaderTask(private val isDesc: Boolean, private val mediaType: Int, private val mediaInterface: MediaLoaderInterface?) :
+class MediaLoaderTask(
+    private val isDesc: Boolean,
+    private val mediaType: Int,
+    private val mediaInterface: MediaLoaderInterface?
+) :
     AsyncTask<Context, Int, ArrayList<MediaLocalInfo>>() {
 
     private val searchURI = MediaStore.Files.getContentUri("external")
@@ -23,11 +27,12 @@ class MediaLoaderTask(private val isDesc: Boolean, private val mediaType: Int, p
         MediaStore.Files.FileColumns.DATA,
         MediaStore.Files.FileColumns.DATE_MODIFIED,
         MediaStore.Files.FileColumns.MIME_TYPE,
-        MediaStore.Files.FileColumns.TITLE,
+        MediaStore.Files.FileColumns.DISPLAY_NAME,
         MediaStore.Video.VideoColumns.DURATION
     )
 
-    private val filterMime = PublishDynamicConfig.mimeTypes.map { it.mMimeTypeName }.toTypedArray()
+
+    private val filterMime = PublishConstant.mimeTypes.map { it.mMimeTypeName }.toTypedArray()
     private val pathIndexes = ArrayList<Int>()
 
     private val sortOrder: String
@@ -46,15 +51,15 @@ class MediaLoaderTask(private val isDesc: Boolean, private val mediaType: Int, p
             val args = ArrayList<String>()
             selection.append("(")
             when (mediaType) {
-                PublishDynamicConfig.IMAGES -> {
+                PublishConstant.IMAGES -> {
                     selection.append(MediaStore.Files.FileColumns.MEDIA_TYPE).append("=? ")
                     args.add(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString())
                 }
-                PublishDynamicConfig.VIDEOS -> {
+                PublishConstant.VIDEOS -> {
                     selection.append(MediaStore.Files.FileColumns.MEDIA_TYPE).append("=? ")
                     args.add(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString())
                 }
-                PublishDynamicConfig.IMAGES_AND_VIDEOS -> {
+                PublishConstant.IMAGES_AND_VIDEOS -> {
                     selection.append(MediaStore.Files.FileColumns.MEDIA_TYPE).append("=? ")
                     args.add(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString())
                     selection.append("OR ")
@@ -143,6 +148,9 @@ class MediaLoaderTask(private val isDesc: Boolean, private val mediaType: Int, p
             if (isCancelled) return arrayListOf()
             val media = LocalMedia.valueOf(cursor)
             //媒体文件
+            if (media.isVideo() && media.duration < 1500) { //视频文件小于 1.5S 过滤
+                continue
+            }
             val file = File(media.path)
             if (file.exists() && file.isFile && file.length() <= 512) { //过滤 512byte 以下的文件
                 continue

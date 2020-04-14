@@ -1,6 +1,7 @@
 package com.suncity.dailynotices.islib.config
 
 import android.os.Environment
+import com.suncity.dailynotices.islib.common.PublishConstant
 import com.suncity.dailynotices.utils.FileUtils
 
 import java.io.Serializable
@@ -26,7 +27,7 @@ class ISListConfig(builder: Builder) : Serializable {
     /**
      * 最多选择图片数
      */
-    var maxNum = PublishDynamicConfig.imageMaxSize
+    var maxNum = PublishConstant.imageMaxSize
 
     /**
      * 第一个item是否显示相机
@@ -67,7 +68,7 @@ class ISListConfig(builder: Builder) : Serializable {
         var needCrop = false
         var multiSelect = true
         var rememberSelected = true
-        var maxNum = PublishDynamicConfig.imageMaxSize
+        var maxNum = PublishConstant.imageMaxSize
         var needCamera = true
         var allImagesText: String? = null
         var filePath: String? = null

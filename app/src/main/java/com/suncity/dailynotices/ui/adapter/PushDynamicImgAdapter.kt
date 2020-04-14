@@ -1,11 +1,13 @@
 package com.suncity.dailynotices.ui.adapter
 
 import android.content.Context
-import android.net.Uri
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.facebook.drawee.view.SimpleDraweeView
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.islib.bean.DynamicAdapterBean
+import com.suncity.dailynotices.islib.bean.MediaType
 import com.suncity.dailynotices.ui.activity.PushDynamicActivity.Companion.TAG_ADD
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.HAFViewHolder
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
@@ -17,27 +19,29 @@ import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapt
  * @Description:     作用描述
  * @UpdateDate:     22/7/2019
  */
-class PushDynamicImgAdapter(context: Context) : RecyclerArrayAdapter<String>(context) {
+open class PushDynamicImgAdapter(context: Context) : RecyclerArrayAdapter<DynamicAdapterBean>(context) {
 
-    private val TYPE_ADD_PIC = 1
-    private val TYPE_SELE_PIC = 0
+    private val typeAddPic = 1
+    private val typeSelePic = 0
+
 
     override fun getViewType(position: Int): Int {
-        val value = getItem(position)
+        val item = getItem(position)
+        val itemPath = item?.path
 
-        return if (value == null || value == TAG_ADD) {
-            TYPE_ADD_PIC
+        return if (itemPath == null || itemPath == TAG_ADD) {
+            typeAddPic
         } else {
-            TYPE_SELE_PIC
+            typeSelePic
         }
     }
 
-    override fun OnCreateViewHolder(parent: ViewGroup, viewType: Int): HAFViewHolder<String> {
+    override fun OnCreateViewHolder(parent: ViewGroup, viewType: Int): HAFViewHolder<DynamicAdapterBean> {
         return when (viewType) {
-            TYPE_ADD_PIC -> {
+            typeAddPic -> {
                 AddPicViewHolder(parent, R.layout.adapter_item_add_pic)
             }
-            TYPE_SELE_PIC -> {
+            typeSelePic -> {
                 SelPicViewHolder(parent, R.layout.adapter_item_sel_pic)
             }
             else -> {
@@ -48,9 +52,10 @@ class PushDynamicImgAdapter(context: Context) : RecyclerArrayAdapter<String>(con
     }
 
 
-    inner class AddPicViewHolder(parent: ViewGroup, reslayoutId: Int) : HAFViewHolder<String>(parent, reslayoutId) {
+    inner class AddPicViewHolder(parent: ViewGroup, reslayoutId: Int) :
+        HAFViewHolder<DynamicAdapterBean>(parent, reslayoutId) {
 
-        override fun setData(data: String) {
+        override fun setData(data: DynamicAdapterBean) {
 
             itemView.setOnClickListener {
                 if (mListener != null) {
@@ -60,34 +65,40 @@ class PushDynamicImgAdapter(context: Context) : RecyclerArrayAdapter<String>(con
         }
     }
 
-    inner class SelPicViewHolder(parent: ViewGroup, reslayoutId: Int) : HAFViewHolder<String>(parent, reslayoutId) {
+    inner class SelPicViewHolder(parent: ViewGroup, reslayoutId: Int) :
+        HAFViewHolder<DynamicAdapterBean>(parent, reslayoutId) {
 
         private var pic: SimpleDraweeView? = null
-        private var iv_del:ImageView? = null
+        private var ivDel: ImageView? = null
+        private var ivVideoMark: View? = null
 
         init {
             pic = itemView.findViewById(R.id.iv_pic)
-            iv_del = itemView.findViewById(R.id.iv_del)
+            ivDel = itemView.findViewById(R.id.iv_del)
+            ivVideoMark = itemView.findViewById(R.id.layout_video_mark)
         }
 
-        override fun setData(data: String) {
-            pic?.setImageURI("file://$data")
-            itemView.setOnClickListener {
-                if (mListener != null) {
-                    mListener?.onSelItemClick(data)
-                }
+        override fun setData(data: DynamicAdapterBean) {
+            val path = data.path
+            pic?.setImageURI("file://$path")
+            val type = data.type
+            if (type == MediaType.TYPE_VIDEO) {
+                ivVideoMark?.visibility = View.VISIBLE
+            } else {
+                ivVideoMark?.visibility = View.GONE
             }
-            iv_del?.setOnClickListener {
-                if (mListener != null) {
-                    mListener?.onDeleteItem(adapterPosition)
-                }
+            itemView.setOnClickListener {
+                mListener?.onSelItemClick(data)
+            }
+            ivDel?.setOnClickListener {
+                mListener?.onDeleteItem(adapterPosition)
             }
         }
     }
 
     private var mListener: OnPushDynamicImgClickListener? = null
 
-    open fun SetOnPushDynamicImgClickListener(l: OnPushDynamicImgClickListener) {
+    open fun setOnPushDynamicImgClickListener(l: OnPushDynamicImgClickListener) {
         mListener = l
     }
 
@@ -95,7 +106,7 @@ class PushDynamicImgAdapter(context: Context) : RecyclerArrayAdapter<String>(con
 
         fun onAddPicClick()
 
-        fun onSelItemClick(url: String)
+        fun onSelItemClick(data: DynamicAdapterBean)
 
         fun onDeleteItem(position: Int)
     }

@@ -16,14 +16,16 @@ import android.view.View
 import android.widget.*
 import androidx.fragment.app.Fragment
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.islib.bean.LocalMedia
 import com.suncity.dailynotices.islib.common.Callback
-import com.suncity.dailynotices.islib.common.Constant
+import com.suncity.dailynotices.islib.common.PublishConstant
 import com.suncity.dailynotices.islib.config.ISListConfig
 import com.suncity.dailynotices.islib.ui.fragment.ImgSelFragment
 import com.suncity.dailynotices.ui.BaseActivity
 import com.suncity.dailynotices.utils.FileUtils
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.utils.Config
+import com.suncity.dailynotices.utils.ToastUtils
 import kotlinx.android.synthetic.main.is_activity_img_sel.*
 
 import java.io.File
@@ -45,12 +47,14 @@ class ISListActivity : BaseActivity(), Callback {
     private var STR_CONFIRM = Config.getString(R.string.str_confirm)
 
     var config: ISListConfig? = null
+    var canSelVideo: Boolean = false
 
     private var cropImagePath: String? = null
 
     private var fragment: ImgSelFragment? = null
 
     private val result = ArrayList<String>()
+
 
     override fun setScreenManager() {
         ImmersionBar.with(this)
@@ -62,6 +66,7 @@ class ISListActivity : BaseActivity(), Callback {
 
     override fun initData() {
         config = intent.getSerializableExtra("config") as ISListConfig
+        canSelVideo = intent.getBooleanExtra("canSelVideo",false)
         checkStoragePermission()
         if (!FileUtils.isSdCardAvailable) {
             Toast.makeText(this, getString(R.string.str_sd_disable), Toast.LENGTH_SHORT).show()
@@ -70,11 +75,11 @@ class ISListActivity : BaseActivity(), Callback {
         if (config != null) {
             if (config?.multiSelect == true) {
                 if (config?.rememberSelected == false) {
-                    Constant.imageList.clear()
+                    PublishConstant.imageList.clear()
                 }
                 formartConfirm()
             } else {
-                Constant.imageList.clear()
+                PublishConstant.imageList.clear()
                 tvConfirm?.visibility = View.GONE
             }
         }
@@ -92,7 +97,7 @@ class ISListActivity : BaseActivity(), Callback {
                 STORAGE_REQUEST_CODE
             )
         } else {
-            fragment = ImgSelFragment.instance()
+            fragment = ImgSelFragment.instance(canSelVideo)
             fragment?.let {
                 supportFragmentManager.beginTransaction().add(R.id.fmImageList, it, null).commit()
             }
@@ -102,7 +107,7 @@ class ISListActivity : BaseActivity(), Callback {
 
     override fun initListener() {
         tvConfirm?.setOnClickListener {
-            if (!Constant.imageList.isEmpty()) {
+            if (!PublishConstant.imageList.isEmpty()) {
                 exit()
             } else {
                 Toast.makeText(this, getString(R.string.str_minnum), Toast.LENGTH_SHORT).show()
@@ -117,7 +122,7 @@ class ISListActivity : BaseActivity(), Callback {
         if (config?.needCrop == true) {
             crop(path)
         } else {
-            Constant.imageList.add(path)
+            PublishConstant.imageList.add(path)
             exit()
         }
     }
@@ -130,11 +135,12 @@ class ISListActivity : BaseActivity(), Callback {
         formartConfirm()
     }
 
+
     private fun formartConfirm() {
         tvConfirm?.text = String.format(
             getString(R.string.str_confirm_format),
             STR_CONFIRM,
-            Constant.imageList.size,
+            PublishConstant.imageList.size,
             (config?.maxNum ?: 9)
         )
 
@@ -144,7 +150,7 @@ class ISListActivity : BaseActivity(), Callback {
         if (config?.needCrop == true) {
             crop(imageFile.absolutePath)
         } else {
-            Constant.imageList.add(imageFile.absolutePath)
+            PublishConstant.imageList.add(imageFile.absolutePath)
             config?.multiSelect = false // 多选点击拍照，强制更改为单选
             exit()
         }
@@ -157,6 +163,15 @@ class ISListActivity : BaseActivity(), Callback {
         } else {
             tvTitle?.text = Config.getString(R.string.app_name)
         }
+    }
+
+    override fun onVideoSelected(videoMedia: LocalMedia) {
+        val videoPath = videoMedia.path
+        if (videoPath.isEmpty()) {
+            ToastUtils.showSafeToast(this@ISListActivity, Config.getString(R.string.str_not_found_video_resource))
+            return
+        }
+        SimplePlayerActivity.start(this@ISListActivity, videoMedia,canSelVideo)
     }
 
     private fun crop(imagePath: String) {
@@ -210,12 +225,16 @@ class ISListActivity : BaseActivity(), Callback {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == IMAGE_CROP_CODE && resultCode == Activity.RESULT_OK) {
-            cropImagePath?.let {
-                Constant.imageList.add(it)
+        when (requestCode) {
+            IMAGE_CROP_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    cropImagePath?.let {
+                        PublishConstant.imageList.add(it)
+                    }
+                    config?.multiSelect = false // 多选点击拍照，强制更改为单选
+                    exit()
+                }
             }
-            config?.multiSelect = false // 多选点击拍照，强制更改为单选
-            exit()
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -223,12 +242,12 @@ class ISListActivity : BaseActivity(), Callback {
     private fun exit() {
         val intent = Intent()
         result.clear()
-        result.addAll(Constant.imageList)
+        result.addAll(PublishConstant.imageList)
         intent.putStringArrayListExtra(INTENT_RESULT, result)
         setResult(Activity.RESULT_OK, intent)
 
         if (config?.multiSelect == false) {
-            Constant.imageList.clear()
+            PublishConstant.imageList.clear()
         }
 
         finish()
@@ -240,7 +259,7 @@ class ISListActivity : BaseActivity(), Callback {
             STORAGE_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.fmImageList, ImgSelFragment.instance(), null)
+                    .add(R.id.fmImageList, ImgSelFragment.instance(canSelVideo), null)
                     .commitAllowingStateLoss()
             } else {
                 Toast.makeText(this, getString(R.string.str_permission_storage_denied), Toast.LENGTH_SHORT).show()
@@ -262,7 +281,7 @@ class ISListActivity : BaseActivity(), Callback {
 
     override fun onBackPressed() {
         if (fragment == null || (fragment?.hidePreview() == false)) {
-            Constant.imageList.clear()
+            PublishConstant.imageList.clear()
             super.onBackPressed()
         }
     }
@@ -272,17 +291,19 @@ class ISListActivity : BaseActivity(), Callback {
 
         const val INTENT_RESULT = "result"
         const val IMAGE_CROP_CODE = 1
-        const val STORAGE_REQUEST_CODE = 1
+        const val STORAGE_REQUEST_CODE = 2
 
-        fun startForResult(activity: Activity, config: ISListConfig, RequestCode: Int) {
+        fun startForResult(activity: Activity, config: ISListConfig, RequestCode: Int, canSelVideo: Boolean? = false) {
             val intent = Intent(activity, ISListActivity::class.java)
             intent.putExtra("config", config)
+            intent.putExtra("canSelVideo", canSelVideo ?: false)
             activity.startActivityForResult(intent, RequestCode)
         }
 
-        fun startForResult(fragment: Fragment, config: ISListConfig, RequestCode: Int) {
+        fun startForResult(fragment: Fragment, config: ISListConfig, RequestCode: Int, canSelVideo: Boolean? = false) {
             val intent = Intent(fragment.activity, ISListActivity::class.java)
             intent.putExtra("config", config)
+            intent.putExtra("canSelVideo", canSelVideo ?: false)
             fragment.startActivityForResult(intent, RequestCode)
         }
     }

@@ -3,14 +3,18 @@ package com.suncity.dailynotices.islib.ui
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.util.Log
 import android.view.View
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.suncity.dailynotices.R
+import com.suncity.dailynotices.callback.GlobalObserverHelper
+import com.suncity.dailynotices.islib.bean.LocalMedia
+import com.suncity.dailynotices.islib.common.PublishConstant
 import com.suncity.dailynotices.ui.BaseActivity
+import com.suncity.dailynotices.ui.activity.PushDynamicActivity
 import com.suncity.dailynotices.ui.bar.ImmersionBar
 import com.suncity.dailynotices.utils.Config
+import com.suncity.dailynotices.utils.PreventRepeatedUtils
 import com.suncity.dailynotices.utils.ToastUtils
 import kotlinx.android.synthetic.main.ac_simple_player.*
 
@@ -23,17 +27,29 @@ class SimplePlayerActivity : BaseActivity() {
 
     private var videoPath: String = ""
     private var videoName: String = ""
+    private var videoTemp: LocalMedia? = null
+    private var canSelVideo: Boolean = false
     private var orientationUtils: OrientationUtils? = null
 
     companion object {
 
-        private const val bundleVideoPath = "bundleVideoPath"
-        private const val bundleVideoName = "bundleVideoName"
+        private const val bundleVideo = "bundleVideo"
+        private const val bundleCanSelVideo = "canSelVideo"
+//        private const val bundleVideoName = "bundleVideoName"
 
-        fun start(context: Context, videoPath: String, videoName: String) {
+        fun start(context: Context, video: LocalMedia, canSelVideo: Boolean) {
             val intent = Intent(context, SimplePlayerActivity::class.java)
-            intent.putExtra(bundleVideoPath, videoPath)
-            intent.putExtra(bundleVideoName, videoName)
+            intent.putExtra(bundleVideo, video)
+            intent.putExtra(bundleCanSelVideo, canSelVideo)
+            context.startActivity(intent)
+        }
+
+        fun start(context: Context, videoPath: String, canSelVideo: Boolean) {
+            val localMedia = LocalMedia()
+            localMedia.path = videoPath
+            val intent = Intent(context, SimplePlayerActivity::class.java)
+            intent.putExtra(bundleVideo, localMedia)
+            intent.putExtra(bundleCanSelVideo, canSelVideo)
             context.startActivity(intent)
         }
     }
@@ -41,7 +57,7 @@ class SimplePlayerActivity : BaseActivity() {
     override fun setScreenManager() {
         ImmersionBar.with(this)
             .fitsSystemWindows(true)
-            .statusBarColor(R.color.color_white)
+            .statusBarColor(R.color.color_black)
             .statusBarDarkFont(true, 0f)
             .init()
     }
@@ -51,13 +67,19 @@ class SimplePlayerActivity : BaseActivity() {
     }
 
     override fun initData() {
-        videoPath = intent?.getStringExtra(bundleVideoPath) ?: ""
-        videoName = intent?.getStringExtra(bundleVideoName) ?: ""
-        Log.e("@@@", "videoPath=$videoPath,videoName=$videoName")
+        videoTemp = intent?.getSerializableExtra(bundleVideo) as? LocalMedia
+        canSelVideo = intent?.getBooleanExtra(bundleCanSelVideo, false) ?: false
+        videoPath = videoTemp?.path ?: ""
+        videoName = videoTemp?.name ?: ""
         if (videoPath.isEmpty()) {
             ToastUtils.showSafeToast(this@SimplePlayerActivity, Config.getString(R.string.str_not_found_video_resource))
             this@SimplePlayerActivity.finish()
             return
+        }
+        if (canSelVideo) {
+            videoPlayer_complete_layout?.visibility = View.VISIBLE
+        } else {
+            videoPlayer_complete_layout?.visibility = View.GONE
         }
         setVideoParams()
 
@@ -72,14 +94,29 @@ class SimplePlayerActivity : BaseActivity() {
         //设置旋转
         orientationUtils = OrientationUtils(this@SimplePlayerActivity, videoPlayer)
         //设置全屏按键功能,这是使用的是选择屏幕，而不是全屏
-        videoPlayer?.fullscreenButton?.setOnClickListener {
-            orientationUtils?.resolveByClick()
-        }
+        videoPlayer?.fullscreenButton?.visibility = View.GONE
+        videoPlayer?.fullscreenButton?.setOnClickListener(null)
         //是否可以滑动调整
         videoPlayer?.setIsTouchWiget(true)
         //设置返回按键功能
         videoPlayer?.backButton?.setOnClickListener { onBackPressed() }
         videoPlayer?.startPlayLogic()
+
+        videoPlayer_complete_layout?.setOnClickListener {
+            if (PreventRepeatedUtils.isFastDoubleClick(R.id.videoPlayer_complete_layout)) return@setOnClickListener
+            if (videoTemp == null) return@setOnClickListener
+            if (!canSelVideo) {
+                val formartStr =
+                    String.format(Config.getString(R.string.str_video_maxnum), PublishConstant.videoMaxSize)
+                ToastUtils.showSafeToast(this@SimplePlayerActivity, formartStr)
+                return@setOnClickListener
+            }
+            videoTemp?.let {
+                GlobalObserverHelper.onVideoSelected(it)
+            }
+            startActivity(PushDynamicActivity::class.java)
+            this@SimplePlayerActivity.finish()
+        }
     }
 
 

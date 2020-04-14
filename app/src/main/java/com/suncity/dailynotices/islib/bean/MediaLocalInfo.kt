@@ -19,9 +19,7 @@ class MediaLocalInfo : Serializable {
         return "MediaLocalInfo(parentPath='$parentPath', imageCounts=$imageCounts, cover='$cover', localMedias=$localMedias)"
     }
 
-
 }
-
 
 class LocalMedia : Serializable {
 

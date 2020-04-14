@@ -3,9 +3,13 @@ package com.suncity.dailynotices.utils
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.os.Environment
+import java.io.ByteArrayOutputStream
 
 import java.io.File
+import java.io.FileOutputStream
 
 object FileUtils {
 
@@ -88,9 +92,42 @@ object FileUtils {
             LogUtils.e(appContext.packageName + " " + applicationInfo.metaData.getString("APP_ID"))
             (applicationInfo.metaData.getString("APP_ID") ?: "")
         } catch (e: PackageManager.NameNotFoundException) {
-    //            throw IllegalArgumentException(" get application info error! ", e)
+            //            throw IllegalArgumentException(" get application info error! ", e)
             ""
         }
 
+    }
+
+    /**
+     * 获取本地视频缩略图
+     */
+    fun getVideoThumbnailPath(context: Context, videoPath: String, onResult: (String) -> Unit) {
+        val media = MediaMetadataRetriever()
+        media.setDataSource(videoPath)
+        val bitmap = media.frameAtTime
+        if (bitmap != null) {
+            val tempThumbnialFile = File(createRootPath(context) + "/" + System.currentTimeMillis() + ".jpg")
+            writeVideoThumbToFile(bitmap, tempThumbnialFile) {
+                if (it.exists()) {
+                    onResult(it.absolutePath)
+                } else {
+                    onResult("")
+                }
+            }
+        } else {
+            onResult("")
+        }
+    }
+
+    fun writeVideoThumbToFile(bitmap: Bitmap, tempFile: File, onResult: (File) -> Unit) {
+        val bos = ByteArrayOutputStream()
+        val formart = Bitmap.CompressFormat.JPEG
+        bitmap.compress(formart, 100, bos)
+        val tmpOs = FileOutputStream(tempFile)
+        tmpOs.write(bos.toByteArray())
+        bos.close()
+        tmpOs.flush()
+        tmpOs.close()
+        onResult(tempFile)
     }
 }

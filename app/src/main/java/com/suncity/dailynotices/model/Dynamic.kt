@@ -17,23 +17,25 @@ class Dynamic : Serializable {
     var objectId: String? = null
     var createAt: Date? = null
     var updateAt: Date? = null
-    var contents:String? = null
-    var images:MutableList<String>? = null
+    var contents: String? = null
+    var images: MutableList<String>? = null
+    var isVideo: Int? = 0  //是否是视频  1 video, 0  image
     var skill: String? = null
     var likeNum: Int? = null
     var able: Int? = null
     var style: String? = null
     var fire: Int? = null
-    var tagList:ArrayList<String>? = null
+    var tagList: ArrayList<String>? = null
     // user 表中的
     var idPointer: String? = null
     var avatarurl: String? = null
     var userName: String? = null
+    var videoImage: String? = null
     //userInfo
-    var userAutonym : Int? = null
+    var userAutonym: Int? = null
     //like表  是否点过赞了
-    var isSelected : Boolean = false
+    var isSelected: Boolean = false
     //点赞人的头像的集合
-    var userLikeAvatar:MutableList<String>? = null
+    var userLikeAvatar: MutableList<String>? = null
 
 }

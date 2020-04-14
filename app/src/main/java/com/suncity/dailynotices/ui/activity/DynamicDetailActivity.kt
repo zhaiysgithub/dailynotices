@@ -384,10 +384,29 @@ class DynamicDetailActivity : BaseActivity() {
 
     private fun setOnePic(ivPic: SimpleDraweeView?, data: Dynamic) {
         val images = data.images
-        if (images != null && images.size > 0) {
-            firstImgUrl = images[0]
-            ivPic?.setImageURI(images[0])
-            setImageClick(ivPic, 0, images[0], data)
+        if (images == null || images.size == 0) return
+        val isVideo = data.isVideo == 1
+        val path = images[0]
+
+        if (isVideo) {
+            layout_video_view?.visibility = View.VISIBLE
+            ivPic?.visibility = View.GONE
+            video_item_player?.loadCoverImage(data.videoImage ?: "")
+            video_item_player?.setUpLazy(path, true, null, null, "")
+            video_item_player?.titleTextView?.visibility = View.GONE
+            video_item_player?.backButton?.visibility = View.GONE
+            video_item_player?.fullscreenButton?.setOnClickListener {
+                video_item_player.startWindowFullscreen(this@DynamicDetailActivity, false, true)
+            }
+            video_item_player?.isAutoFullWithSize = false
+            video_item_player?.isReleaseWhenLossAudio = false
+            video_item_player?.isShowFullAnimation = true
+            video_item_player?.setIsTouchWiget(false)
+        } else {
+            layout_video_view?.visibility = View.GONE
+            ivPic?.visibility = View.VISIBLE
+            ivPic?.setImageURI(path)
+            setImageClick(ivPic, 0, path, data)
         }
 
     }

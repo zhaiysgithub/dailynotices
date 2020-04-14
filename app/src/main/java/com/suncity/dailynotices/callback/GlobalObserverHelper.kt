@@ -1,5 +1,6 @@
 package com.suncity.dailynotices.callback
 
+import com.suncity.dailynotices.islib.bean.LocalMedia
 import com.suncity.dailynotices.observer.ObserverList
 
 /**
@@ -72,6 +73,12 @@ object GlobalObserverHelper {
     fun onDelPost(postId: String) {
         mObservers.forEach {
             it.notifyDelPost(postId)
+        }
+    }
+
+    fun onVideoSelected(videoMedia: LocalMedia) {
+        mObservers.forEach {
+            it.onVideoSelected(videoMedia)
         }
     }
 }

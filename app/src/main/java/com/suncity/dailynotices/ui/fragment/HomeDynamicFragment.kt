@@ -15,6 +15,7 @@ import com.suncity.dailynotices.callback.OnDynamicItemMenuClick
 import com.suncity.dailynotices.callback.SimpleGlobalObservable
 import com.suncity.dailynotices.dialog.BottomDialogiOSDynamic
 import com.suncity.dailynotices.dialog.TipDialog
+import com.suncity.dailynotices.islib.ui.SimplePlayerActivity
 import com.suncity.dailynotices.lcoperation.Delete
 import com.suncity.dailynotices.lcoperation.Increase
 import com.suncity.dailynotices.lcoperation.Modify
@@ -51,7 +52,7 @@ class HomeDynamicFragment : BaseFragment() {
     private val dividerMargin = DisplayUtils.dip2px(20f)
     private val dividerColor = Config.getColor(R.color.color_f3f3f3)
     private val dividerHeight = Config.getDimension(R.dimen.dp_1).toInt()
-    private val IMAGETRANSITION = Config.getString(R.string.image_transition_name)
+    private val ImageTransition = Config.getString(R.string.image_transition_name)
 
     companion object {
         fun getInstance(): HomeDynamicFragment {
@@ -209,8 +210,14 @@ class HomeDynamicFragment : BaseFragment() {
         override fun onImageClick(view: View, position: Int, url: String, data: Dynamic) {
             val images = data.images
             if (images == null || images.size == 0) return
+            val isVideo = data.isVideo == 1
+            if (isVideo) {
+                val videoPath = images[0]
+                SimplePlayerActivity.start(requireContext(), videoPath, false)
+                return
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val option = ActivityOptions.makeSceneTransitionAnimation(activity, view, IMAGETRANSITION)
+                val option = ActivityOptions.makeSceneTransitionAnimation(activity, view, ImageTransition)
                 val intent = Intent(requireContext(), ImageViewPagerActivity::class.java)
                 ImageViewPagerActivity.currentPos = position
                 ImageViewPagerActivity.urls = images

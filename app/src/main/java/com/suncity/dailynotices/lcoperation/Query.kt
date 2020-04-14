@@ -1,6 +1,5 @@
 package com.suncity.dailynotices.lcoperation
 
-import android.util.Log
 import com.alibaba.fastjson.JSONObject
 import com.avos.avoscloud.*
 import com.google.gson.Gson
@@ -172,6 +171,7 @@ object Query {
             }
         })
     }
+
     /**
      * 查询 RecentVisit 的信息
      */
@@ -859,6 +859,7 @@ object Query {
                 } else {
                     dynamic.skill = null
                 }
+                dynamic.isVideo = it.getInt("isVideo")
                 dynamic.likeNum = it.getInt("likeNum")
                 dynamic.able = it.getInt("able")
                 val style = it.getString("style")?.trim()
@@ -882,6 +883,7 @@ object Query {
                 val avUser = it.getAVUser<AVUser>("user")
                 val userId = avUser.objectId
                 dynamic.idPointer = userId
+                dynamic.videoImage = it.getString("videoImage")
                 dynamicList.add(dynamic)
 
                 //or 组合查询
@@ -953,7 +955,6 @@ object Query {
      * 查询点赞用户的头像
      */
     fun queryDynamicLikeUserAvatar(likeId: String, callback: (MutableList<String>?, AVException?) -> Unit) {
-        Log.e("@@@", "likeId = $likeId")
         val query = AVQuery<AVObject>(TableConstants.TABLE_LIKE)
         query.whereEqualTo("likedId", likeId)
         query.findInBackground(object : FindCallback<AVObject>() {

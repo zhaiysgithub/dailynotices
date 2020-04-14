@@ -1,7 +1,6 @@
 package com.suncity.dailynotices.ui.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.ViewGroup
 import com.facebook.drawee.view.SimpleDraweeView
 import com.suncity.dailynotices.R
@@ -36,7 +35,6 @@ class UserInfoPicAdapter(context: Context) : RecyclerArrayAdapter<String>(contex
         }
 
         override fun setData(data: String) {
-            Log.e("@@@","data = $data")
             val layoutParams = image?.layoutParams
             layoutParams?.width = imageWidth
             layoutParams?.height = imageWidth

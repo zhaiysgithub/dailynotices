@@ -1,6 +1,7 @@
 package com.suncity.dailynotices.ui.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import com.suncity.dailynotices.ui.views.recyclerview.adapter.HAFViewHolder
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
 import java.util.*
 import com.facebook.drawee.generic.RoundingParams
+import com.suncity.dailynotices.ui.views.SampleCoverVideo
 import com.suncity.dailynotices.ui.views.flowlayout.TagView
 import com.suncity.dailynotices.utils.*
 
@@ -67,7 +69,7 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
             TYPE_NO_PIC -> {
                 DynamicNoPicVH(parent, R.layout.adapter_dynamic_no_pic)
             }
-            TYPE_PIC_ONE -> {
+            TYPE_PIC_ONE -> {  //目前只支持发一个视频功能
                 DynamicOnePicVH(parent, R.layout.adapter_dynamic_one_pic)
             }
             TYPE_PIC_TWO -> {
@@ -136,6 +138,8 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         private var tagFlowLayout: TagFlowLayout? = null
         private var ivZan: ImageView? = null
         private var tvZanCount: TextView? = null
+        private var layoutvideoView: View? = null
+        private var sampleCoverView: SampleCoverVideo? = null
 
         init {
             ivAvatar = itemView.findViewById(R.id.iv_avatar_one)
@@ -148,6 +152,8 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
             ivZan = itemView.findViewById(R.id.iv_zan_one)
             tvZanCount = itemView.findViewById(R.id.tv_zan_count_one)
             ivPic = itemView.findViewById(R.id.iv_pic_one_one)
+            layoutvideoView = itemView.findViewById(R.id.layout_video_view)
+            sampleCoverView = itemView.findViewById(R.id.video_item_player)
         }
 
         override fun setData(data: Dynamic) {
@@ -159,7 +165,7 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
             setTags(tagFlowLayout, data, adapterPosition)
             setZan(ivZan, tvZanCount, data, adapterPosition)
             setMoreClick(ivMore, adapterPosition)
-            setOnePic(ivPic, data)
+            setOnePic(adapterPosition, ivPic, data, layoutvideoView, sampleCoverView)
         }
     }
 
@@ -403,16 +409,16 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         }
         zanCount?.text = (data.likeNum ?: 0).toString()
         zan?.setOnClickListener {
-            if(selected){
-                ToastUtils.showSafeToast(mContext,"不能取消点赞")
+            if (selected) {
+                ToastUtils.showSafeToast(mContext, "不能取消点赞")
                 return@setOnClickListener
-            }else{
+            } else {
                 zan.setImageResource(R.mipmap.ico_zan_selected)
                 val likeNum = ((data.likeNum ?: 0) + 1)
                 zanCount?.text = likeNum.toString()
             }
             if (mMenuClick != null && !PreventRepeatedUtils.isFastDoubleClick()) {
-                mMenuClick?.onSelectLikeClick(position,data)
+                mMenuClick?.onSelectLikeClick(position, data)
             }
         }
     }
@@ -425,13 +431,40 @@ class DynamicAdapter(context: Context) : RecyclerArrayAdapter<Dynamic>(context) 
         }
     }
 
-    private fun setOnePic(ivPic: SimpleDraweeView?, data: Dynamic) {
+    private fun setOnePic(
+        position: Int,
+        ivPic: SimpleDraweeView?,
+        data: Dynamic,
+        layoutvideoMark: View?,
+        sampleCoverVideo: SampleCoverVideo?
+    ) {
         val images = data.images
-        if (images != null && images.size > 0) {
-            ivPic?.setImageURI(images[0])
-
-            setImageClick(ivPic, 0, images[0], data)
+        if (images == null || images.size == 0) return
+        val isVideo = data.isVideo == 1
+        val path = images[0]
+        Log.e("mmm", "isVideo=$isVideo,path=$path")
+        if (isVideo) {
+            layoutvideoMark?.visibility = View.VISIBLE
+            ivPic?.visibility = View.GONE
+            sampleCoverVideo?.loadCoverImage(data.videoImage ?: "")
+            sampleCoverVideo?.setUpLazy(path, true, null, null, "")
+            sampleCoverVideo?.titleTextView?.visibility = View.GONE
+            sampleCoverVideo?.backButton?.visibility = View.GONE
+            sampleCoverVideo?.fullscreenButton?.setOnClickListener {
+                sampleCoverVideo.startWindowFullscreen(mContext, false, true)
+            }
+            sampleCoverVideo?.playPosition = position
+            sampleCoverVideo?.isAutoFullWithSize = false
+            sampleCoverVideo?.isReleaseWhenLossAudio = false
+            sampleCoverVideo?.isShowFullAnimation = true
+            sampleCoverVideo?.setIsTouchWiget(false)
+        } else {
+            layoutvideoMark?.visibility = View.GONE
+            ivPic?.visibility = View.VISIBLE
+            ivPic?.setImageURI(path)
+            setImageClick(ivPic, 0, path, data)
         }
+
 
     }
 

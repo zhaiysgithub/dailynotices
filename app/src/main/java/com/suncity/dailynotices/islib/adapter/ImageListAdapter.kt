@@ -8,7 +8,7 @@ import com.facebook.drawee.view.SimpleDraweeView
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.islib.ISNav
 import com.suncity.dailynotices.islib.bean.LocalMedia
-import com.suncity.dailynotices.islib.common.Constant
+import com.suncity.dailynotices.islib.common.PublishConstant
 import com.suncity.dailynotices.islib.common.OnImgItemClickListener
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.HAFViewHolder
 import com.suncity.dailynotices.ui.views.recyclerview.adapter.RecyclerArrayAdapter
@@ -97,14 +97,14 @@ class ImageListAdapter(context: Context) : RecyclerArrayAdapter<LocalMedia>(cont
             val filePath = data.path
             if (mutiSelect) {
                 ivCheckedStatus?.visibility = View.VISIBLE
-                var isContains = Constant.imageList.contains(filePath)
+                var isContains = PublishConstant.imageList.contains(filePath)
                 setCheckedStatus(isContains, ivCheckedStatus)
 
                 ivCheckedStatus?.setOnClickListener {
                     if (listener != null) {
                         val ret = listener?.onCheckedClick(adapterPosition, data)
                         if (ret == 1) { // 局部刷新
-                            isContains = Constant.imageList.contains(filePath)
+                            isContains = PublishConstant.imageList.contains(filePath)
                             setCheckedStatus(isContains, ivCheckedStatus)
                         }
                     }
@@ -136,7 +136,6 @@ class ImageListAdapter(context: Context) : RecyclerArrayAdapter<LocalMedia>(cont
 
         override fun setData(data: LocalMedia) {
             val filePath = data.path
-
             draweeView?.let {
                 ISNav.getInstance().displayImage(mContext, filePath, it)
             }

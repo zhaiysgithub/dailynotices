@@ -1,5 +1,7 @@
 package com.suncity.dailynotices.callback
 
+import com.suncity.dailynotices.islib.bean.LocalMedia
+
 /**
  * @ProjectName:    dailynotices
  * @Package:        com.suncity.dailynotices.callback
@@ -50,4 +52,9 @@ interface GlobalObservable {
      * 刪除帖子通知帖子數據
      */
     fun notifyDelPost(postId: String)
+
+    /**
+     * 选择视频
+     */
+    fun onVideoSelected(videoMedia: LocalMedia)
 }

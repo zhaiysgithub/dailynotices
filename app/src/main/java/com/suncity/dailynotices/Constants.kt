@@ -33,7 +33,6 @@ class Constants{
 
         val ERROR_MSG = Config.getString(R.string.str_error_server)
 
-
         val needClearTableValue = arrayOf(SP_KEY_USER,SP_KEY_USERINFO,SP_KEY_FIRE)
 
     }

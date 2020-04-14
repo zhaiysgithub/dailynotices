@@ -21,6 +21,7 @@ import com.suncity.dailynotices.callback.GlobalObserverHelper
 import com.suncity.dailynotices.callback.OnDynamicItemMenuClick
 import com.suncity.dailynotices.callback.SimpleGlobalObservable
 import com.suncity.dailynotices.dialog.BottomDialogiOSDynamic
+import com.suncity.dailynotices.islib.ui.SimplePlayerActivity
 import com.suncity.dailynotices.lcoperation.Delete
 import com.suncity.dailynotices.lcoperation.Query
 import com.suncity.dailynotices.model.Dynamic
@@ -207,7 +208,9 @@ class UserInfoHomeFragment : BaseFragment() {
         override fun onMoreClick(position: Int) {
 
             val item = dynamicAdapter?.getItem(position) ?: return
-            val dynamicMoreDialog = BottomDialogiOSDynamic(requireContext(), true)
+            val currentUserId = PreferenceStorage.userObjectId
+            val isMine = currentUserId == item.idPointer
+            val dynamicMoreDialog = BottomDialogiOSDynamic(requireContext(), isMine)
             dynamicMoreDialog.show()
             dynamicMoreDialog.setClickCallback(object : BottomDialogiOSDynamic.ClickCallback {
 
@@ -226,6 +229,7 @@ class UserInfoHomeFragment : BaseFragment() {
                         }
                     }
                 }
+
                 override fun doShieldUserclick() {
                 }
 
@@ -245,6 +249,12 @@ class UserInfoHomeFragment : BaseFragment() {
         override fun onImageClick(view: View, position: Int, url: String, data: Dynamic) {
             val images = data.images
             if (images == null || images.size == 0) return
+            val isVideo = data.isVideo == 1
+            if (isVideo) {
+                val videoPath = images[0]
+                SimplePlayerActivity.start(requireContext(), videoPath, false)
+                return
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 val option = ActivityOptions.makeSceneTransitionAnimation(activity, view, IMAGETRANSITION)
                 val intent = Intent(requireContext(), ImageViewPagerActivity::class.java)

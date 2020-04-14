@@ -2,7 +2,8 @@
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools" android:layout_width="@dimen/dp_120"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="@dimen/dp_120"
         android:layout_height="@dimen/dp_120">
 
     <com.facebook.drawee.view.SimpleDraweeView
@@ -15,12 +16,28 @@
             app:failureImage="@mipmap/ico_home_img_holder"
             app:roundedCornerRadius="@dimen/dp_4"
     />
-    
+
     <ImageView
             android:id="@+id/iv_del"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/ico_delete_push"
             tools:ignore="ContentDescription"/>
+
+    <FrameLayout
+            android:id="@+id/layout_video_mark"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_alignEnd="@id/iv_pic"
+            android:layout_alignBottom="@id/iv_pic"
+            android:visibility="gone"
+            android:background="#B3000000">
+        <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_video_mark"/>
+    </FrameLayout>
 </RelativeLayout>
 

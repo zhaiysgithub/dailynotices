@@ -2,7 +2,6 @@ package com.suncity.dailynotices.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import com.google.gson.Gson
 import com.suncity.dailynotices.Constants
 import org.json.JSONObject

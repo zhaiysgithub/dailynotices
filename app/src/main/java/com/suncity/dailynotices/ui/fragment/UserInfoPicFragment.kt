@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import com.avos.avoscloud.AVObject
@@ -76,7 +75,6 @@ class UserInfoPicFragment : BaseFragment() {
         Query.queryHomeImagesByUserid(userId) { imgList, _ ->
 
             if (imgList != null && imgList.size > 0) {
-                Log.e("@@@", "imgList = $imgList")
                 imgs = imgList
                 mAdapter?.addAll(imgList)
                 recyclerView_userinfo_pic?.visibility = View.VISIBLE
@@ -94,13 +92,14 @@ class UserInfoPicFragment : BaseFragment() {
         mAdapter?.setOnItemClickListener(object : RecyclerArrayAdapter.OnItemClickListener {
 
             override fun onItemClick(position: Int, view: View) {
-                if (imgs == null || imgs?.size == 0) return
+                val tempImgs = imgs
+                if (tempImgs == null || tempImgs.size == 0) return
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     val option =
                         ActivityOptions.makeSceneTransitionAnimation(activity, view, IMAGETRANSITION)
                     val intent = Intent(activity, ImageViewPagerActivity::class.java)
                     ImageViewPagerActivity.currentPos = position
-                    ImageViewPagerActivity.urls = imgs!!.toMutableList()
+                    ImageViewPagerActivity.urls = tempImgs.toMutableList()
                     startActivity(intent, option.toBundle())
                 } else {
                     val intent = Intent(activity, ImageViewPagerActivity::class.java)
@@ -108,7 +107,7 @@ class UserInfoPicFragment : BaseFragment() {
                     view.getLocalVisibleRect(rect)
                     intent.sourceBounds = rect
                     ImageViewPagerActivity.currentPos = position
-                    ImageViewPagerActivity.urls = imgs!!.toMutableList()
+                    ImageViewPagerActivity.urls = tempImgs.toMutableList()
                     startActivity(intent)
                     activity?.overridePendingTransition(0, 0)
                 }

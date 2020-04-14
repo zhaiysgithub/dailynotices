@@ -9,7 +9,7 @@ import com.facebook.drawee.view.SimpleDraweeView
 import com.suncity.dailynotices.R
 import com.suncity.dailynotices.islib.ISNav
 import com.suncity.dailynotices.islib.bean.LocalMedia
-import com.suncity.dailynotices.islib.common.Constant
+import com.suncity.dailynotices.islib.common.PublishConstant
 import com.suncity.dailynotices.islib.common.OnImgItemClickListener
 import com.suncity.dailynotices.islib.config.ISListConfig
 import com.suncity.dailynotices.utils.LogUtils
@@ -37,7 +37,7 @@ class PreviewAdapter(
 
             ivChecked.visibility = View.VISIBLE
             val image = images[if (config.needCamera) position + 1 else position]
-            if (Constant.imageList.contains(image.path)) {
+            if (PublishConstant.imageList.contains(image.path)) {
                 ivChecked.setImageResource(R.drawable.ic_checked)
             } else {
                 ivChecked.setImageResource(R.drawable.ic_uncheck)
@@ -47,7 +47,7 @@ class PreviewAdapter(
                 if (listenerImg != null) {
                     val ret = listenerImg?.onCheckedClick(position, image)
                     if (ret == 1) { // 局部刷新
-                        if (Constant.imageList.contains(image.path)) {
+                        if (PublishConstant.imageList.contains(image.path)) {
                             ivChecked.setImageResource(R.drawable.ic_checked)
                         } else {
                             ivChecked.setImageResource(R.drawable.ic_uncheck)

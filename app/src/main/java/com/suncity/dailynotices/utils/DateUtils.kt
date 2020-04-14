@@ -1,12 +1,10 @@
 package com.suncity.dailynotices.utils
 
 import android.annotation.SuppressLint
-import android.util.Log
 import com.suncity.dailynotices.R
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @ProjectName:    dailynotices

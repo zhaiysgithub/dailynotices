@@ -1,5 +1,7 @@
 package com.suncity.dailynotices.callback
 
+import com.suncity.dailynotices.islib.bean.LocalMedia
+
 /**
  * @ProjectName:    dailynotices
  * @Package:        com.suncity.dailynotices.callback
@@ -32,6 +34,9 @@ open class SimpleGlobalObservable : GlobalObservable {
     }
 
     override fun notifyDelPost(postId: String) {
+    }
+
+    override fun onVideoSelected(videoMedia: LocalMedia) {
     }
 
 

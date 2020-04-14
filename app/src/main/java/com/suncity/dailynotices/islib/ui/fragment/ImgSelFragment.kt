@@ -24,7 +24,7 @@ import com.suncity.dailynotices.islib.adapter.FolderListAdapter
 import com.suncity.dailynotices.islib.adapter.ImageListAdapter
 import com.suncity.dailynotices.islib.adapter.PreviewAdapter
 import com.suncity.dailynotices.islib.common.Callback
-import com.suncity.dailynotices.islib.common.Constant
+import com.suncity.dailynotices.islib.common.PublishConstant
 import com.suncity.dailynotices.islib.common.OnFolderChangeListener
 import com.suncity.dailynotices.islib.common.OnImgItemClickListener
 import com.suncity.dailynotices.islib.config.ISListConfig
@@ -36,8 +36,6 @@ import com.suncity.dailynotices.islib.MediaLoaderInterface
 import com.suncity.dailynotices.islib.MediaLoaderTask
 import com.suncity.dailynotices.islib.bean.LocalMedia
 import com.suncity.dailynotices.islib.bean.MediaLocalInfo
-import com.suncity.dailynotices.islib.config.PublishDynamicConfig
-import com.suncity.dailynotices.islib.ui.SimplePlayerActivity
 import com.suncity.dailynotices.utils.*
 import kotlin.collections.ArrayList
 
@@ -58,8 +56,9 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
     private var previewAdapter: PreviewAdapter? = null
 
     private var tempFile: File? = null
+    private var canSelVideo: Boolean = false
 
-    private var mediaType = PublishDynamicConfig.IMAGES_AND_VIDEOS
+    private var mediaType = PublishConstant.IMAGES_AND_VIDEOS
     private var mediaLoaderTask: MediaLoaderTask? = null
 
     override fun setContentView(): Int {
@@ -67,6 +66,7 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
     }
 
     override fun initData() {
+        canSelVideo = arguments?.getBoolean("canSelVideo") ?: false
         viewPager?.offscreenPageLimit = 1
         viewPager?.addOnPageChangeListener(this)
         if (activity is ISListActivity) {
@@ -268,13 +268,7 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
 
             override fun onVideoClick(position: Int, video: LocalMedia) {
                 // 視頻播放
-                val videoPath = video.path
-                val videoName = video.name
-                if (videoPath.isEmpty()) {
-                    ToastUtils.showSafeToast(requireActivity(), Config.getString(R.string.str_not_found_video_resource))
-                    return
-                }
-                SimplePlayerActivity.start(requireContext(), videoPath, videoName)
+                callback?.onVideoSelected(video)
             }
 
         })
@@ -493,20 +487,20 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
 
     private fun checkedImage(position: Int, image: LocalMedia?): Int {
         if (image != null) {
-            if (Constant.imageList.contains(image.path)) {
-                Constant.imageList.remove(image.path)
+            if (PublishConstant.imageList.contains(image.path)) {
+                PublishConstant.imageList.remove(image.path)
                 if (callback != null) {
                     callback?.onImageUnselected(image.path)
                 }
             } else {
-                if ((config?.maxNum ?: 0) <= Constant.imageList.size) {
+                if ((config?.maxNum ?: 0) <= PublishConstant.imageList.size) {
                     ToastUtils.showSafeToast(
                         requireActivity(),
                         String.format(getString(R.string.str_maxnum), (config?.maxNum ?: 0))
                     )
                     return 0
                 }
-                Constant.imageList.add(image.path)
+                PublishConstant.imageList.add(image.path)
                 if (callback != null) {
                     callback?.onImageSelected(image.path)
                 }
@@ -557,7 +551,7 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
 
     private fun showCameraAction() {
         val maxNum = config?.maxNum ?: 0
-        if (maxNum <= Constant.imageList.size) {
+        if (maxNum <= PublishConstant.imageList.size) {
             ToastUtils.showSafeToast(requireActivity(), String.format(getString(R.string.str_maxnum), maxNum))
             return
         }
@@ -604,16 +598,19 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_CAMERA) {
-            if (resultCode == Activity.RESULT_OK) {
-                tempFile?.let {
-                    callback?.onCameraShot(it)
-                }
-            } else {
-                if (tempFile != null && (tempFile?.exists() == true)) {
-                    tempFile?.delete()
+        when (requestCode) {
+            REQUEST_CAMERA -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    tempFile?.let {
+                        callback?.onCameraShot(it)
+                    }
+                } else {
+                    if (tempFile != null && (tempFile?.exists() == true)) {
+                        tempFile?.delete()
+                    }
                 }
             }
+
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -667,14 +664,13 @@ class ImgSelFragment : BaseFragment(), ViewPager.OnPageChangeListener {
     companion object {
 
         private const val LOADER_ALL = 0
-        private const val LOADER_CATEGORY = 1
         private const val REQUEST_CAMERA = 5
-
         private const val CAMERA_REQUEST_CODE = 1
 
-        fun instance(): ImgSelFragment {
+        fun instance(canSelVideo: Boolean): ImgSelFragment {
             val fragment = ImgSelFragment()
             val bundle = Bundle()
+            bundle.putBoolean("canSelVideo", canSelVideo)
             fragment.arguments = bundle
             return fragment
         }

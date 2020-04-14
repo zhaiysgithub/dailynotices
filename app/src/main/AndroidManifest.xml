@@ -153,7 +153,7 @@
 
         <activity android:name=".ui.activity.PushDynamicActivity"
                   android:screenOrientation="portrait"
-                  android:launchMode="singleTop"/>
+                  android:launchMode="singleTask"/>
 
         <activity android:name=".islib.ui.ISListActivity"
                   android:screenOrientation="portrait"
@@ -172,6 +172,7 @@
                   android:launchMode="singleTop"/>
 
         <activity android:name=".islib.ui.SimplePlayerActivity"
+                  android:screenOrientation="portrait"
                   android:launchMode="singleTop"/>
 
 

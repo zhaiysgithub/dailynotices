@@ -25,18 +25,14 @@ import com.avos.avoscloud.im.v2.AVIMServiceConversation;
 import com.avos.avoscloud.im.v2.AVIMTemporaryConversation;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback;
-import com.avos.avoscloud.im.v2.callback.AVIMMessagesQueryCallback;
-import com.avos.avoscloud.im.v2.callback.AVIMSingleMessageQueryCallback;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import cn.leancloud.chatkit.LCChatMessageInterface;
 import cn.leancloud.chatkit.R;
-import cn.leancloud.chatkit.cache.LCIMConversationItemCache;
 import cn.leancloud.chatkit.event.LCIMConversationItemLongClickEvent;
 import cn.leancloud.chatkit.utils.LCIMConstants;
 import cn.leancloud.chatkit.utils.LCIMConversationUtils;
@@ -226,7 +222,7 @@ public class LCIMConversationItemHolder extends LCIMCommonViewHolder {
       intent.putExtra(LCIMConstants.CONVERSATION_ID, conversation.getConversationId());
       getContext().startActivity(intent);
     } catch (ActivityNotFoundException exception) {
-      Log.i(LCIMConstants.LCIM_LOG_TAG, exception.toString());
+      Log.e(LCIMConstants.LCIM_LOG_TAG, exception.toString());
     }
   }
 
