@@ -642,23 +642,25 @@ object Query {
                         val itemCover = Cover()
                         val coverFile = it.getAVFile<AVFile>("cover")
                         itemCover.objectId = it.objectId
-                        itemCover.coverUrl = coverFile.url
-                        itemCover.createdAt = it.getDate("createdAt")
-                        itemCover.updateAt = it.getDate("updateAt")
-                        val userInfoPointer = it.getAVObject<AVObject>("user")
-                        val idPointer = userInfoPointer.objectId
-                        itemCover.userObjectId = idPointer
-                        coverList.add(itemCover)
-                        //查询user表中的userName
-                        val userQuery = AVQuery<AVUser>(TableConstants.TABLE_USER)
-                        userQuery.whereEqualTo(TableConstants.OBJECTID, idPointer)
-                        queryUserList.add(userQuery)
+                        if (coverFile != null){
+                            itemCover.coverUrl = coverFile.url
+                            itemCover.createdAt = it.getDate("createdAt")
+                            itemCover.updateAt = it.getDate("updateAt")
+                            val userInfoPointer = it.getAVObject<AVObject>("user")
+                            val idPointer = userInfoPointer.objectId
+                            itemCover.userObjectId = idPointer
+                            coverList.add(itemCover)
+                            //查询user表中的userName
+                            val userQuery = AVQuery<AVUser>(TableConstants.TABLE_USER)
+                            userQuery.whereEqualTo(TableConstants.OBJECTID, idPointer)
+                            queryUserList.add(userQuery)
 
-                        //查询userInfo表中的fire字段
+                            //查询userInfo表中的fire字段
 
-                        val userInfoQuery = AVQuery<AVObject>(TableConstants.TABLE_USERINFO)
-                        userInfoQuery.whereEqualTo(TableConstants.USER, idPointer)
-                        queryUserInfoList.add(userInfoQuery)
+                            val userInfoQuery = AVQuery<AVObject>(TableConstants.TABLE_USERINFO)
+                            userInfoQuery.whereEqualTo(TableConstants.USER, idPointer)
+                            queryUserInfoList.add(userInfoQuery)
+                        }
                     }
                     // OR 组合查询
                     val userQueryOr = AVQuery.or(queryUserList)
